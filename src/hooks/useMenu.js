@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { getMainMenu } from '../services/menuService'
-import { sortMenuItems, filterActiveItems } from '../components/menu/types'
+// import { sortMenuItems, filterActiveItems } from '../components/menu/types'
 
 export const useMenu = () => {
   const [menuItems, setMenuItems] = useState([])
@@ -8,22 +8,21 @@ export const useMenu = () => {
   const [error, setError] = useState(null)
 
   const processMenuData = (data) => {
+    // Convertir datos del backend al formato esperado por los componentes
+    const processedItems = data.map(item => ({
+      id: item.id,
+      label: item.title,
+      href: item.path,
+      order: item.order_index,
+      active: item.is_active,
+      children: item.children || []
+    }))
+    
     // Filtrar items activos y ordenar
-    const activeItems = filterActiveItems(data)
-    const sortedItems = sortMenuItems(activeItems)
+    const activeItems = processedItems.filter(item => item.active)
+    const sortedItems = activeItems.sort((a, b) => a.order - b.order)
     
-    // Procesar también los children si existen
-    const processedItems = sortedItems.map(item => {
-      if (item.children && item.children.length > 0) {
-        return {
-          ...item,
-          children: sortMenuItems(filterActiveItems(item.children))
-        }
-      }
-      return item
-    })
-    
-    return processedItems
+    return sortedItems
   }
 
   useEffect(() => {
@@ -31,8 +30,11 @@ export const useMenu = () => {
       try {
         setLoading(true)
         setError(null)
+        // console.log('🔄 Obteniendo menú...')
         const data = await getMainMenu()
+        // console.log('📊 Datos del backend:', data)
         const processedData = processMenuData(data)
+        // console.log('🔄 Datos procesados:', processedData)
         setMenuItems(processedData)
       } catch (err) {
         console.error('🚨 Error en useMenu:', err)

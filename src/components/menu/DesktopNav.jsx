@@ -8,13 +8,19 @@ import {
   useColorModeValue,
   Spinner,
   Text,
+  Button,
+  HStack,
 } from '@chakra-ui/react'
 import DesktopSubNav from './DesktopSubNav'
+import { useAuth } from '../../hooks/useAuth'
+import { getDashboardRoute } from '../../utils/roleUtils'
+import { Link as RouterLink } from 'react-router-dom'
 
 const DesktopNav = ({ menuItems, loading, error }) => {
   const linkColor = useColorModeValue('gray.600', 'gray.200')
   const linkHoverColor = useColorModeValue('gray.800', 'white')
   const popoverContentBgColor = useColorModeValue('white', 'gray.800')
+  const { auth } = useAuth()
 
   if (loading) {
     return (
@@ -52,18 +58,24 @@ const DesktopNav = ({ menuItems, loading, error }) => {
   }
 
   return (
-    <Stack direction={'row'} spacing={4}>
+    <Stack 
+      direction={'row'} 
+      spacing={{ base: 2, md: 4 }}
+      wrap="wrap"
+      align="center"
+      justify="center">
       {menuItems.map((navItem) => (
         <Box key={navItem.id || navItem.label}>
           <Popover trigger={'hover'} placement={'bottom-start'}>
             <PopoverTrigger>
               <Box
                 as="a"
-                p={2}
+                p={{ base: 1, md: 2 }}
                 href={navItem.href ?? '#'}
-                fontSize={'sm'}
+                fontSize={{ base: 'xs', md: 'sm' }}
                 fontWeight={500}
                 color={linkColor}
+                whiteSpace="nowrap"
                 _hover={{
                   textDecoration: 'none',
                   color: linkHoverColor,
@@ -79,7 +91,7 @@ const DesktopNav = ({ menuItems, loading, error }) => {
                 bg={popoverContentBgColor}
                 p={4}
                 rounded={'xl'}
-                minW={'sm'}>
+                minW={{ base: '200px', md: 'sm' }}>
                 <Stack>
                   {navItem.children.map((child) => (
                     <DesktopSubNav key={child.id || child.label} {...child} />
@@ -90,6 +102,22 @@ const DesktopNav = ({ menuItems, loading, error }) => {
           </Popover>
         </Box>
       ))}
+      {auth && (
+        <HStack pl={2} spacing={2}>
+          <Text fontSize={{ base: 'xs', md: 'sm' }} color={linkColor}>
+            {auth.name || auth.email}
+          </Text>
+          <Button
+            as={RouterLink}
+            to={getDashboardRoute(auth)}
+            size="sm"
+            colorScheme="blue"
+            variant="solid"
+          >
+            Ir al Dashboard
+          </Button>
+        </HStack>
+      )}
     </Stack>
   )
 }
