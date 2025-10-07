@@ -17,6 +17,7 @@ const Root = () => {
           {/* Rutas protegidas - CON PersistAuth */}
           <Route element={<PersistAuth />}>
             <Route path="/dashboard/*" element={<Private />} />
+            <Route path="/admin/*" element={<Private />} />
           </Route>
         </Routes>
       </AuthProvider>

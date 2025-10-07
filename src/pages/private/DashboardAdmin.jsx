@@ -61,7 +61,6 @@ import { FaChartBar } from "react-icons/fa";
 import { FiMenu, FiHome, FiLogOut } from 'react-icons/fi'
 import { useAuth } from '../../hooks/useAuth'
 import { Link as RouterLink } from 'react-router-dom'
-import { useMenu } from '../../hooks/useMenu'
 
 const DashboardAdmin = () => {
   const bgColor = useColorModeValue('gray.50', 'gray.900')
@@ -69,7 +68,14 @@ const DashboardAdmin = () => {
   const textColor = useColorModeValue('gray.600', 'gray.300')
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { logout } = useAuth()
-  const { menuItems } = useMenu('/api/menu/admin-dashboard')
+  // Menú específico para administradores
+  const menuItems = [
+    { label: 'Crear categoría Podcasts', href: '/dashboard/admin/podcast-category' },
+    { label: 'Crear subcategoría de Podcasts', href: '/dashboard/admin/podcast-subcategory' },
+    { label: 'Crear categoría de noticias', href: '/dashboard/admin/news-category' },
+    { label: 'Crear subcategoría de noticias', href: '/dashboard/admin/news-subcategory' },
+    { label: 'Crear Menú', href: '/dashboard/admin/menu-management' }
+  ]
 
   // Datos de ejemplo - en producción vendrían del backend
   const adminStats = {
