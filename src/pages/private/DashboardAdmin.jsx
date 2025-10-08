@@ -74,7 +74,9 @@ const DashboardAdmin = () => {
     { label: 'Crear subcategoría de Podcasts', href: '/dashboard/admin/podcast-subcategory' },
     { label: 'Crear categoría de noticias', href: '/dashboard/admin/news-category' },
     { label: 'Crear subcategoría de noticias', href: '/dashboard/admin/news-subcategory' },
-    { label: 'Crear Menú', href: '/dashboard/admin/menu-management' }
+    { label: 'Crear Menú', href: '/dashboard/admin/menu-management' },
+    { label: 'Gestionar Suscriptores', href: '/dashboard/admin/subscribers' },
+    { label: 'Gestionar Roles', href: '/dashboard/admin/user-roles' }
   ]
 
   // Datos de ejemplo - en producción vendrían del backend

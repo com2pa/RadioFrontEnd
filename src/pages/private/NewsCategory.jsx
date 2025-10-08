@@ -328,8 +328,8 @@ const NewsCategory = () => {
                       </Tr>
                     </Thead>
                     <Tbody>
-                      {Array.isArray(categories) && categories.map((category) => (
-                        <Tr key={category.category_id}>
+                      {Array.isArray(categories) && categories.map((category, index) => (
+                        <Tr key={category.category_id || `category-${index}`}>
                           <Td>
                             <Text fontWeight="medium" fontSize="sm">
                               {category.category_name}

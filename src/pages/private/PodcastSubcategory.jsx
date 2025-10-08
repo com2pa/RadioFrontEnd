@@ -321,8 +321,8 @@ const PodcastSubcategory = () => {
                         onChange={handleInputChange}
                         placeholder="Selecciona una categoría"
                       >
-                        {categories.map((category) => (
-                          <option key={category.category_id} value={category.category_id}>
+                        {categories.map((category, index) => (
+                          <option key={category.category_id || `category-${index}`} value={category.category_id}>
                             {category.category_name}
                           </option>
                         ))}
@@ -395,8 +395,8 @@ const PodcastSubcategory = () => {
                       </Tr>
                     </Thead>
                     <Tbody>
-                      {subcategories.map((subcategory) => (
-                        <Tr key={subcategory.subcategoryId}>
+                      {subcategories.map((subcategory, index) => (
+                        <Tr key={subcategory.subcategoryId || `subcategory-${index}`}>
                           <Td>
                             <Text fontWeight="medium" fontSize="sm">
                               {subcategory.subcategory_name}

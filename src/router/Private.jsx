@@ -11,6 +11,8 @@ import PodcastSubcategory from '../pages/private/PodcastSubcategory'
 import NewsCategory from '../pages/private/NewsCategory'
 import NewsSubcategory from '../pages/private/NewsSubcategory'
 import MenuManagement from '../pages/private/MenuManagement'
+import SubscribersManagement from '../pages/private/SubscribersManagement'
+import UserRolesManagement from '../pages/private/UserRolesManagement'
 
 const LoadingFallback = () => (
   <Box display="flex" justifyContent="center" alignItems="center" minH="100vh">
@@ -46,6 +48,8 @@ const Private = () => {
       <Route path="admin/news-category" element={<NewsCategory />} />
       <Route path="admin/news-subcategory" element={<NewsSubcategory />} />
       <Route path="admin/menu-management" element={<MenuManagement />} />
+      <Route path="admin/subscribers" element={<SubscribersManagement />} />
+      <Route path="admin/user-roles" element={<UserRolesManagement />} />
       
       {/* Redirección automática */}
       <Route path="/" element={<Navigate to={getDashboardRoute(auth)} replace />} />
