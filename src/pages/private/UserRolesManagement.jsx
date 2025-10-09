@@ -34,13 +34,6 @@ import {
   AlertIcon,
   AlertTitle,
   AlertDescription,
-  Drawer,
-  DrawerBody,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerOverlay,
-  DrawerContent,
-  DrawerCloseButton,
   IconButton,
   useDisclosure,
   Input,
@@ -91,6 +84,7 @@ import { FiMenu, FiHome, FiLogOut, FiArrowLeft } from 'react-icons/fi'
 import { useAuth } from '../../hooks/useAuth'
 import { Link as RouterLink } from 'react-router-dom'
 import axios from 'axios'
+import AdminMenu from '../../components/layout/AdminMenu'
 
 const UserRolesManagement = () => {
   const bgColor = useColorModeValue('gray.50', 'gray.900')
@@ -119,17 +113,6 @@ const UserRolesManagement = () => {
   const [editingRole, setEditingRole] = useState(null)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [newRole, setNewRole] = useState({ role_name: '', role_description: '' })
-
-  // Menú específico para administradores
-  const menuItems = [
-    { label: 'Crear categoría Podcasts', href: '/dashboard/admin/podcast-category' },
-    { label: 'Crear subcategoría de Podcasts', href: '/dashboard/admin/podcast-subcategory' },
-    { label: 'Crear categoría de noticias', href: '/dashboard/admin/news-category' },
-    { label: 'Crear subcategoría de noticias', href: '/dashboard/admin/news-subcategory' },
-    { label: 'Crear Menú', href: '/dashboard/admin/menu-management' },
-    { label: 'Gestionar Suscriptores', href: '/dashboard/admin/subscribers' },
-    { label: 'Gestionar Roles', href: '/dashboard/admin/user-roles' }
-  ]
 
   // Función para calcular estadísticas basándose en los roles
   const calculateStats = useCallback((roles) => {
@@ -360,35 +343,12 @@ const UserRolesManagement = () => {
             </HStack>
           </Box>
 
-          {/* Barra lateral (Drawer) */}
-          <Drawer isOpen={isOpen} placement="left" onClose={onClose} size="xs">
-            <DrawerOverlay />
-            <DrawerContent>
-              <DrawerCloseButton />
-              <DrawerHeader>Menú</DrawerHeader>
-              <DrawerBody>
-                <VStack align="stretch" spacing={2}>
-                  {(menuItems || []).map((item, idx) => (
-                    <Button
-                      key={idx}
-                      as={RouterLink}
-                      to={item.href || '#'}
-                      justifyContent="start"
-                      variant="ghost"
-                      colorScheme={item.label === 'Gestionar Roles' ? 'blue' : undefined}
-                    >
-                      {item.label}
-                    </Button>
-                  ))}
-                </VStack>
-              </DrawerBody>
-              <DrawerFooter>
-                <Button variant="outline" mr={3} onClick={onClose}>
-                  Cerrar
-                </Button>
-              </DrawerFooter>
-            </DrawerContent>
-          </Drawer>
+          {/* Menú administrativo reutilizable */}
+          <AdminMenu 
+            isOpen={isOpen}
+            onClose={onClose}
+            currentPage="/dashboard/admin/user-roles"
+          />
 
           {/* Estadísticas principales */}
           <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' }} gap={6}>

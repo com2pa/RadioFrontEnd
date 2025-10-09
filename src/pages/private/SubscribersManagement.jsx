@@ -34,13 +34,6 @@ import {
   AlertIcon,
   AlertTitle,
   AlertDescription,
-  Drawer,
-  DrawerBody,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerOverlay,
-  DrawerContent,
-  DrawerCloseButton,
   IconButton,
   useDisclosure,
   Input,
@@ -60,7 +53,9 @@ import {
   ModalBody,
   ModalCloseButton,
   useToast,
-  Spinner
+  Spinner,
+  FormControl,
+  FormLabel
 } from '@chakra-ui/react'
 import { 
   FiUsers, 
@@ -89,6 +84,7 @@ import { FiMenu, FiHome, FiLogOut, FiArrowLeft } from 'react-icons/fi'
 import { useAuth } from '../../hooks/useAuth'
 import { Link as RouterLink } from 'react-router-dom'
 import axios from 'axios'
+import AdminMenu from '../../components/layout/AdminMenu'
 
 const SubscribersManagement = () => {
   const bgColor = useColorModeValue('gray.50', 'gray.900')
@@ -107,6 +103,7 @@ const SubscribersManagement = () => {
   
   // Estados para datos del backend
   const [subscribers, setSubscribers] = useState([])
+  const [availableRoles, setAvailableRoles] = useState([])
   const [subscriberStats, setSubscriberStats] = useState({
     totalSubscribers: 0,
     premiumSubscribers: 0,
@@ -117,63 +114,9 @@ const SubscribersManagement = () => {
   })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [selectedUserForEdit, setSelectedUserForEdit] = useState(null)
 
-  // Menú específico para administradores
-  const menuItems = [
-    { label: 'Crear categoría Podcasts', href: '/dashboard/admin/podcast-category' },
-    { label: 'Crear subcategoría de Podcasts', href: '/dashboard/admin/podcast-subcategory' },
-    { label: 'Crear categoría de noticias', href: '/dashboard/admin/news-category' },
-    { label: 'Crear subcategoría de noticias', href: '/dashboard/admin/news-subcategory' },
-    { label: 'Crear Menú', href: '/dashboard/admin/menu-management' },
-    { label: 'Gestionar Suscriptores', href: '/dashboard/admin/subscribers' }
-  ]
-
-  // Función para obtener suscriptores del backend
-  const fetchSubscribers = useCallback(async () => {
-    try {
-      setLoading(true)
-      setError(null)
-      
-      const response = await axios.get('/api/register')
-      console.log('Response data:', response.data)
-      const result = response.data
-      
-      if (result.success && Array.isArray(result.data)) {
-        // Mapear los datos del backend al formato esperado por la UI
-        const mappedSubscribers = result.data.map(user => ({
-          id: user.user_id,
-          name: `${user.user_name} ${user.user_lastname}`,
-          email: user.user_email,
-          phone: user.user_phone || 'N/A',
-          subscriptionDate: user.created_at || user.subscription_date || 'N/A',
-          plan: user.subscription_plan || 'Básico',
-          status: user.subscription_status || 'Activo',
-          nextBilling: user.next_billing_date || 'N/A',
-          totalPaid: user.total_paid || 0,
-          avatar: null
-        }))
-        console.log('Mapped subscribers:', mappedSubscribers)
-        setSubscribers(mappedSubscribers)
-        // Calcular estadísticas basándose en los usuarios mapeados
-        calculateStats(mappedSubscribers)
-      } else {
-        setSubscribers([])
-      }
-    } catch (error) {
-      console.error('Error fetching subscribers:', error)
-      setError('Error al cargar los suscriptores')
-      toast({
-        title: 'Error',
-        description: 'No se pudieron cargar los suscriptores',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      })
-      setSubscribers([])
-    } finally {
-      setLoading(false)
-    }
-  }, [toast])
 
   // Función para calcular estadísticas basándose en los usuarios
   const calculateStats = useCallback((users) => {
@@ -197,10 +140,73 @@ const SubscribersManagement = () => {
     })
   }, [])
 
+  // Función para obtener roles disponibles
+  const fetchAvailableRoles = useCallback(async () => {
+    try {
+      const response = await axios.get('/api/role')
+      const result = response.data
+      
+      if (result.success && Array.isArray(result.data)) {
+        setAvailableRoles(result.data)
+      }
+    } catch (error) {
+      console.error('Error fetching roles:', error)
+    }
+  }, [])
+
+  // Función para obtener suscriptores del backend
+  const fetchSubscribers = useCallback(async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      
+      const response = await axios.get('/api/register')
+      console.log('Response data:', response.data)
+      const result = response.data
+      
+      if (result.success && Array.isArray(result.data)) {
+        // Mapear los datos del backend al formato esperado por la UI
+        const mappedSubscribers = result.data.map(user => ({
+          id: user.user_id,
+          name: `${user.user_name} ${user.user_lastname}`,
+          email: user.user_email,
+          phone: user.user_phone || 'N/A',
+          subscriptionDate: user.created_at || user.subscription_date || 'N/A',
+          plan: user.subscription_plan || 'Básico',
+          status: user.subscription_status || 'Activo',
+          nextBilling: user.next_billing_date || 'N/A',
+          totalPaid: user.total_paid || 0,
+          role: user.user_role || 'user',
+          avatar: null
+        }))
+        console.log('Mapped subscribers:', mappedSubscribers)
+        setSubscribers(mappedSubscribers)
+        // Calcular estadísticas basándose en los usuarios mapeados
+        calculateStats(mappedSubscribers)
+      } else {
+        setSubscribers([])
+      }
+    } catch (error) {
+      console.error('Error fetching subscribers:', error)
+      setError('Error al cargar los suscriptores')
+      toast({
+        title: 'Error',
+        description: 'No se pudieron cargar los suscriptores',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      })
+      setSubscribers([])
+    } finally {
+      setLoading(false)
+    }
+  }, [toast, calculateStats])
+
   // Cargar datos al montar el componente
   useEffect(() => {
     fetchSubscribers()
-  }, [fetchSubscribers])
+    fetchAvailableRoles()
+  }, [fetchSubscribers, fetchAvailableRoles])
 
   // Filtrar suscriptores
   const filteredSubscribers = subscribers.filter(subscriber => {
@@ -217,22 +223,39 @@ const SubscribersManagement = () => {
     setIsDetailModalOpen(true)
   }
 
-  const handleEditSubscriber = async (subscriber) => {
+  const handleEditSubscriber = (subscriber) => {
+    setSelectedUserForEdit(subscriber)
+    setIsEditModalOpen(true)
+  }
+
+  const handleUpdateUserRole = async (userId, roleData) => {
     try {
-      // Aquí puedes implementar la lógica para editar el suscriptor
-      // Por ejemplo, abrir un modal de edición o navegar a una página de edición
-      toast({
-        title: 'Función en desarrollo',
-        description: `Editar suscriptor ${subscriber.name}`,
-        status: 'info',
-        duration: 3000,
-        isClosable: true,
-      })
+      const response = await axios.put(`/api/register/${userId}/role`, roleData)
+      
+      if (response.data.success) {
+        toast({
+          title: 'Rol actualizado',
+          description: 'El rol del usuario ha sido actualizado exitosamente',
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        })
+        
+        // Actualizar el estado local
+        setSubscribers(prevSubscribers => 
+          prevSubscribers.map(subscriber => 
+            subscriber.id === userId ? { ...subscriber, role: roleData.role_name } : subscriber
+          )
+        )
+        
+        setIsEditModalOpen(false)
+        setSelectedUserForEdit(null)
+      }
     } catch (error) {
-      console.error('Error editing subscriber:', error)
+      console.error('Error updating user role:', error)
       toast({
         title: 'Error',
-        description: 'No se pudo editar el suscriptor',
+        description: 'No se pudo actualizar el rol del usuario',
         status: 'error',
         duration: 3000,
         isClosable: true,
@@ -282,6 +305,24 @@ const SubscribersManagement = () => {
     return plan === 'Premium' ? 'purple' : 'blue'
   }
 
+  const getRoleColor = (role) => {
+    switch (role?.toLowerCase()) {
+      case 'superadmin': return 'red'
+      case 'admin': return 'purple'
+      case 'user': return 'blue'
+      default: return 'gray'
+    }
+  }
+
+  const getRoleIcon = (role) => {
+    switch (role?.toLowerCase()) {
+      case 'superadmin': return FaCrown
+      case 'admin': return FiUser
+      case 'user': return FiUser
+      default: return FiUser
+    }
+  }
+
   return (
     <Box minH="100vh" bg={bgColor}>
       <Container maxW="container.xl" py={8}>
@@ -325,35 +366,12 @@ const SubscribersManagement = () => {
             </HStack>
           </Box>
 
-          {/* Barra lateral (Drawer) */}
-          <Drawer isOpen={isOpen} placement="left" onClose={onClose} size="xs">
-            <DrawerOverlay />
-            <DrawerContent>
-              <DrawerCloseButton />
-              <DrawerHeader>Menú</DrawerHeader>
-              <DrawerBody>
-                <VStack align="stretch" spacing={2}>
-                  {(menuItems || []).map((item, idx) => (
-                    <Button
-                      key={idx}
-                      as={RouterLink}
-                      to={item.href || '#'}
-                      justifyContent="start"
-                      variant="ghost"
-                      colorScheme={item.label === 'Gestionar Suscriptores' ? 'blue' : undefined}
-                    >
-                      {item.label}
-                    </Button>
-                  ))}
-                </VStack>
-              </DrawerBody>
-              <DrawerFooter>
-                <Button variant="outline" mr={3} onClick={onClose}>
-                  Cerrar
-                </Button>
-              </DrawerFooter>
-            </DrawerContent>
-          </Drawer>
+          {/* Menú administrativo reutilizable */}
+          <AdminMenu 
+            isOpen={isOpen}
+            onClose={onClose}
+            currentPage="/dashboard/admin/subscribers"
+          />
 
           {/* Estadísticas principales */}
           <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' }} gap={6}>
@@ -493,6 +511,7 @@ const SubscribersManagement = () => {
                     <Tr>
                       <Th>Usuario</Th>
                       <Th>Plan</Th>
+                      <Th>Rol</Th>
                       <Th>Estado</Th>
                       <Th>Fecha Suscripción</Th>
                       <Th>Próximo Pago</Th>
@@ -516,6 +535,18 @@ const SubscribersManagement = () => {
                         <HStack spacing={2}>
                           <Icon as={getPlanIcon(subscriber.plan)} color={`${getPlanColor(subscriber.plan)}.500`} />
                           <Text fontSize="sm">{subscriber.plan}</Text>
+                        </HStack>
+                      </Td>
+                      <Td>
+                        <HStack spacing={2}>
+                          <Icon as={getRoleIcon(subscriber.role)} color={`${getRoleColor(subscriber.role)}.500`} />
+                          <Badge 
+                            colorScheme={getRoleColor(subscriber.role)}
+                            variant="subtle"
+                            fontSize="xs"
+                          >
+                            {subscriber.role}
+                          </Badge>
                         </HStack>
                       </Td>
                       <Td>
@@ -587,6 +618,16 @@ const SubscribersManagement = () => {
                           <Icon as={getPlanIcon(selectedSubscriber.plan)} color={`${getPlanColor(selectedSubscriber.plan)}.500`} />
                           <Text fontSize="sm" fontWeight="medium">{selectedSubscriber.plan}</Text>
                         </HStack>
+                        <HStack spacing={2}>
+                          <Icon as={getRoleIcon(selectedSubscriber.role)} color={`${getRoleColor(selectedSubscriber.role)}.500`} />
+                          <Badge 
+                            colorScheme={getRoleColor(selectedSubscriber.role)}
+                            variant="subtle"
+                            fontSize="sm"
+                          >
+                            {selectedSubscriber.role}
+                          </Badge>
+                        </HStack>
                       </VStack>
                     </HStack>
                     
@@ -632,6 +673,115 @@ const SubscribersManagement = () => {
                   handleEditSubscriber(selectedSubscriber)
                 }}>
                   Editar
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
+
+          {/* Modal para editar usuario */}
+          <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} size="lg">
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Editar Usuario</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                {selectedUserForEdit && (
+                  <VStack spacing={6} align="stretch">
+                    {/* Información del usuario */}
+                    <HStack spacing={4}>
+                      <Avatar size="lg" name={selectedUserForEdit.name} bg="blue.500" />
+                      <VStack align="start" spacing={1}>
+                        <Heading size="md">{selectedUserForEdit.name}</Heading>
+                        <Text color={textColor}>{selectedUserForEdit.email}</Text>
+                        <HStack spacing={2}>
+                          <Icon as={getPlanIcon(selectedUserForEdit.plan)} color={`${getPlanColor(selectedUserForEdit.plan)}.500`} />
+                          <Text fontSize="sm" fontWeight="medium">{selectedUserForEdit.plan}</Text>
+                        </HStack>
+                      </VStack>
+                    </HStack>
+                    
+                    <Divider />
+                    
+                    {/* Información detallada */}
+                    <Grid templateColumns="repeat(2, 1fr)" gap={4}>
+                      <Box>
+                        <Text fontSize="sm" fontWeight="medium" color={textColor}>Teléfono</Text>
+                        <Text fontSize="sm">{selectedUserForEdit.phone}</Text>
+                      </Box>
+                      <Box>
+                        <Text fontSize="sm" fontWeight="medium" color={textColor}>Estado</Text>
+                        <Badge 
+                          colorScheme={getStatusColor(selectedUserForEdit.status)}
+                          variant="subtle"
+                          fontSize="xs"
+                        >
+                          {selectedUserForEdit.status}
+                        </Badge>
+                      </Box>
+                      <Box>
+                        <Text fontSize="sm" fontWeight="medium" color={textColor}>Fecha de Suscripción</Text>
+                        <Text fontSize="sm">{selectedUserForEdit.subscriptionDate}</Text>
+                      </Box>
+                      <Box>
+                        <Text fontSize="sm" fontWeight="medium" color={textColor}>Próximo Pago</Text>
+                        <Text fontSize="sm">{selectedUserForEdit.nextBilling || 'N/A'}</Text>
+                      </Box>
+                      <Box>
+                        <Text fontSize="sm" fontWeight="medium" color={textColor}>Total Pagado</Text>
+                        <Text fontSize="sm" fontWeight="medium" color="green.500">${selectedUserForEdit.totalPaid}</Text>
+                      </Box>
+                    </Grid>
+                    
+                    <Divider />
+                    
+                    {/* Sección para cambiar rol */}
+                    <Box>
+                      <Heading size="sm" mb={4}>Cambiar Rol del Usuario</Heading>
+                      <VStack spacing={4} align="stretch">
+                        <FormControl>
+                          <FormLabel>Rol Actual</FormLabel>
+                          <HStack spacing={2}>
+                            <Icon as={getRoleIcon(selectedUserForEdit.role)} color={`${getRoleColor(selectedUserForEdit.role)}.500`} />
+                            <Badge 
+                              colorScheme={getRoleColor(selectedUserForEdit.role)}
+                              variant="subtle"
+                            >
+                              {selectedUserForEdit.role}
+                            </Badge>
+                          </HStack>
+                        </FormControl>
+                        
+                        <FormControl>
+                          <FormLabel>Nuevo Rol</FormLabel>
+                          <Select 
+                            placeholder="Seleccionar nuevo rol"
+                            onChange={(e) => {
+                              if (e.target.value) {
+                                const selectedRole = availableRoles.find(role => role.role_name === e.target.value)
+                                if (selectedRole) {
+                                  handleUpdateUserRole(selectedUserForEdit.id, {
+                                    role_name: selectedRole.role_name,
+                                    role_description: selectedRole.role_description
+                                  })
+                                }
+                              }
+                            }}
+                          >
+                            {availableRoles.map((role) => (
+                              <option key={role.id || role.role_id} value={role.role_name}>
+                                {role.role_name}
+                              </option>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      </VStack>
+                    </Box>
+                  </VStack>
+                )}
+              </ModalBody>
+              <ModalFooter>
+                <Button variant="outline" mr={3} onClick={() => setIsEditModalOpen(false)}>
+                  Cerrar
                 </Button>
               </ModalFooter>
             </ModalContent>
