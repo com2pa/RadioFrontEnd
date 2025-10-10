@@ -11,6 +11,8 @@ import PodcastSubcategory from '../pages/private/PodcastSubcategory'
 import PodcastUpload from '../pages/private/PodcastUpload'
 import NewsCategory from '../pages/private/NewsCategory'
 import NewsSubcategory from '../pages/private/NewsSubcategory'
+import NewsCreate from '../pages/private/NewsCreate'
+import NewsManagement from '../pages/private/NewsManagement'
 import MenuManagement from '../pages/private/MenuManagement'
 import SubscribersManagement from '../pages/private/SubscribersManagement'
 import UserRolesManagement from '../pages/private/UserRolesManagement'
@@ -49,6 +51,8 @@ const Private = () => {
       <Route path="admin/podcast-upload" element={<PodcastUpload />} />
       <Route path="admin/news-category" element={<NewsCategory />} />
       <Route path="admin/news-subcategory" element={<NewsSubcategory />} />
+      <Route path="admin/news-create" element={<NewsCreate />} />
+      <Route path="admin/news-management" element={<NewsManagement />} />
       <Route path="admin/menu-management" element={<MenuManagement />} />
       <Route path="admin/subscribers" element={<SubscribersManagement />} />
       <Route path="admin/user-roles" element={<UserRolesManagement />} />

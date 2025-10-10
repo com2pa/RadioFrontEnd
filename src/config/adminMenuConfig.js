@@ -40,6 +40,20 @@ export const adminMenuItems = [
     description: 'Gestionar subcategorías de noticias'
   },
   {
+    id: 'news-create',
+    label: 'Crear Noticia',
+    href: '/dashboard/admin/news-create',
+    icon: 'FiEdit3',
+    description: 'Crear y publicar noticias'
+  },
+  {
+    id: 'news-management',
+    label: 'Gestionar Noticias',
+    href: '/dashboard/admin/news-management',
+    icon: 'FiList',
+    description: 'Administrar noticias existentes'
+  },
+  {
     id: 'menu-management',
     label: 'Crear Menú',
     href: '/dashboard/admin/menu-management',
