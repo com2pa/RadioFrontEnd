@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import {
   Box,
+  Container,
   VStack,
   HStack,
   Text,
@@ -28,11 +29,13 @@ import {
   AlertIcon,
   AlertTitle,
   AlertDescription,
-  Spinner
+  Spinner,
+  useDisclosure
 } from '@chakra-ui/react'
-import { FiSave, FiEdit, FiTrash2 } from 'react-icons/fi'
+import { FiSave, FiEdit, FiTrash2, FiMenu, FiHome, FiLogOut, FiArrowLeft } from 'react-icons/fi'
 import { useAuth } from '../../hooks/useAuth'
-import AdminLayout from '../../components/layout/AdminLayout'
+import { Link as RouterLink } from 'react-router-dom'
+import AdminMenu from '../../components/layout/AdminMenu'
 import axios from 'axios'
 
 const NewsCategory = () => {
@@ -40,7 +43,8 @@ const NewsCategory = () => {
   const cardBg = useColorModeValue('white', 'gray.800')
   const textColor = useColorModeValue('gray.600', 'gray.300')
   const toast = useToast()
-  const { auth } = useAuth()
+  const { auth, logout } = useAuth()
+  const { isOpen, onOpen, onClose } = useDisclosure()
 
   const [formData, setFormData] = useState({
     categoryName: ''
@@ -245,11 +249,50 @@ const NewsCategory = () => {
   }
 
   return (
-    <AdminLayout 
-      title="Gestión de Categorías de Noticias"
-      subtitle="Crear y administrar categorías para noticias"
-    >
-      <Box display={{ base: 'block', lg: 'grid' }} gridTemplateColumns="1fr 1fr" gap={8}>
+    <Box minH="100vh" bg={bgColor}>
+      <Container maxW="container.xl" py={8}>
+        <VStack spacing={8} align="stretch">
+          {/* Header del Dashboard */}
+          <Box>
+            <HStack justify="space-between" align="center" mb={4}>
+              <VStack align="start" spacing={1}>
+                <HStack spacing={4}>
+                  <Button
+                    as={RouterLink}
+                    to="/dashboard/admin"
+                    leftIcon={<FiArrowLeft />}
+                    variant="outline"
+                    size="sm"
+                  >
+                    Volver
+                  </Button>
+                  <Heading size="lg" color="red.600">
+                    Gestión de Categorías de Noticias
+                  </Heading>
+                </HStack>
+                <Text color={textColor}>
+                  Crear y administrar categorías para noticias
+                </Text>
+              </VStack>
+              <HStack spacing={2}>
+                <IconButton aria-label="Abrir menú" icon={<FiMenu />} onClick={onOpen} />
+                <IconButton as={RouterLink} to="/" aria-label="Inicio" icon={<FiHome />} />
+                <Button leftIcon={<FiLogOut />} colorScheme="red" variant="outline" onClick={logout}>
+                  Cerrar sesión
+                </Button>
+              </HStack>
+            </HStack>
+          </Box>
+
+          {/* Menú administrativo reutilizable */}
+          <AdminMenu 
+            isOpen={isOpen}
+            onClose={onClose}
+            currentPage="/dashboard/admin/news-category"
+          />
+
+          {/* Contenido principal */}
+          <Box display={{ base: 'block', lg: 'grid' }} gridTemplateColumns="1fr 1fr" gap={8}>
             {/* Formulario */}
             <Card bg={cardBg} boxShadow="md">
               <CardHeader>
@@ -364,7 +407,9 @@ const NewsCategory = () => {
               </CardBody>
             </Card>
           </Box>
-    </AdminLayout>
+        </VStack>
+      </Container>
+    </Box>
   )
 }
 

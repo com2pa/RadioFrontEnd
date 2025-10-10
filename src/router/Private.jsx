@@ -8,6 +8,7 @@ import DashboardUser from '../pages/private/DashboardUser'
 import DashboardAdmin from '../pages/private/DashboardAdmin'
 import PodcastCategory from '../pages/private/PodcastCategory'
 import PodcastSubcategory from '../pages/private/PodcastSubcategory'
+import PodcastUpload from '../pages/private/PodcastUpload'
 import NewsCategory from '../pages/private/NewsCategory'
 import NewsSubcategory from '../pages/private/NewsSubcategory'
 import MenuManagement from '../pages/private/MenuManagement'
@@ -45,6 +46,7 @@ const Private = () => {
       {/* Rutas de administración */}
       <Route path="admin/podcast-category" element={<PodcastCategory />} />
       <Route path="admin/podcast-subcategory" element={<PodcastSubcategory />} />
+      <Route path="admin/podcast-upload" element={<PodcastUpload />} />
       <Route path="admin/news-category" element={<NewsCategory />} />
       <Route path="admin/news-subcategory" element={<NewsSubcategory />} />
       <Route path="admin/menu-management" element={<MenuManagement />} />

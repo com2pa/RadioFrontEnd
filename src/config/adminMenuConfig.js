@@ -19,6 +19,13 @@ export const adminMenuItems = [
     description: 'Gestionar subcategorías de podcasts'
   },
   {
+    id: 'podcast-upload',
+    label: 'Subir Podcasts',
+    href: '/dashboard/admin/podcast-upload',
+    icon: 'FiRadio',
+    description: 'Crear y gestionar podcasts con videos'
+  },
+  {
     id: 'news-category',
     label: 'Crear categoría de noticias',
     href: '/dashboard/admin/news-category',

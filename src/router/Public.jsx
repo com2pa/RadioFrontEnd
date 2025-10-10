@@ -5,6 +5,7 @@ import { useDynamicRoutes } from '../hooks/useDynamicRoutes'
 import Home from '../page/public/Home'
 import Register from '../pages/public/Register'
 import Login from '../pages/public/Login'
+import About from '../pages/public/About'
 
 // Componente de carga
 const LoadingFallback = () => (
@@ -31,7 +32,7 @@ const Public = () => {
   const { routes, loading, error } = useDynamicRoutes()
   
   // Rutas públicas que no necesitan cargar rutas dinámicas
-  const publicRoutes = ['/', '/login', '/register']
+  const publicRoutes = ['/', '/login', '/register', '/about']
   const isPublicRoute = publicRoutes.includes(location.pathname)
   
   // Solo mostrar loading para rutas que no son públicas
@@ -50,6 +51,7 @@ const Public = () => {
         <Route path='/' element={<Home />} />
         <Route path='/register' element={<Register />} />
         <Route path='/login' element={<Login />} />
+        <Route path='/about' element={<About />} />
         
         {/* Rutas dinámicas generadas desde el backend - solo para rutas no públicas */}
         {!isPublicRoute && routes.map((route) => {

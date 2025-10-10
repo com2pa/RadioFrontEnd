@@ -93,7 +93,7 @@ const AdminMenu = ({
         <DrawerCloseButton />
         
         {showHeader && (
-          <DrawerHeader>
+          <DrawerHeader borderBottomWidth="1px" borderColor="gray.200">
             <VStack align="start" spacing={2}>
               <Text fontSize="lg" fontWeight="bold" color="blue.600">
                 Panel Administrativo
@@ -105,7 +105,7 @@ const AdminMenu = ({
           </DrawerHeader>
         )}
         
-        <DrawerBody>
+        <DrawerBody pt={4}>
           <VStack align="stretch" spacing={1}>
             {allMenuItems.map((item) => {
               const IconComponent = getIcon(item.icon)
@@ -126,13 +126,16 @@ const AdminMenu = ({
                     bg: isActive ? "blue.600" : "gray.100"
                   }}
                   position="relative"
+                  h="auto"
+                  py={3}
+                  px={4}
                 >
                   <VStack align="start" spacing={0} flex={1}>
                     <Text fontSize="sm" fontWeight="medium">
                       {item.label}
                     </Text>
                     {item.description && (
-                      <Text fontSize="xs" color="gray.500" noOfLines={1}>
+                      <Text fontSize="xs" color={isActive ? "whiteAlpha.800" : "gray.500"} noOfLines={1}>
                         {item.description}
                       </Text>
                     )}
@@ -145,8 +148,9 @@ const AdminMenu = ({
                       position="absolute"
                       right={2}
                       top={2}
+                      fontSize="xs"
                     >
-                      Activo
+                      ACTIVO
                     </Badge>
                   )}
                 </Button>
@@ -156,9 +160,8 @@ const AdminMenu = ({
         </DrawerBody>
         
         {showFooter && (
-          <DrawerFooter>
+          <DrawerFooter borderTopWidth="1px" borderColor="gray.200">
             <VStack align="stretch" spacing={2} w="full">
-              <Divider />
               <HStack spacing={2}>
                 <Button
                   as={RouterLink}

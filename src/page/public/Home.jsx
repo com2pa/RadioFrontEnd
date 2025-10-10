@@ -1,13 +1,14 @@
 import React from 'react'
-import Menu from '../../layout/Menu'
 import { Outlet } from 'react-router-dom'
+import PublicFooter from '../../components/layout/PublicFooter'
+import PublicLayout from '../../components/layout/PublicLayout'
 
 const Home = () => {
   return (
-    <>
-        <Menu />
-        <Outlet />
-    </>
+    <PublicLayout>
+      <Outlet />
+      <PublicFooter />
+    </PublicLayout>
   )
 }
 

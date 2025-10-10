@@ -34,13 +34,6 @@ import {
   AlertIcon,
   AlertTitle,
   AlertDescription,
-  Drawer,
-  DrawerBody,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerOverlay,
-  DrawerContent,
-  DrawerCloseButton,
   IconButton,
   useDisclosure
 } from '@chakra-ui/react'
@@ -61,6 +54,7 @@ import { FaChartBar } from "react-icons/fa";
 import { FiMenu, FiHome, FiLogOut } from 'react-icons/fi'
 import { useAuth } from '../../hooks/useAuth'
 import { Link as RouterLink } from 'react-router-dom'
+import AdminMenu from '../../components/layout/AdminMenu'
 
 const DashboardAdmin = () => {
   const bgColor = useColorModeValue('gray.50', 'gray.900')
@@ -68,16 +62,6 @@ const DashboardAdmin = () => {
   const textColor = useColorModeValue('gray.600', 'gray.300')
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { logout } = useAuth()
-  // Menú específico para administradores
-  const menuItems = [
-    { label: 'Crear categoría Podcasts', href: '/dashboard/admin/podcast-category' },
-    { label: 'Crear subcategoría de Podcasts', href: '/dashboard/admin/podcast-subcategory' },
-    { label: 'Crear categoría de noticias', href: '/dashboard/admin/news-category' },
-    { label: 'Crear subcategoría de noticias', href: '/dashboard/admin/news-subcategory' },
-    { label: 'Crear Menú', href: '/dashboard/admin/menu-management' },
-    { label: 'Gestionar Suscriptores', href: '/dashboard/admin/subscribers' },
-    { label: 'Gestionar Roles', href: '/dashboard/admin/user-roles' }
-  ]
 
   // Datos de ejemplo - en producción vendrían del backend
   const adminStats = {
@@ -140,34 +124,12 @@ const DashboardAdmin = () => {
             </HStack>
           </Box>
 
-          {/* Barra lateral (Drawer) */}
-          <Drawer isOpen={isOpen} placement="left" onClose={onClose} size="xs">
-            <DrawerOverlay />
-            <DrawerContent>
-              <DrawerCloseButton />
-              <DrawerHeader>Menú</DrawerHeader>
-              <DrawerBody>
-                <VStack align="stretch" spacing={2}>
-                  {(menuItems || []).map((item, idx) => (
-                    <Button
-                      key={idx}
-                      as={RouterLink}
-                      to={item.href || '#'}
-                      justifyContent="start"
-                      variant="ghost"
-                    >
-                      {item.label}
-                    </Button>
-                  ))}
-                </VStack>
-              </DrawerBody>
-              <DrawerFooter>
-                <Button variant="outline" mr={3} onClick={onClose}>
-                  Cerrar
-                </Button>
-              </DrawerFooter>
-            </DrawerContent>
-          </Drawer>
+          {/* Menú administrativo reutilizable */}
+          <AdminMenu 
+            isOpen={isOpen}
+            onClose={onClose}
+            currentPage="/dashboard/admin"
+          />
 
           {/* Alertas del Sistema */}
           {systemAlerts.length > 0 && (
