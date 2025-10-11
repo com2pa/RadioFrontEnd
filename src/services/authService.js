@@ -11,8 +11,19 @@ const api = axios.create({
 // Servicio para registro de usuario
 export const registerUser = async (userData) => {
   try {
-    console.log('🔄 Enviando datos de registro...', userData)
-    const response = await api.post('/api/register', userData)
+    // Mapear campos del frontend a los que espera el backend
+    const payload = {
+      user_name: userData?.name ?? '',
+      user_lastname: userData?.lastname ?? '',
+      user_email: userData?.email ?? '',
+      user_password: userData?.password ?? '',
+      user_address: userData?.address ?? '',
+      user_phone: userData?.phone ?? '',
+      user_age: userData?.age ?? ''
+    }
+
+    console.log('🔄 Enviando datos de registro...', payload)
+    const response = await api.post('/api/register', payload)
     console.log('✅ Usuario registrado exitosamente:', response.data)
     return response.data
   } catch (error) {
@@ -41,6 +52,20 @@ export const loginUser = async (credentials) => {
 
 export default api
 
+// Servicio para verificación de email
+export const verifyEmail = async (userId, token) => {
+  try {
+    console.log('🔄 Verificando email...', { userId, token })
+    const response = await api.patch(`/api/register/${userId}/${token}`)
+    console.log('✅ Email verificado exitosamente:', response.data)
+    return response.data
+  } catch (error) {
+    console.error('❌ Error al verificar email:', error)
+    
+    throw error
+  }
+}
+
 // Servicio para logout de usuario
 export const logoutUser = async () => {
   // Si tu backend requiere invalidar token/cerrar sesión en servidor,
@@ -49,6 +74,7 @@ export const logoutUser = async () => {
     const response = await api.post('/api/logout')
     return response.data
   } catch (error) {
+    console.error('❌ Error al cerrar sesión:', error)
     // Si falla el endpoint, devolvemos un objeto estándar para permitir logout local
     return { success: false, message: 'logout local' }
   }

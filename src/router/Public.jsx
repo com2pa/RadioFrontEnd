@@ -6,6 +6,7 @@ import Home from '../page/public/Home'
 import Register from '../pages/public/Register'
 import Login from '../pages/public/Login'
 import About from '../pages/public/About'
+import EmailVerification from '../pages/public/EmailVerification'
 
 // Componente de carga
 const LoadingFallback = () => (
@@ -33,7 +34,7 @@ const Public = () => {
   
   // Rutas públicas que no necesitan cargar rutas dinámicas
   const publicRoutes = ['/', '/login', '/register', '/about']
-  const isPublicRoute = publicRoutes.includes(location.pathname)
+  const isPublicRoute = publicRoutes.includes(location.pathname) || location.pathname.startsWith('/verify/')
   
   // Solo mostrar loading para rutas que no son públicas
   if (!isPublicRoute && loading) {
@@ -52,6 +53,7 @@ const Public = () => {
         <Route path='/register' element={<Register />} />
         <Route path='/login' element={<Login />} />
         <Route path='/about' element={<About />} />
+        <Route path='/verify/:id/:token' element={<EmailVerification />} />
         
         {/* Rutas dinámicas generadas desde el backend - solo para rutas no públicas */}
         {!isPublicRoute && routes.map((route) => {

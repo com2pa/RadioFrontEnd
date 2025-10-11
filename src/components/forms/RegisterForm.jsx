@@ -65,6 +65,18 @@ const RegisterForm = ({ onSuccess, onError }) => {
       // Enviar datos al backend
       const response = await registerUser(formData)
       
+      // Limpiar el formulario después del registro exitoso
+      setFormData({
+        name: '',
+        lastname: '',
+        email: '',
+        password: '',
+        address: '',
+        phone: '',
+        age: ''
+      })
+      setErrors({})
+      
       toast({
         title: 'Registro exitoso',
         description: 'Tu cuenta ha sido creada correctamente',
@@ -169,7 +181,7 @@ const RegisterForm = ({ onSuccess, onError }) => {
           {renderField('address', 'Dirección', 'text', 'Calle, número, ciudad')}
           
           <HStack spacing={4}>
-            {renderField('phone', 'Teléfono', 'tel', '3001234567')}
+            {renderField('phone', 'Teléfono', 'tel', '04141111111')}
             {renderField('age', 'Edad', 'number', '18')}
           </HStack>
 

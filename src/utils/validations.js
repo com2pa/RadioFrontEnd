@@ -22,7 +22,7 @@ export const validationRules = {
     message: 'La dirección debe tener entre 10 y 100 caracteres'
   },
   phone: {
-    regex: /^(\+?57)?[1-9]\d{9}$/,
+    regex: /^[0](212|412|414|424|416|426)[0-9]{7}$/,
     message: 'Ingresa un número de teléfono válido (10 dígitos)'
   },
   age: {

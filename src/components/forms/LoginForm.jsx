@@ -98,6 +98,13 @@ const handleSubmit = async (e) => {
       // ACTUALIZAR EL ESTADO DE AUTENTICACIÓN
       setAuth(authData);
       
+      // Limpiar el formulario después del login exitoso
+      setFormData({
+        email: '',
+        password: ''
+      })
+      setErrors({})
+      
       console.log('🔐 [10] LoginForm - Auth state updated, checking localStorage...')
       console.log('🔐 [11] LoginForm - localStorage token:', localStorage.getItem('authToken'))
       console.log('🔐 [12] LoginForm - localStorage user:', localStorage.getItem('user'))

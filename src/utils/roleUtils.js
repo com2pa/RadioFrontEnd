@@ -51,3 +51,38 @@ export const hasPermission = (user, permission) => {
   const userPermissions = permissions[user.role_id] || permissions[ROLE_IDS.USER]
   return userPermissions.includes(permission)
 }
+
+// Verificar si un usuario puede crear/editar contenido
+export const canEdit = (user) => {
+  if (!user) return false
+  
+  // Verificar por role_id (más confiable)
+  if (user.role_id >= ROLE_IDS.EDIT) return true
+  
+  // Verificar por role string (fallback)
+  const editRoles = ['edit', 'admin', 'superAdmin']
+  return editRoles.includes(user.role)
+}
+
+// Verificar si un usuario es administrador
+export const canAdmin = (user) => {
+  if (!user) return false
+  
+  // Verificar por role_id
+  if (user.role_id >= ROLE_IDS.ADMIN) return true
+  
+  // Verificar por role string
+  const adminRoles = ['admin', 'superAdmin']
+  return adminRoles.includes(user.role)
+}
+
+// Obtener información del rol del usuario
+export const getUserRoleInfo = (user) => {
+  if (!user) return { id: null, name: 'guest', level: 0 }
+  
+  return {
+    id: user.role_id,
+    name: user.role || ROLE_NAMES[user.role_id] || 'unknown',
+    level: user.role_id || 0
+  }
+}
