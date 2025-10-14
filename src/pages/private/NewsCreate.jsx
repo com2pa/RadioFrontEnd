@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import {
   Box,
   Container,
@@ -29,13 +29,20 @@ import {
   FormHelperText,
   Image,
   AspectRatio,
-  Grid
+  Grid,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton
 } from '@chakra-ui/react'
 import { FiSave, FiUpload, FiImage, FiMenu, FiHome, FiLogOut, FiArrowLeft, FiEye, FiExternalLink, FiEdit, FiTrash2, FiToggleLeft, FiToggleRight } from 'react-icons/fi'
 import { useAuth } from '../../hooks/useAuth'
 import { Link as RouterLink } from 'react-router-dom'
 import AdminMenu from '../../components/layout/AdminMenu'
-import { canEdit, getUserRoleInfo } from '../../utils/roleUtils'
+import { canEdit, getUserRoleInfo, canAdmin } from '../../utils/roleUtils'
 import api from '../../services/authService'
 
 const NewsCreate = () => {
@@ -52,7 +59,18 @@ const NewsCreate = () => {
   const [subcategories, setSubcategories] = useState([])
   const [loadingSubcategories, setLoadingSubcategories] = useState(false)
   const [userNews, setUserNews] = useState([])
+  const [allNews, setAllNews] = useState([])
   const [loadingNews, setLoadingNews] = useState(false)
+  const [loadingAllNews, setLoadingAllNews] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
+  const [editingNewsId, setEditingNewsId] = useState(null)
+  const [showAllNews, setShowAllNews] = useState(false)
+  const [deleteModal, setDeleteModal] = useState({
+    isOpen: false,
+    newsId: null,
+    newsTitle: '',
+    isDeleting: false
+  })
 
   const [formData, setFormData] = useState({
     news_title: '', // CORREGIDO: usar news_title en lugar de title
@@ -62,6 +80,11 @@ const NewsCreate = () => {
     subcategory_id: '', // NUEVO: campo para subcategoría
     news_status: true // CORREGIDO: usar news_status en lugar de status
   })
+
+  // Verificar permisos de editor y admin
+  const hasEditPermission = useMemo(() => canEdit(auth), [auth])
+  const hasAdminPermission = useMemo(() => canAdmin(auth), [auth])
+  const roleInfo = useMemo(() => getUserRoleInfo(auth), [auth])
 
   // Cargar subcategorías
   const fetchSubcategories = useCallback(async () => {
@@ -109,6 +132,32 @@ const NewsCreate = () => {
     }
   }, [toast])
 
+  // Cargar todas las noticias del sistema (solo para admin/superAdmin)
+  const fetchAllNews = useCallback(async () => {
+    setLoadingAllNews(true)
+    try {
+      const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken')
+      const response = await api.get('/api/news', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      const newsData = response.data?.data || response.data || []
+      setAllNews(newsData)
+    } catch (error) {
+      console.error('Error fetching all news:', error)
+      toast({
+        title: 'Error',
+        description: 'No se pudieron cargar todas las noticias',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      })
+    } finally {
+      setLoadingAllNews(false)
+    }
+  }, [toast])
+
   // Función para cambiar el status de una noticia
   const toggleNewsStatus = async (newsId, currentStatus) => {
     try {
@@ -150,16 +199,34 @@ const NewsCreate = () => {
     }
   }
 
+  // Función para abrir el modal de confirmación de eliminación
+  const openDeleteModal = (newsId, newsTitle) => {
+    setDeleteModal({
+      isOpen: true,
+      newsId,
+      newsTitle,
+      isDeleting: false
+    })
+  }
+
+  // Función para cerrar el modal de confirmación
+  const closeDeleteModal = () => {
+    setDeleteModal({
+      isOpen: false,
+      newsId: null,
+      newsTitle: '',
+      isDeleting: false
+    })
+  }
+
   // Función para eliminar una noticia
-  const deleteNews = async (newsId, newsTitle) => {
-    if (!window.confirm(`¿Estás seguro de que quieres eliminar la noticia "${newsTitle}"?`)) {
-      return
-    }
+  const deleteNews = async () => {
+    setDeleteModal(prev => ({ ...prev, isDeleting: true }))
 
     try {
       const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken')
       
-      const response = await api.delete(`/api/news/${newsId}`, {
+      const response = await api.delete(`/api/news/${deleteModal.newsId}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -173,7 +240,9 @@ const NewsCreate = () => {
           duration: 3000,
           isClosable: true,
         })
-        // Recargar noticias
+        
+        // Cerrar modal y recargar noticias
+        closeDeleteModal()
         fetchUserNews()
       } else {
         throw new Error(response.data.message || 'Error al eliminar la noticia')
@@ -187,13 +256,114 @@ const NewsCreate = () => {
         duration: 3000,
         isClosable: true,
       })
+    } finally {
+      setDeleteModal(prev => ({ ...prev, isDeleting: false }))
     }
+  }
+
+  // Función para actualizar la noticia
+  const updateNews = async () => {
+    setSubmitting(true)
+    
+    try {
+      const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken')
+      
+      // Crear FormData para enviar datos con imagen opcional
+      const formDataToSend = new FormData()
+      formDataToSend.append('news_title', formData.news_title)
+      formDataToSend.append('news_subtitle', formData.news_subtitle)
+      formDataToSend.append('news_content', formData.news_content)
+      formDataToSend.append('subcategory_id', formData.subcategory_id)
+      formDataToSend.append('news_status', formData.news_status)
+      
+      // Solo agregar la imagen si se ha seleccionado una nueva
+      if (formData.news_image && formData.news_image instanceof File) {
+        formDataToSend.append('news_image', formData.news_image)
+      }
+      
+      console.log('🔄 Actualizando noticia ID:', editingNewsId)
+      console.log('📝 Datos del formulario:', formData)
+      
+      const response = await api.put(`/api/news/${editingNewsId}`, formDataToSend, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      
+      if (response.data.success) {
+        toast({
+          title: 'Noticia actualizada',
+          description: 'La noticia ha sido actualizada exitosamente',
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        })
+        
+        // Limpiar formulario y salir del modo edición
+        resetForm()
+        
+        // Recargar noticias del usuario
+        fetchUserNews()
+      } else {
+        throw new Error(response.data.message || 'Error al actualizar la noticia')
+      }
+    } catch (error) {
+      console.error('Error updating news:', error)
+      toast({
+        title: 'Error',
+        description: error.response?.data?.message || 'No se pudo actualizar la noticia',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      })
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  // Función para resetear el formulario
+  const resetForm = () => {
+    setFormData({
+      news_title: '',
+      news_subtitle: '',
+      news_content: '',
+      news_image: null,
+      subcategory_id: '',
+      news_status: true
+    })
+    setIsEditing(false)
+    setEditingNewsId(null)
+    setShowPreview(false)
+  }
+
+  // Función para cargar datos de noticia existente en el formulario
+  const loadNewsForEdit = (news) => {
+    setFormData({
+      news_title: news.news_title || '',
+      news_subtitle: news.news_subtitle || '',
+      news_content: news.news_content || '',
+      news_image: null, // No cargar imagen existente, permitir nueva selección
+      subcategory_id: news.subcategory_id || '',
+      news_status: news.news_status
+    })
+    setIsEditing(true)
+    setEditingNewsId(news.news_id)
+    setShowPreview(false)
+    
+    // Scroll al formulario
+    document.querySelector('form')?.scrollIntoView({ behavior: 'smooth' })
   }
 
   useEffect(() => {
     fetchSubcategories()
     fetchUserNews()
-  }, [fetchSubcategories, fetchUserNews])
+    
+    // Si el usuario es admin o superAdmin, cargar también todas las noticias
+    if (hasAdminPermission) {
+      fetchAllNews()
+    }
+  }, [fetchSubcategories, fetchUserNews, fetchAllNews, hasAdminPermission])
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target
@@ -215,8 +385,8 @@ const NewsCreate = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setSubmitting(true)
     
+    // Validaciones comunes
     if (!formData.news_title.trim()) {
       toast({
         title: 'Error',
@@ -225,7 +395,6 @@ const NewsCreate = () => {
         duration: 3000,
         isClosable: true,
       })
-      setSubmitting(false)
       return
     }
 
@@ -237,7 +406,6 @@ const NewsCreate = () => {
         duration: 3000,
         isClosable: true,
       })
-      setSubmitting(false)
       return
     }
 
@@ -249,10 +417,18 @@ const NewsCreate = () => {
         duration: 3000,
         isClosable: true,
       })
-      setSubmitting(false)
       return
     }
 
+    // Si está en modo edición, usar updateNews
+    if (isEditing) {
+      await updateNews()
+      return
+    }
+
+    // Si no está en modo edición, crear nueva noticia
+    setSubmitting(true)
+    
     try {
       const formDataToSend = new FormData()
       formDataToSend.append('news_title', formData.news_title)
@@ -262,7 +438,7 @@ const NewsCreate = () => {
       formDataToSend.append('news_status', formData.news_status)
       
       if (formData.news_image) {
-        formDataToSend.append('news_image', formData.news_image) // CORREGIDO: usar news_image
+        formDataToSend.append('news_image', formData.news_image)
       }
 
       // Agregar token de autorización
@@ -289,15 +465,7 @@ const NewsCreate = () => {
         })
         
         // Limpiar formulario
-        setFormData({
-          news_title: '',
-          news_subtitle: '',
-          news_content: '',
-          news_image: null,
-          subcategory_id: '',
-          news_status: true
-        })
-        setShowPreview(false)
+        resetForm()
         
         // Recargar noticias del usuario
         fetchUserNews()
@@ -320,6 +488,26 @@ const NewsCreate = () => {
 
   const togglePreview = () => {
     setShowPreview(!showPreview)
+  }
+
+
+  // Función para obtener las noticias actuales según la vista
+  const getCurrentNews = () => {
+    return showAllNews ? allNews : userNews
+  }
+
+  // Función para obtener el estado de carga actual
+  const getCurrentLoading = () => {
+    return showAllNews ? loadingAllNews : loadingNews
+  }
+
+  // Función para recargar las noticias actuales
+  const refreshCurrentNews = () => {
+    if (showAllNews) {
+      fetchAllNews()
+    } else {
+      fetchUserNews()
+    }
   }
 
   const renderPreview = () => {
@@ -385,10 +573,6 @@ const NewsCreate = () => {
       </Card>
     )
   }
-
-  // Verificar permisos de editor
-  const hasEditPermission = canEdit(auth)
-  const roleInfo = getUserRoleInfo(auth)
 
   if (!hasEditPermission) {
     return (
@@ -461,7 +645,20 @@ const NewsCreate = () => {
             {/* Formulario de creación */}
             <Card bg={cardBg} boxShadow="md">
               <CardHeader>
-                <Heading size="md">Crear Nueva Noticia</Heading>
+                <HStack justify="space-between" align="center">
+                  <Heading size="md">
+                    {isEditing ? 'Editar Noticia' : 'Crear Nueva Noticia'}
+                  </Heading>
+                  {isEditing && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={resetForm}
+                    >
+                      Cancelar Edición
+                    </Button>
+                  )}
+                </HStack>
               </CardHeader>
               <CardBody>
               <form onSubmit={handleSubmit}>
@@ -530,7 +727,7 @@ const NewsCreate = () => {
                   </FormControl>
 
                   {/* Subir Imagen */}
-                  <FormControl isRequired>
+                  <FormControl isRequired={!isEditing}>
                     <FormLabel>Imagen de la Noticia</FormLabel>
                     <Input
                       type="file"
@@ -539,12 +736,22 @@ const NewsCreate = () => {
                       p={1}
                     />
                     <FormHelperText>
-                      Selecciona una imagen para la noticia (JPG, PNG)
+                      {isEditing 
+                        ? 'Selecciona una nueva imagen para reemplazar la actual (opcional)'
+                        : 'Selecciona una imagen para la noticia (JPG, PNG)'
+                      }
                     </FormHelperText>
                     {formData.news_image && (
                       <Box mt={2}>
                         <Text fontSize="sm" color="green.500">
                           ✓ Imagen seleccionada: {formData.news_image.name}
+                        </Text>
+                      </Box>
+                    )}
+                    {isEditing && !formData.news_image && (
+                      <Box mt={2}>
+                        <Text fontSize="sm" color="blue.500">
+                          ℹ️ Si no seleccionas una nueva imagen, se mantendrá la imagen actual
                         </Text>
                       </Box>
                     )}
@@ -587,9 +794,9 @@ const NewsCreate = () => {
                         colorScheme="red"
                         size="lg"
                         isLoading={submitting}
-                        loadingText="Creando..."
+                        loadingText={isEditing ? "Actualizando..." : "Creando..."}
                       >
-                        Crear Noticia
+                        {isEditing ? 'Actualizar Noticia' : 'Crear Noticia'}
                       </Button>
                     </HStack>
                   </HStack>
@@ -598,16 +805,40 @@ const NewsCreate = () => {
             </CardBody>
           </Card>
 
-          {/* Listado de noticias del usuario */}
+          {/* Listado de noticias */}
           <Card bg={cardBg} boxShadow="md">
             <CardHeader>
               <HStack justify="space-between" align="center">
-                <Heading size="md">Mis Noticias</Heading>
+                <VStack align="start" spacing={1}>
+                  <Heading size="md">
+                    {showAllNews ? 'Todas las Noticias' : 'Mis Noticias'}
+                  </Heading>
+                  {hasAdminPermission && (
+                    <HStack spacing={2}>
+                      <Button
+                        size="xs"
+                        variant={!showAllNews ? "solid" : "outline"}
+                        colorScheme="blue"
+                        onClick={() => setShowAllNews(false)}
+                      >
+                        Mis Noticias
+                      </Button>
+                      <Button
+                        size="xs"
+                        variant={showAllNews ? "solid" : "outline"}
+                        colorScheme="purple"
+                        onClick={() => setShowAllNews(true)}
+                      >
+                        Todas las Noticias
+                      </Button>
+                    </HStack>
+                  )}
+                </VStack>
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={fetchUserNews}
-                  isLoading={loadingNews}
+                  onClick={refreshCurrentNews}
+                  isLoading={getCurrentLoading()}
                   loadingText="Cargando..."
                 >
                   Actualizar
@@ -615,23 +846,29 @@ const NewsCreate = () => {
               </HStack>
             </CardHeader>
             <CardBody>
-              {loadingNews ? (
+              {getCurrentLoading() ? (
                 <VStack spacing={4} py={8}>
                   <Spinner size="lg" color="blue.500" />
-                  <Text>Cargando noticias...</Text>
+                  <Text>Cargando {showAllNews ? 'todas las' : 'mis'} noticias...</Text>
                 </VStack>
-              ) : !Array.isArray(userNews) || userNews.length === 0 ? (
+              ) : !Array.isArray(getCurrentNews()) || getCurrentNews().length === 0 ? (
                 <VStack spacing={4} py={8}>
                   <Text color={textColor} textAlign="center">
-                    No tienes noticias creadas aún.
+                    {showAllNews 
+                      ? 'No hay noticias en el sistema.' 
+                      : 'No tienes noticias creadas aún.'
+                    }
                   </Text>
                   <Text fontSize="sm" color={textColor} textAlign="center">
-                    Crea tu primera noticia usando el formulario de la izquierda.
+                    {showAllNews 
+                      ? 'Las noticias aparecerán aquí cuando los usuarios las creen.'
+                      : 'Crea tu primera noticia usando el formulario de la izquierda.'
+                    }
                   </Text>
                 </VStack>
               ) : (
                 <VStack spacing={4} align="stretch" maxH="600px" overflowY="auto">
-                  {Array.isArray(userNews) && userNews.map((news) => (
+                  {Array.isArray(getCurrentNews()) && getCurrentNews().map((news) => (
                     <Box
                       key={news.news_id}
                       p={4}
@@ -642,16 +879,30 @@ const NewsCreate = () => {
                     >
                       <VStack align="start" spacing={2}>
                         <HStack justify="space-between" w="full">
-                          <Heading size="sm" color="blue.600" noOfLines={1}>
-                            {news.news_title}
-                          </Heading>
-                          <Badge
-                            colorScheme={news.news_status ? "green" : "red"}
-                            variant="solid"
-                            fontSize="xs"
-                          >
-                            {news.news_status ? "Activa" : "Inactiva"}
-                          </Badge>
+                          <VStack align="start" spacing={1}>
+                            <Heading size="sm" color="blue.600" noOfLines={1}>
+                              {news.news_title}
+                            </Heading>
+                            {showAllNews && news.user_name && (
+                              <Text fontSize="xs" color="gray.500">
+                                Por: {news.user_name}
+                              </Text>
+                            )}
+                          </VStack>
+                          <VStack align="end" spacing={1}>
+                            <Badge
+                              colorScheme={news.news_status ? "green" : "red"}
+                              variant="solid"
+                              fontSize="xs"
+                            >
+                              {news.news_status ? "Activa" : "Inactiva"}
+                            </Badge>
+                            {showAllNews && news.user_id === auth?.user_id && (
+                              <Badge colorScheme="blue" variant="outline" fontSize="xs">
+                                Tu noticia
+                              </Badge>
+                            )}
+                          </VStack>
                         </HStack>
                         
                         {news.news_subtitle && (
@@ -671,44 +922,45 @@ const NewsCreate = () => {
                         
                         {/* Botones de acción */}
                         <HStack spacing={2} w="full" justify="flex-end">
-                          <Button
-                            size="xs"
-                            variant="outline"
-                            colorScheme="blue"
-                            leftIcon={<FiEdit />}
-                            onClick={() => {
-                              // TODO: Implementar edición
-                              toast({
-                                title: 'Función en desarrollo',
-                                description: 'La edición de noticias estará disponible próximamente',
-                                status: 'info',
-                                duration: 3000,
-                                isClosable: true,
-                              })
-                            }}
-                          >
-                            Editar
-                          </Button>
+                          {/* Solo mostrar botones de acción para noticias propias o si es admin */}
+                          {(!showAllNews || news.user_id === auth?.user_id || hasAdminPermission) && (
+                            <>
+                              <Button
+                                size="xs"
+                                variant="outline"
+                                colorScheme="blue"
+                                leftIcon={<FiEdit />}
+                                onClick={() => loadNewsForEdit(news)}
+                                isDisabled={showAllNews && news.user_id !== auth?.user_id && !hasAdminPermission}
+                              >
+                                Editar
+                              </Button>
+                              
+                              <Button
+                                size="xs"
+                                variant="outline"
+                                colorScheme={news.news_status ? "orange" : "green"}
+                                leftIcon={news.news_status ? <FiToggleLeft /> : <FiToggleRight />}
+                                onClick={() => toggleNewsStatus(news.news_id, news.news_status)}
+                                isDisabled={showAllNews && news.user_id !== auth?.user_id && !hasAdminPermission}
+                              >
+                                {news.news_status ? "Desactivar" : "Activar"}
+                              </Button>
+                            </>
+                          )}
                           
-                          <Button
-                            size="xs"
-                            variant="outline"
-                            colorScheme={news.news_status ? "orange" : "green"}
-                            leftIcon={news.news_status ? <FiToggleLeft /> : <FiToggleRight />}
-                            onClick={() => toggleNewsStatus(news.news_id, news.news_status)}
-                          >
-                            {news.news_status ? "Desactivar" : "Activar"}
-                          </Button>
-                          
-                          <Button
-                            size="xs"
-                            variant="outline"
-                            colorScheme="red"
-                            leftIcon={<FiTrash2 />}
-                            onClick={() => deleteNews(news.news_id, news.news_title)}
-                          >
-                            Eliminar
-                          </Button>
+                          {/* Botón eliminar solo para admin/superAdmin */}
+                          {hasAdminPermission && (
+                            <Button
+                              size="xs"
+                              variant="outline"
+                              colorScheme="red"
+                              leftIcon={<FiTrash2 />}
+                              onClick={() => openDeleteModal(news.news_id, news.news_title)}
+                            >
+                              Eliminar
+                            </Button>
+                          )}
                         </HStack>
                         
                         {news.news_image ? (
@@ -721,7 +973,7 @@ const NewsCreate = () => {
                               objectFit="cover"
                               w="full"
                               fallbackSrc="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjBmMGYwIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OTk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlbiBubyBkaXNwb25pYmxlPC90ZXh0Pjwvc3ZnPg=="
-                              onError={(e) => {
+                              onError={() => {
                                 console.log('❌ Error cargando imagen:', `http://localhost:3000/uploads/news/${news.news_image}`)
                                 console.log('📰 Datos de la noticia:', news)
                               }}
@@ -750,6 +1002,86 @@ const NewsCreate = () => {
         {renderPreview()}
         </VStack>
       </Container>
+
+      {/* Modal de Confirmación de Eliminación */}
+      <Modal isOpen={deleteModal.isOpen} onClose={closeDeleteModal} isCentered>
+        <ModalOverlay bg="blackAlpha.600" backdropFilter="blur(10px)" />
+        <ModalContent mx={4} maxW="md">
+          <ModalHeader>
+            <HStack spacing={3}>
+              <Box
+                p={2}
+                borderRadius="full"
+                bg="red.100"
+                color="red.600"
+              >
+                <FiTrash2 size={20} />
+              </Box>
+              <VStack align="start" spacing={0}>
+                <Text fontSize="lg" fontWeight="bold">
+                  Confirmar Eliminación
+                </Text>
+                <Text fontSize="sm" color="gray.500">
+                  Esta acción no se puede deshacer
+                </Text>
+              </VStack>
+            </HStack>
+          </ModalHeader>
+          <ModalCloseButton />
+          
+          <ModalBody>
+            <VStack spacing={4} align="stretch">
+              <Alert status="warning" borderRadius="md">
+                <AlertIcon />
+                <VStack align="start" spacing={1}>
+                  <AlertTitle fontSize="sm">¡Atención!</AlertTitle>
+                  <AlertDescription fontSize="sm">
+                    Estás a punto de eliminar permanentemente la noticia:
+                  </AlertDescription>
+                </VStack>
+              </Alert>
+              
+              <Box
+                p={4}
+                bg="gray.50"
+                borderRadius="md"
+                border="1px solid"
+                borderColor="gray.200"
+              >
+                <Text fontWeight="semibold" color="red.600" mb={2}>
+                  "{deleteModal.newsTitle}"
+                </Text>
+                <Text fontSize="sm" color="gray.600">
+                  Esta acción eliminará la noticia y todos sus datos asociados de forma permanente.
+                </Text>
+              </Box>
+            </VStack>
+          </ModalBody>
+
+          <ModalFooter>
+            <HStack spacing={3} w="full">
+              <Button
+                variant="outline"
+                onClick={closeDeleteModal}
+                flex={1}
+                isDisabled={deleteModal.isDeleting}
+              >
+                Cancelar
+              </Button>
+              <Button
+                colorScheme="red"
+                onClick={deleteNews}
+                flex={1}
+                isLoading={deleteModal.isDeleting}
+                loadingText="Eliminando..."
+                leftIcon={<FiTrash2 />}
+              >
+                Eliminar Noticia
+              </Button>
+            </HStack>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   )
 }
