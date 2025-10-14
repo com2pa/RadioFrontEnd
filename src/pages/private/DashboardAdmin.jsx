@@ -55,13 +55,15 @@ import { FiMenu, FiHome, FiLogOut } from 'react-icons/fi'
 import { useAuth } from '../../hooks/useAuth'
 import { Link as RouterLink } from 'react-router-dom'
 import AdminMenu from '../../components/layout/AdminMenu'
+import { getUserRoleInfo } from '../../utils/roleUtils'
 
 const DashboardAdmin = () => {
   const bgColor = useColorModeValue('gray.50', 'gray.900')
   const cardBg = useColorModeValue('white', 'gray.800')
   const textColor = useColorModeValue('gray.600', 'gray.300')
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const { logout } = useAuth()
+  const { auth, logout } = useAuth()
+  const roleInfo = getUserRoleInfo(auth)
 
   // Datos de ejemplo - en producción vendrían del backend
   const adminStats = {
@@ -114,10 +116,27 @@ const DashboardAdmin = () => {
                   Cerrar sesión
                 </Button>
                 <HStack spacing={4}>
-                  <Avatar size="md" name="Admin" bg="red.500" />
+                  <Avatar 
+                    size="md" 
+                    name={auth?.user_name || auth?.name || 'Usuario'} 
+                    bg="red.500" 
+                  />
                   <VStack align="start" spacing={0}>
-                    <Text fontWeight="medium">Administrador</Text>
-                    <Text fontSize="sm" color={textColor}>admin@radiofm.com</Text>
+                    <HStack spacing={2}>
+                      <Text fontWeight="medium">
+                        {auth?.user_name || auth?.name || 'Usuario'}
+                      </Text>
+                      <Badge 
+                        colorScheme="red" 
+                        variant="solid" 
+                        fontSize="xs"
+                      >
+                        {roleInfo.name.toUpperCase()}
+                      </Badge>
+                    </HStack>
+                    <Text fontSize="sm" color={textColor}>
+                      {auth?.user_email || auth?.email || 'usuario@radiofm.com'}
+                    </Text>
                   </VStack>
                 </HStack>
               </HStack>

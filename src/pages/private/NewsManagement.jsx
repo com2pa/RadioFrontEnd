@@ -50,21 +50,29 @@ const NewsManagement = () => {
   const [news, setNews] = useState([])
   const [loading, setLoading] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
-  const [editingId, setEditingId] = useState(null)
-  const [editingNews, setEditingNews] = useState(null)
 
   // Función para obtener todas las noticias
   const fetchNews = useCallback(async () => {
     setLoading(true)
     try {
-      const response = await axios.get('/api/news/')
-      const data = Array.isArray(response.data) ? response.data : []
-      setNews(data)
+      const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken')
+      const response = await axios.get('/api/news', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      
+      // Manejar diferentes estructuras de respuesta del servidor
+      const data = response.data?.data || response.data || []
+      const newsArray = Array.isArray(data) ? data : []
+      
+      console.log('📰 Noticias cargadas:', newsArray.length)
+      setNews(newsArray)
     } catch (error) {
       console.error('Error fetching news:', error)
       toast({
         title: 'Error',
-        description: 'No se pudieron cargar las noticias',
+        description: error.response?.data?.message || 'No se pudieron cargar las noticias',
         status: 'error',
         duration: 3000,
         isClosable: true,
@@ -75,7 +83,7 @@ const NewsManagement = () => {
     }
   }, [toast])
 
-  // Función para buscar noticias por título
+  // Función para buscar noticias por término
   const searchNews = useCallback(async (term) => {
     if (!term.trim()) {
       fetchNews()
@@ -84,14 +92,24 @@ const NewsManagement = () => {
     
     setLoading(true)
     try {
-      const response = await axios.get(`/api/news/search/${encodeURIComponent(term)}`)
-      const data = Array.isArray(response.data) ? response.data : []
-      setNews(data)
+      const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken')
+      const response = await axios.get(`/api/news/search/${encodeURIComponent(term)}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      
+      // Manejar diferentes estructuras de respuesta del servidor
+      const data = response.data?.data || response.data || []
+      const newsArray = Array.isArray(data) ? data : []
+      
+      console.log('🔍 Resultados de búsqueda:', newsArray.length, 'para término:', term)
+      setNews(newsArray)
     } catch (error) {
       console.error('Error searching news:', error)
       toast({
         title: 'Error',
-        description: 'No se pudo realizar la búsqueda',
+        description: error.response?.data?.message || 'No se pudo realizar la búsqueda',
         status: 'error',
         duration: 3000,
         isClosable: true,
@@ -102,32 +120,24 @@ const NewsManagement = () => {
     }
   }, [fetchNews, toast])
 
-  // Función para obtener noticia por ID
-  const fetchNewsById = useCallback(async (id) => {
-    try {
-      const response = await axios.get(`/api/news/${id}`)
-      return response.data
-    } catch (error) {
-      console.error('Error fetching news by ID:', error)
-      toast({
-        title: 'Error',
-        description: 'No se pudo cargar la noticia',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      })
-      return null
-    }
-  }, [toast])
-
   // Función para cambiar estado de la noticia
   const changeNewsStatus = async (id, status) => {
     try {
-      const response = await axios.put(`/api/news/${id}/status`, { status })
+      const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken')
+      const response = await axios.put(`/api/news/${id}/status`, 
+        { status }, 
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      )
+      
       if (response.data.success) {
         toast({
           title: 'Estado actualizado',
-          description: `La noticia ha sido ${status === 'published' ? 'publicada' : 'despublicada'}`,
+          description: `La noticia ha sido ${status ? 'activada' : 'desactivada'}`,
           status: 'success',
           duration: 3000,
           isClosable: true,
@@ -138,7 +148,7 @@ const NewsManagement = () => {
       console.error('Error changing news status:', error)
       toast({
         title: 'Error',
-        description: 'No se pudo cambiar el estado de la noticia',
+        description: error.response?.data?.message || 'No se pudo cambiar el estado de la noticia',
         status: 'error',
         duration: 3000,
         isClosable: true,
@@ -149,7 +159,13 @@ const NewsManagement = () => {
   // Función para eliminar noticia
   const deleteNews = async (id) => {
     try {
-      const response = await axios.delete(`/api/news/${id}`)
+      const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken')
+      const response = await axios.delete(`/api/news/${id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      
       if (response.data.success) {
         toast({
           title: 'Noticia eliminada',
@@ -164,7 +180,7 @@ const NewsManagement = () => {
       console.error('Error deleting news:', error)
       toast({
         title: 'Error',
-        description: 'No se pudo eliminar la noticia',
+        description: error.response?.data?.message || 'No se pudo eliminar la noticia',
         status: 'error',
         duration: 3000,
         isClosable: true,
@@ -172,13 +188,17 @@ const NewsManagement = () => {
     }
   }
 
-  // Función para editar noticia
-  const editNews = async (id) => {
-    const newsData = await fetchNewsById(id)
-    if (newsData) {
-      setEditingNews(newsData)
-      setEditingId(id)
-    }
+  // Función para editar noticia (redirige a la página de creación/edición)
+  const editNews = async () => {
+    // Por ahora, solo mostramos un mensaje
+    // En el futuro se puede implementar un modal de edición o redirigir
+    toast({
+      title: 'Función en desarrollo',
+      description: 'La edición de noticias estará disponible próximamente',
+      status: 'info',
+      duration: 3000,
+      isClosable: true,
+    })
   }
 
   // Cargar noticias al montar el componente
@@ -334,26 +354,26 @@ const NewsManagement = () => {
                   </Thead>
                   <Tbody>
                     {news.map((item, index) => (
-                      <Tr key={item.id || `news-${index}`}>
+                      <Tr key={item.news_id || item.id || `news-${index}`}>
                         <Td>
                           <VStack align="start" spacing={1}>
                             <Text fontWeight="medium" fontSize="sm" noOfLines={2}>
-                              {item.title}
+                              {item.news_title || item.title}
                             </Text>
-                            {item.summary && (
+                            {(item.news_subtitle || item.subtitle) && (
                               <Text fontSize="xs" color={textColor} noOfLines={1}>
-                                {item.summary}
+                                {item.news_subtitle || item.subtitle}
                               </Text>
                             )}
                           </VStack>
                         </Td>
                         <Td>
                           <Badge
-                            colorScheme={item.is_published ? 'green' : 'gray'}
+                            colorScheme={item.news_status || item.is_published ? 'green' : 'gray'}
                             variant="subtle"
                             fontSize="xs"
                           >
-                            {item.is_published ? 'Publicada' : 'Borrador'}
+                            {item.news_status || item.is_published ? 'Publicada' : 'Borrador'}
                           </Badge>
                         </Td>
                         <Td>
@@ -367,7 +387,10 @@ const NewsManagement = () => {
                         </Td>
                         <Td>
                           <Text fontSize="xs" color={textColor}>
-                            {item.created_at ? new Date(item.created_at).toLocaleDateString() : 'N/A'}
+                            {item.news_created_at || item.created_at ? 
+                              new Date(item.news_created_at || item.created_at).toLocaleDateString() : 
+                              'N/A'
+                            }
                           </Text>
                         </Td>
                         <Td>
@@ -377,22 +400,25 @@ const NewsManagement = () => {
                               icon={<FiEye />}
                               size="sm"
                               variant="ghost"
-                              onClick={() => editNews(item.id)}
+                              onClick={() => editNews(item.news_id || item.id)}
                             />
                             <IconButton
                               aria-label="Editar noticia"
                               icon={<FiEdit />}
                               size="sm"
                               variant="ghost"
-                              onClick={() => editNews(item.id)}
+                              onClick={() => editNews(item.news_id || item.id)}
                             />
                             <IconButton
-                              aria-label={item.is_published ? 'Despublicar' : 'Publicar'}
+                              aria-label={item.news_status || item.is_published ? 'Desactivar' : 'Activar'}
                               icon={<FiRefreshCw />}
                               size="sm"
                               variant="ghost"
-                              colorScheme={item.is_published ? 'orange' : 'green'}
-                              onClick={() => changeNewsStatus(item.id, item.is_published ? 'draft' : 'published')}
+                              colorScheme={item.news_status || item.is_published ? 'orange' : 'green'}
+                              onClick={() => changeNewsStatus(
+                                item.news_id || item.id, 
+                                !(item.news_status || item.is_published)
+                              )}
                             />
                             <IconButton
                               aria-label="Eliminar noticia"
@@ -400,7 +426,7 @@ const NewsManagement = () => {
                               size="sm"
                               variant="ghost"
                               colorScheme="red"
-                              onClick={() => deleteNews(item.id)}
+                              onClick={() => deleteNews(item.news_id || item.id)}
                             />
                           </HStack>
                         </Td>
