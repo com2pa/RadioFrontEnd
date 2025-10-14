@@ -30,7 +30,17 @@ import {
   Spinner,
   useDisclosure,
   Select,
-  Textarea
+  Textarea,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  Image,
+  AspectRatio,
+  Avatar
 } from '@chakra-ui/react'
 import { FiEdit, FiTrash2, FiEye, FiMenu, FiHome, FiLogOut, FiArrowLeft, FiSearch, FiRefreshCw } from 'react-icons/fi'
 import { useAuth } from '../../hooks/useAuth'
@@ -50,6 +60,14 @@ const NewsManagement = () => {
   const [news, setNews] = useState([])
   const [loading, setLoading] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
+  const [selectedNews, setSelectedNews] = useState(null)
+  const [userStats, setUserStats] = useState(null)
+  const [deleteModal, setDeleteModal] = useState({
+    isOpen: false,
+    newsId: null,
+    newsTitle: '',
+    isDeleting: false
+  })
 
   // Función para obtener todas las noticias
   const fetchNews = useCallback(async () => {
@@ -157,10 +175,12 @@ const NewsManagement = () => {
   }
 
   // Función para eliminar noticia
-  const deleteNews = async (id) => {
+  const deleteNews = async () => {
+    setDeleteModal(prev => ({ ...prev, isDeleting: true }))
+
     try {
       const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken')
-      const response = await axios.delete(`/api/news/${id}`, {
+      const response = await axios.delete(`/api/news/${deleteModal.newsId}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -174,7 +194,10 @@ const NewsManagement = () => {
           duration: 3000,
           isClosable: true,
         })
-        fetchNews() // Recargar la lista
+        
+        // Cerrar modal y recargar noticias
+        closeDeleteModal()
+        fetchNews()
       }
     } catch (error) {
       console.error('Error deleting news:', error)
@@ -185,19 +208,83 @@ const NewsManagement = () => {
         duration: 3000,
         isClosable: true,
       })
+    } finally {
+      setDeleteModal(prev => ({ ...prev, isDeleting: false }))
+    }
+  }
+
+  // Función para obtener estadísticas del usuario
+  const fetchUserStats = async (userId) => {
+    if (!userId) return null
+    
+    try {
+      const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken')
+      const response = await axios.get(`/api/news/user/${userId}/stats`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      return response.data?.data || response.data
+    } catch (error) {
+      console.error('Error fetching user stats:', error)
+      return null
+    }
+  }
+
+  // Función para ver detalles de la noticia
+  const viewNews = async (id) => {
+    try {
+      const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken')
+      const response = await axios.get(`/api/news/${id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      
+      const newsData = response.data?.data || response.data
+      setSelectedNews(newsData)
+      
+      // Obtener estadísticas del usuario si está disponible
+      const userId = newsData.user_id || newsData.author_id
+      if (userId) {
+        const stats = await fetchUserStats(userId)
+        setUserStats(stats)
+      }
+    } catch (error) {
+      console.error('Error fetching news details:', error)
+      toast({
+        title: 'Error',
+        description: error.response?.data?.message || 'No se pudo cargar la noticia',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      })
     }
   }
 
   // Función para editar noticia (redirige a la página de creación/edición)
-  const editNews = async () => {
-    // Por ahora, solo mostramos un mensaje
-    // En el futuro se puede implementar un modal de edición o redirigir
-    toast({
-      title: 'Función en desarrollo',
-      description: 'La edición de noticias estará disponible próximamente',
-      status: 'info',
-      duration: 3000,
-      isClosable: true,
+  const editNews = async (id) => {
+    // Redirigir a la página de creación con el ID para editar
+    window.location.href = `/dashboard/admin/news-create?edit=${id}`
+  }
+
+  // Función para abrir el modal de confirmación de eliminación
+  const openDeleteModal = (newsId, newsTitle) => {
+    setDeleteModal({
+      isOpen: true,
+      newsId,
+      newsTitle,
+      isDeleting: false
+    })
+  }
+
+  // Función para cerrar el modal de confirmación
+  const closeDeleteModal = () => {
+    setDeleteModal({
+      isOpen: false,
+      newsId: null,
+      newsTitle: '',
+      isDeleting: false
     })
   }
 
@@ -346,6 +433,7 @@ const NewsManagement = () => {
                   <Thead>
                     <Tr>
                       <Th>Título</Th>
+                      <Th>Usuario</Th>
                       <Th>Estado</Th>
                       <Th>Destacada</Th>
                       <Th>Fecha</Th>
@@ -366,6 +454,23 @@ const NewsManagement = () => {
                               </Text>
                             )}
                           </VStack>
+                        </Td>
+                        <Td>
+                          <HStack spacing={2}>
+                            <Avatar 
+                              size="xs" 
+                              name={item.user_name || item.author_name || 'Usuario'} 
+                              bg="blue.500"
+                            />
+                            <VStack align="start" spacing={0}>
+                              <Text fontSize="xs" fontWeight="medium" noOfLines={1}>
+                                {item.user_name || item.author_name || 'Usuario'}
+                              </Text>
+                              <Text fontSize="xs" color="gray.500" noOfLines={1}>
+                                {item.user_email || item.author_email || ''}
+                              </Text>
+                            </VStack>
+                          </HStack>
                         </Td>
                         <Td>
                           <Badge
@@ -400,13 +505,15 @@ const NewsManagement = () => {
                               icon={<FiEye />}
                               size="sm"
                               variant="ghost"
-                              onClick={() => editNews(item.news_id || item.id)}
+                              colorScheme="blue"
+                              onClick={() => viewNews(item.news_id || item.id)}
                             />
                             <IconButton
                               aria-label="Editar noticia"
                               icon={<FiEdit />}
                               size="sm"
                               variant="ghost"
+                              colorScheme="green"
                               onClick={() => editNews(item.news_id || item.id)}
                             />
                             <IconButton
@@ -426,7 +533,10 @@ const NewsManagement = () => {
                               size="sm"
                               variant="ghost"
                               colorScheme="red"
-                              onClick={() => deleteNews(item.news_id || item.id)}
+                              onClick={() => openDeleteModal(
+                                item.news_id || item.id, 
+                                item.news_title || item.title
+                              )}
                             />
                           </HStack>
                         </Td>
@@ -439,6 +549,224 @@ const NewsManagement = () => {
           </Card>
         </VStack>
       </Container>
+
+      {/* Modal para ver detalles de la noticia */}
+      <Modal isOpen={!!selectedNews} onClose={() => {
+        setSelectedNews(null)
+        setUserStats(null)
+      }} size="xl">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>
+            <HStack spacing={3}>
+              <Heading size="md">Detalles de la Noticia</Heading>
+              <Badge colorScheme="blue" variant="solid">
+                {selectedNews?.news_status || selectedNews?.is_published ? 'Publicada' : 'Borrador'}
+              </Badge>
+            </HStack>
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {selectedNews && (
+              <VStack spacing={4} align="stretch">
+                {selectedNews.news_image || selectedNews.image ? (
+                  <AspectRatio ratio={16/9} borderRadius="md" overflow="hidden">
+                    <Image
+                      src={`http://localhost:3000/uploads/news/${selectedNews.news_image || selectedNews.image}`}
+                      alt={selectedNews.news_title || selectedNews.title}
+                      objectFit="cover"
+                      fallbackSrc="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjBmMGYwIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OTk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlbiBubyBkaXNwb25pYmxlPC90ZXh0Pjwvc3ZnPg=="
+                    />
+                  </AspectRatio>
+                ) : null}
+                
+                <VStack align="start" spacing={2}>
+                  <Heading size="lg" color="red.600">
+                    {selectedNews.news_title || selectedNews.title}
+                  </Heading>
+                  
+                  {(selectedNews.news_subtitle || selectedNews.subtitle) && (
+                    <Text fontSize="lg" color={textColor} fontStyle="italic">
+                      {selectedNews.news_subtitle || selectedNews.subtitle}
+                    </Text>
+                  )}
+                  
+                  <HStack spacing={2} flexWrap="wrap">
+                    <Badge colorScheme="blue" variant="outline">
+                      Categoría: {selectedNews.subcategory_name || selectedNews.category_name || 'Sin categoría'}
+                    </Badge>
+                    <Badge colorScheme="gray" variant="outline">
+                      Fecha: {new Date(selectedNews.news_created_at || selectedNews.created_at).toLocaleDateString()}
+                    </Badge>
+                  </HStack>
+                  
+                  {/* Información del Usuario */}
+                  <Box
+                    p={3}
+                    bg="blue.50"
+                    borderRadius="md"
+                    border="1px solid"
+                    borderColor="blue.200"
+                  >
+                    <HStack spacing={3}>
+                      <Avatar 
+                        size="md" 
+                        name={selectedNews.user_name || selectedNews.author_name || 'Usuario'} 
+                        bg="blue.500"
+                      />
+                      <VStack align="start" spacing={1}>
+                        <Text fontSize="sm" fontWeight="semibold" color="blue.700">
+                          Publicado por:
+                        </Text>
+                        <Text fontSize="md" fontWeight="medium">
+                          {selectedNews.user_name || selectedNews.author_name || 'Usuario'}
+                        </Text>
+                        <Text fontSize="sm" color="gray.600">
+                          {selectedNews.user_email || selectedNews.author_email || 'Sin email'}
+                        </Text>
+                        {selectedNews.user_role && (
+                          <Badge colorScheme="purple" variant="subtle" fontSize="xs">
+                            {selectedNews.user_role}
+                          </Badge>
+                        )}
+                      </VStack>
+                    </HStack>
+                    
+                    {/* Estadísticas del Usuario */}
+                    {userStats && (
+                      <HStack spacing={4} mt={3} justify="center">
+                        <VStack spacing={1}>
+                          <Text fontSize="lg" fontWeight="bold" color="blue.600">
+                            {userStats.total_news || 0}
+                          </Text>
+                          <Text fontSize="xs" color="gray.600">
+                            Noticias Totales
+                          </Text>
+                        </VStack>
+                        <VStack spacing={1}>
+                          <Text fontSize="lg" fontWeight="bold" color="green.600">
+                            {userStats.published_news || 0}
+                          </Text>
+                          <Text fontSize="xs" color="gray.600">
+                            Publicadas
+                          </Text>
+                        </VStack>
+                        <VStack spacing={1}>
+                          <Text fontSize="lg" fontWeight="bold" color="orange.600">
+                            {userStats.draft_news || 0}
+                          </Text>
+                          <Text fontSize="xs" color="gray.600">
+                            Borradores
+                          </Text>
+                        </VStack>
+                      </HStack>
+                    )}
+                  </Box>
+                </VStack>
+                
+                <Box>
+                  <Text fontSize="sm" fontWeight="medium" mb={2}>Contenido:</Text>
+                  <Text 
+                    whiteSpace="pre-wrap" 
+                    lineHeight="tall"
+                    dangerouslySetInnerHTML={{ 
+                      __html: (selectedNews.news_content || selectedNews.content || '').replace(/\n/g, '<br>') 
+                    }}
+                  />
+                </Box>
+              </VStack>
+            )}
+          </ModalBody>
+          <ModalFooter>
+            <Button variant="outline" onClick={() => {
+              setSelectedNews(null)
+              setUserStats(null)
+            }}>
+              Cerrar
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* Modal de Confirmación de Eliminación */}
+      <Modal isOpen={deleteModal.isOpen} onClose={closeDeleteModal} isCentered>
+        <ModalOverlay bg="blackAlpha.600" backdropFilter="blur(10px)" />
+        <ModalContent mx={4} maxW="md">
+          <ModalHeader>
+            <HStack spacing={3}>
+              <Box
+                p={2}
+                borderRadius="full"
+                bg="red.100"
+                color="red.600"
+              >
+                <FiTrash2 size={20} />
+              </Box>
+              <VStack align="start" spacing={0}>
+                <Text fontSize="lg" fontWeight="bold">
+                  Confirmar Eliminación
+                </Text>
+                <Text fontSize="sm" color="gray.500">
+                  Esta acción no se puede deshacer
+                </Text>
+              </VStack>
+            </HStack>
+          </ModalHeader>
+          <ModalCloseButton />
+          
+          <ModalBody>
+            <VStack spacing={4} align="stretch">
+              <Alert status="warning" borderRadius="md">
+                <AlertIcon />
+                <VStack align="start" spacing={1}>
+                  <AlertTitle fontSize="sm">¡Atención!</AlertTitle>
+                  <AlertDescription fontSize="sm">
+                    Estás a punto de eliminar permanentemente la noticia:
+                  </AlertDescription>
+                </VStack>
+              </Alert>
+              
+              <Box
+                p={4}
+                bg="gray.50"
+                borderRadius="md"
+                border="1px solid"
+                borderColor="gray.200"
+              >
+                <Text fontWeight="semibold" color="red.600" mb={2}>
+                  "{deleteModal.newsTitle}"
+                </Text>
+                <Text fontSize="sm" color="gray.600">
+                  Esta acción eliminará la noticia y todos sus datos asociados de forma permanente.
+                </Text>
+              </Box>
+            </VStack>
+          </ModalBody>
+
+          <ModalFooter>
+            <HStack spacing={3} w="full">
+              <Button
+                variant="outline"
+                onClick={closeDeleteModal}
+                flex={1}
+                isDisabled={deleteModal.isDeleting}
+              >
+                Cancelar
+              </Button>
+              <Button
+                colorScheme="red"
+                onClick={deleteNews}
+                flex={1}
+                isLoading={deleteModal.isDeleting}
+                loadingText="Eliminando..."
+                leftIcon={<FiTrash2 />}
+              >
+                Eliminar Noticia
+              </Button>
+            </HStack>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   )
 }
