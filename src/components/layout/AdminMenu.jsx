@@ -25,7 +25,10 @@ import {
   FiSettings,
   FiHome,
   FiLogOut,
-  FiArrowLeft
+  FiArrowLeft,
+  FiMail,
+  FiEdit3,
+  FiList
 } from 'react-icons/fi'
 import { useAuth } from '../../hooks/useAuth'
 import { adminMenuItems } from '../../config/adminMenuConfig'
@@ -66,7 +69,10 @@ const AdminMenu = ({
       FiSettings,
       FiHome,
       FiLogOut,
-      FiArrowLeft
+      FiArrowLeft,
+      FiMail,
+      FiEdit3,
+      FiList
     }
     return iconMap[iconName] || FiSettings
   }

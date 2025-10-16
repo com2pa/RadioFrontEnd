@@ -73,6 +73,13 @@ export const adminMenuItems = [
     href: '/dashboard/admin/user-roles',
     icon: 'FiShield',
     description: 'Administrar roles y permisos'
+  },
+  {
+    id: 'contact-notifications',
+    label: 'Mensajes de Contacto',
+    href: '/dashboard/admin/contact-notifications',
+    icon: 'FiMail',
+    description: 'Gestionar mensajes del formulario de contacto'
   }
 ]
 

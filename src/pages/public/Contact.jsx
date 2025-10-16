@@ -28,6 +28,7 @@ const Contact = () => {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
+    email: '',
     message: ''
   })
 
@@ -54,6 +55,12 @@ const Contact = () => {
 
     if (!formData.lastName.trim()) {
       newErrors.lastName = 'El apellido es requerido'
+    }
+
+    if (!formData.email.trim()) {
+      newErrors.email = 'El email es requerido'
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = 'El email no tiene un formato válido'
     }
 
     if (!formData.message.trim()) {
@@ -84,8 +91,37 @@ const Contact = () => {
     setIsLoading(true)
 
     try {
-      // Simular envío del formulario
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      // Preparar datos para enviar
+      const dataToSend = {
+        contact_name: formData.firstName,
+        contact_lastname: formData.lastName,
+        contact_email: formData.email,
+        contact_message: formData.message,
+        timestamp: new Date().toISOString(),
+        status: 'unread' // Estado inicial del mensaje
+      }
+      
+      console.log('Enviando datos al backend:', dataToSend)
+      
+      // Enviar datos al backend
+      const response = await fetch('/api/contacts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(dataToSend)
+      })
+      
+      console.log('Respuesta del servidor:', response.status, response.statusText)
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        console.error('Error del servidor:', errorData)
+        throw new Error(errorData.message || `Error del servidor: ${response.status}`)
+      }
+
+      const result = await response.json()
+      console.log('Respuesta del servidor:', result)
       
       toast({
         title: 'Mensaje enviado',
@@ -99,6 +135,7 @@ const Contact = () => {
       setFormData({
         firstName: '',
         lastName: '',
+        email: '',
         message: ''
       })
       setErrors({})
@@ -235,6 +272,8 @@ const Contact = () => {
                       {renderField('firstName', 'Nombre', 'text', 'Ingresa tu nombre')}
                       {renderField('lastName', 'Apellido', 'text', 'Ingresa tu apellido')}
                     </HStack>
+
+                    {renderField('email', 'Correo Electrónico', 'email', 'ejemplo@correo.com')}
 
                     <Divider />
 
