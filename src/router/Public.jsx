@@ -7,7 +7,7 @@ import Register from '../pages/public/Register'
 import Login from '../pages/public/Login'
 import About from '../pages/public/About'
 import EmailVerification from '../pages/public/EmailVerification'
-
+import Contact from '../pages/public/Contact'
 // Componente de carga
 const LoadingFallback = () => (
   <Box display="flex" justifyContent="center" alignItems="center" minH="50vh">
@@ -54,6 +54,7 @@ const Public = () => {
         <Route path='/login' element={<Login />} />
         <Route path='/about' element={<About />} />
         <Route path='/verify/:id/:token' element={<EmailVerification />} />
+        <Route path='/contact' element={<Contact />} />
         
         {/* Rutas dinámicas generadas desde el backend - solo para rutas no públicas */}
         {!isPublicRoute && routes.map((route) => {
