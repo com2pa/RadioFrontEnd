@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react'
+import axios from 'axios'
 import {
   Box,
   Container,
@@ -100,22 +101,26 @@ const ContactNotifications = () => {
       webSocketService.on('new-contact', (data) => {
         console.log('📨 Nueva notificación de contacto:', data)
         
-        // Asegurar que el mensaje tenga la estructura correcta
+        // Mapear los datos del backend a la estructura esperada por el frontend
         const messageData = {
-          id: data.id || Date.now(),
-          contact_name: data.contact_name,
-          contact_lastname: data.contact_lastname,
-          contact_email: data.contact_email,
-          contact_message: data.contact_message,
-          timestamp: data.timestamp || new Date().toISOString(),
-          status: data.status || 'unread'
+          id: data.contact?.contact_id || data.contact_id || Date.now(),
+          contact_name: data.contact?.contact_name || data.contact_name,
+          contact_lastname: data.contact?.contact_lastname || data.contact_lastname,
+          contact_email: data.contact?.contact_email || data.contact_email,
+          contact_phone: data.contact?.contact_phone || data.contact_phone,
+          contact_message: data.contact?.contact_message || data.contact_message,
+          timestamp: data.contact?.contact_created_at || data.contact_created_at || new Date().toISOString(),
+          // Los nuevos mensajes siempre llegan como 'unread'
+          status: 'unread'
         }
+        
+        console.log('📝 Mensaje mapeado:', messageData)
         
         setMessages(prev => [messageData, ...prev])
         
         toast({
           title: 'Nuevo mensaje de contacto',
-          description: `${data.contact_name} ${data.contact_lastname} ha enviado un mensaje`,
+          description: `${messageData.contact_name} ${messageData.contact_lastname} ha enviado un mensaje`,
           status: 'info',
           duration: 5000,
           isClosable: true,
@@ -127,22 +132,29 @@ const ContactNotifications = () => {
         console.log('📢 Notificación general recibida:', notification)
         
         // Si es una notificación de contacto, procesarla
-        if (notification.type === 'contact' || notification.contact_name) {
+        if (notification.type === 'new_contact' || notification.type === 'contact') {
+          // Extraer datos del contacto desde la notificación
+          const contactData = notification.data?.contact || notification.contact || notification
+          
           const messageData = {
-            id: notification.id || Date.now(),
-            contact_name: notification.contact_name,
-            contact_lastname: notification.contact_lastname,
-            contact_email: notification.contact_email,
-            contact_message: notification.contact_message,
-            timestamp: notification.timestamp || new Date().toISOString(),
-            status: notification.status || 'unread'
+            id: contactData.contact_id || Date.now(),
+            contact_name: contactData.contact_name,
+            contact_lastname: contactData.contact_lastname,
+            contact_email: contactData.contact_email,
+            contact_phone: contactData.contact_phone,
+            contact_message: contactData.contact_message,
+            timestamp: contactData.contact_created_at || new Date().toISOString(),
+            // Los nuevos mensajes siempre llegan como 'unread'
+            status: 'unread'
           }
+          
+          console.log('📝 Mensaje desde notificación general:', messageData)
           
           setMessages(prev => [messageData, ...prev])
           
           toast({
             title: 'Nuevo mensaje de contacto',
-            description: `${notification.contact_name} ${notification.contact_lastname} ha enviado un mensaje`,
+            description: `${messageData.contact_name} ${messageData.contact_lastname} ha enviado un mensaje`,
             status: 'info',
             duration: 5000,
             isClosable: true,
@@ -188,7 +200,7 @@ const ContactNotifications = () => {
       setLoading(true)
       setHasTriedToLoad(true)
       
-      const response = await fetch('/api/contact-messages', {
+      const response = await fetch('/api/contacts', {
         headers: {
           'Authorization': `Bearer ${auth?.token}`,
           'Content-Type': 'application/json'
@@ -200,7 +212,41 @@ const ContactNotifications = () => {
       }
 
       const data = await response.json()
-      setMessages(data.messages || [])
+      console.log('📨 Datos recibidos del endpoint /api/contacts:', data)
+      
+      // El backend envía los datos en data.data (array)
+      const contactsArray = data.data || data.messages || data.contacts || []
+      console.log('📋 Array de contactos encontrado:', contactsArray)
+      
+      // Mapear los datos del backend a la estructura esperada por el frontend
+      const mappedMessages = contactsArray.map(contact => {
+        console.log('📋 Mapeando contacto:', {
+          id: contact.contact_id,
+          name: contact.contact_name,
+          // Verificar todos los posibles campos de estado
+          contact_status: contact.contact_status,
+          is_read: contact.is_read,
+          read: contact.read,
+          status: contact.status
+        })
+        
+        return {
+          id: contact.contact_id || contact.id,
+          contact_name: contact.contact_name,
+          contact_lastname: contact.contact_lastname,
+          contact_email: contact.contact_email,
+          contact_phone: contact.contact_phone,
+          contact_message: contact.contact_message,
+          timestamp: contact.contact_created_at || contact.created_at || contact.timestamp,
+          // Mapear correctamente el estado de leído/no leído
+          // El campo que tiene true/false en la BD indica si está leído
+          status: (contact.contact_status === true || contact.is_read === true || contact.read === true) ? 'read' : 'unread'
+        }
+      })
+      
+      console.log('📝 Mensajes mapeados:', mappedMessages)
+      console.log('📊 Total de mensajes a mostrar:', mappedMessages.length)
+      setMessages(mappedMessages)
     } catch (error) {
       console.error('Error al cargar mensajes:', error)
       // Solo mostrar toast una vez
@@ -221,35 +267,45 @@ const ContactNotifications = () => {
   // Marcar mensaje como leído
   const markAsRead = async (messageId) => {
     try {
-      const response = await fetch(`/api/contact-messages/${messageId}/read`, {
-        method: 'PUT',
+      console.log('✅ Marcando mensaje como leído, ID:', messageId)
+      
+      const response = await axios.patch(`/api/contacts/${messageId}/mark-read`, {}, {
         headers: {
           'Authorization': `Bearer ${auth?.token}`,
           'Content-Type': 'application/json'
         }
       })
 
-      if (!response.ok) {
-        throw new Error('Error al marcar como leído')
-      }
+      console.log('📡 Respuesta del servidor para marcar como leído:', response.status, response.statusText)
+      console.log('✅ Respuesta del servidor:', response.data)
 
-      setMessages(prev => 
-        prev.map(msg => 
-          msg.id === messageId ? { ...msg, status: 'read' } : msg
+      // Verificar si la operación fue exitosa según la respuesta del backend
+      if (response.data.success) {
+        setMessages(prev => 
+          prev.map(msg => 
+            msg.id === messageId ? { ...msg, status: 'read' } : msg
+          )
         )
-      )
 
-      toast({
-        title: 'Mensaje marcado como leído',
-        status: 'success',
-        duration: 2000,
-        isClosable: true,
-      })
+        toast({
+          title: 'Mensaje marcado como leído',
+          description: response.data.message || 'El mensaje ha sido marcado como leído exitosamente',
+          status: 'success',
+          duration: 2000,
+          isClosable: true,
+        })
+      } else {
+        throw new Error(response.data.message || 'Error al marcar como leído')
+      }
     } catch (error) {
-      console.error('Error al marcar como leído:', error)
+      console.error('❌ Error al marcar como leído:', error)
+      
+      const errorMessage = error.response?.data?.message || error.message || 'Error desconocido'
+      const statusCode = error.response?.status || 'N/A'
+      
       toast({
         title: 'Error',
-        description: 'No se pudo marcar el mensaje como leído',
+        description: `No se pudo marcar el mensaje como leído: ${errorMessage} (${statusCode})`,
         status: 'error',
         duration: 3000,
         isClosable: true,
@@ -260,7 +316,10 @@ const ContactNotifications = () => {
   // Eliminar mensaje
   const deleteMessage = async (messageId) => {
     try {
-      const response = await fetch(`/api/contact-messages/${messageId}`, {
+      console.log('🗑️ Intentando eliminar mensaje con ID:', messageId)
+      console.log('📋 Mensajes actuales antes de eliminar:', messages.length)
+      
+      const response = await fetch(`/api/contacts/${messageId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${auth?.token}`,
@@ -272,7 +331,11 @@ const ContactNotifications = () => {
         throw new Error('Error al eliminar mensaje')
       }
 
-      setMessages(prev => prev.filter(msg => msg.id !== messageId))
+      setMessages(prev => {
+        const filtered = prev.filter(msg => msg.id !== messageId)
+        console.log('📋 Mensajes después de eliminar:', filtered.length)
+        return filtered
+      })
 
       toast({
         title: 'Mensaje eliminado',
@@ -294,13 +357,12 @@ const ContactNotifications = () => {
 
   // Ver detalles del mensaje
   const viewMessage = (message) => {
+    console.log('👁️ Abriendo detalles del mensaje:', message)
     setSelectedMessage(message)
     onOpen()
     
-    // Marcar como leído si no lo está
-    if (message.status === 'unread') {
-      markAsRead(message.id)
-    }
+    // NO marcar automáticamente como leído al ver detalles
+    // El usuario debe hacer clic explícitamente en el botón "Marcar como Leído"
   }
 
   // Filtrar mensajes
@@ -344,6 +406,15 @@ const ContactNotifications = () => {
       webSocketService.off('connection-status')
     }
   }, [fetchMessages, connectWebSocket])
+
+  // Efecto para monitorear cambios en los mensajes
+  useEffect(() => {
+    console.log('📊 Estado de mensajes actualizado:', {
+      total: messages.length,
+      unread: messages.filter(msg => msg.status === 'unread').length,
+      read: messages.filter(msg => msg.status === 'read').length
+    })
+  }, [messages])
 
 
   if (loading) {
@@ -497,12 +568,27 @@ const ContactNotifications = () => {
                     leftIcon={<FiFilter />}
                     variant="outline"
                     onClick={() => {
+                      console.log('🔄 Actualizando mensajes manualmente...')
                       setHasTriedToLoad(false)
                       fetchMessages()
                     }}
                     isLoading={loading}
                   >
                     Actualizar
+                  </Button>
+                  
+                  <Button
+                    leftIcon={<FiMail />}
+                    colorScheme="blue"
+                    variant="solid"
+                    onClick={() => {
+                      console.log('🔄 Recargando mensajes desde el servidor...')
+                      setHasTriedToLoad(false)
+                      fetchMessages()
+                    }}
+                    isLoading={loading}
+                  >
+                    Recargar Mensajes
                   </Button>
                 </HStack>
               </CardBody>
@@ -546,6 +632,7 @@ const ContactNotifications = () => {
                       <Tr>
                         <Th>Estado</Th>
                         <Th>Nombre</Th>
+                        <Th>Teléfono</Th>
                         <Th>Mensaje</Th>
                         <Th>Fecha</Th>
                         <Th>Acciones</Th>
@@ -574,6 +661,15 @@ const ContactNotifications = () => {
                           </Td>
                           <Td>
                             <Text 
+                              fontSize="sm" 
+                              color={textColor}
+                              fontFamily="mono"
+                            >
+                              {message.contact_phone || 'No disponible'}
+                            </Text>
+                          </Td>
+                          <Td>
+                            <Text 
                               noOfLines={2} 
                               maxW="300px"
                               color={textColor}
@@ -591,13 +687,18 @@ const ContactNotifications = () => {
                           </Td>
                           <Td>
                             <HStack spacing={2}>
-                              <Tooltip label="Ver detalles">
+                              <Tooltip 
+                                label="Ver detalles del mensaje (solo lectura)"
+                                hasArrow
+                                placement="top"
+                              >
                                 <IconButton
                                   icon={<FiEye />}
                                   size="sm"
                                   variant="ghost"
                                   colorScheme="blue"
                                   onClick={() => viewMessage(message)}
+                                  aria-label="Ver detalles del mensaje"
                                 />
                               </Tooltip>
                               
@@ -642,12 +743,18 @@ const ContactNotifications = () => {
           <ModalHeader>
             <HStack spacing={3}>
               <FiMessageSquare />
-              <Text>Detalles del Mensaje</Text>
+              <VStack align="start" spacing={0}>
+                <Text>Detalles del Mensaje</Text>
+                <Text fontSize="sm" color="gray.500" fontWeight="normal">
+                  Solo lectura - Para marcar como leído usa el botón correspondiente
+                </Text>
+              </VStack>
             </HStack>
           </ModalHeader>
           <ModalCloseButton />
           
           {selectedMessage && (
+           
             <ModalBody>
               <VStack spacing={4} align="stretch">
                 {/* Información del remitente */}
@@ -662,6 +769,14 @@ const ContactNotifications = () => {
                         <Text fontSize="lg" fontWeight="bold">
                           {selectedMessage.contact_name} {selectedMessage.contact_lastname}
                         </Text>
+                        <Text fontSize="sm" color={textColor}>
+                          📧 {selectedMessage.contact_email}
+                        </Text>
+                        {selectedMessage.contact_phone && (
+                          <Text fontSize="sm" color={textColor} fontFamily="mono">
+                            📞 {selectedMessage.contact_phone}
+                          </Text>
+                        )}
                         <HStack spacing={2}>
                           <FiClock size={14} />
                           <Text fontSize="sm" color={textColor}>
@@ -710,9 +825,17 @@ const ContactNotifications = () => {
                   markAsRead(selectedMessage.id)
                   onClose()
                 }}
+                variant="solid"
+                size="md"
               >
                 Marcar como Leído
               </Button>
+            )}
+            
+            {selectedMessage && selectedMessage.status === 'read' && (
+              <Text fontSize="sm" color="green.600" fontWeight="medium">
+                ✓ Mensaje ya leído
+              </Text>
             )}
           </ModalFooter>
         </ModalContent>

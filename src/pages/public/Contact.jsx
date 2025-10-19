@@ -19,6 +19,7 @@ import {
 import { FiSend } from 'react-icons/fi'
 import PublicLayout from '../../components/layout/PublicLayout'
 import PageWithFooter from '../../components/layout/PageWithFooter'
+import { validateField } from '../../utils/validations'
 
 const Contact = () => {
   const bgColor = useColorModeValue('gray.50', 'gray.900')
@@ -29,6 +30,7 @@ const Contact = () => {
     firstName: '',
     lastName: '',
     email: '',
+    phone: '',
     message: ''
   })
 
@@ -45,24 +47,26 @@ const Contact = () => {
     }
   }
 
-  // Validar formulario
+  // Validar formulario usando las validaciones centralizadas
   const validateForm = () => {
     const newErrors = {}
 
-    if (!formData.firstName.trim()) {
-      newErrors.firstName = 'El nombre es requerido'
-    }
+    // Validar campos usando las validaciones centralizadas
+    const fieldsToValidate = ['name', 'lastname', 'email', 'phone']
+    
+    fieldsToValidate.forEach(field => {
+      const value = formData[field === 'name' ? 'firstName' : field === 'lastname' ? 'lastName' : field]
+      if (!value.trim()) {
+        newErrors[field === 'name' ? 'firstName' : field === 'lastname' ? 'lastName' : field] = `El ${field === 'name' ? 'nombre' : field === 'lastname' ? 'apellido' : field === 'email' ? 'email' : 'teléfono'} es requerido`
+      } else {
+        const validation = validateField(field, value)
+        if (!validation.isValid) {
+          newErrors[field === 'name' ? 'firstName' : field === 'lastname' ? 'lastName' : field] = validation.message
+        }
+      }
+    })
 
-    if (!formData.lastName.trim()) {
-      newErrors.lastName = 'El apellido es requerido'
-    }
-
-    if (!formData.email.trim()) {
-      newErrors.email = 'El email es requerido'
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'El email no tiene un formato válido'
-    }
-
+    // Validar mensaje (validación específica para este formulario)
     if (!formData.message.trim()) {
       newErrors.message = 'El mensaje es requerido'
     } else if (formData.message.trim().length < 10) {
@@ -96,6 +100,7 @@ const Contact = () => {
         contact_name: formData.firstName,
         contact_lastname: formData.lastName,
         contact_email: formData.email,
+        contact_phone: formData.phone,
         contact_message: formData.message,
         timestamp: new Date().toISOString(),
         status: 'unread' // Estado inicial del mensaje
@@ -136,6 +141,7 @@ const Contact = () => {
         firstName: '',
         lastName: '',
         email: '',
+        phone: '',
         message: ''
       })
       setErrors({})
@@ -274,6 +280,8 @@ const Contact = () => {
                     </HStack>
 
                     {renderField('email', 'Correo Electrónico', 'email', 'ejemplo@correo.com')}
+
+                    {renderField('phone', 'Teléfono', 'tel', '02121234567')}
 
                     <Divider />
 
