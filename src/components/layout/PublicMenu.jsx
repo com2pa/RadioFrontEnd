@@ -66,6 +66,7 @@ const PublicMenu = () => {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
   const isMobile = useBreakpointValue({ base: true, md: false })
+  const isSmallMobile = useBreakpointValue({ base: true, sm: false })
   
   // Estado para los elementos del menú desde el API
   const [menuItems, setMenuItems] = useState([])
@@ -151,28 +152,45 @@ const PublicMenu = () => {
           <HStack justify="space-between" py={4}>
             {/* Logo */}
             <ChakraLink as={RouterLink} to="/" _hover={{ textDecoration: 'none' }}>
-              <HStack spacing={3}>
+              <HStack spacing={isSmallMobile ? 2 : 3}>
                 <Box
-                  p={2}
+                  p={isSmallMobile ? 1.5 : 2}
                   borderRadius="lg"
                   bgGradient="linear(to-r, blue.500, purple.500)"
                   color="white"
                 >
-                  <Icon as={FiRadio} boxSize={6} />
+                  <Icon as={FiRadio} boxSize={isSmallMobile ? 5 : 6} />
                 </Box>
-                <VStack align="start" spacing={0}>
-                  <Text
-                    fontSize="xl"
-                    fontWeight="bold"
-                    color={logoColor}
-                    lineHeight="shorter"
-                  >
-                    OXÍ Radio
-                  </Text>
-                  <Text fontSize="xs" color={textColor} fontWeight="medium">
-                    88.1 FM Barquisimeto
-                  </Text>
-                </VStack>
+                {!isSmallMobile && (
+                  <VStack align="start" spacing={0}>
+                    <Text
+                      fontSize="xl"
+                      fontWeight="bold"
+                      color={logoColor}
+                      lineHeight="shorter"
+                    >
+                      OXÍ Radio
+                    </Text>
+                    <Text fontSize="xs" color={textColor} fontWeight="medium">
+                      88.1 FM Barquisimeto
+                    </Text>
+                  </VStack>
+                )}
+                {isSmallMobile && (
+                  <VStack align="start" spacing={0}>
+                    <Text
+                      fontSize="lg"
+                      fontWeight="bold"
+                      color={logoColor}
+                      lineHeight="shorter"
+                    >
+                      OXÍ
+                    </Text>
+                    <Text fontSize="xs" color={textColor} fontWeight="medium">
+                      88.1 FM
+                    </Text>
+                  </VStack>
+                )}
               </HStack>
             </ChakraLink>
 
@@ -203,82 +221,88 @@ const PublicMenu = () => {
             )}
 
             {/* Botones de Acción */}
-            <HStack spacing={4}>
-              {/* Botón de Escuchar */}
-              <Button
-                size="sm"
-                colorScheme="blue"
-                variant="outline"
-                leftIcon={<Icon as={FiVolume2} />}
-                _hover={{
-                  bg: 'blue.500',
-                  color: 'white',
-                  borderColor: 'blue.500'
-                }}
-              >
-                Escuchar
-              </Button>
-
-              {/* Menú de Usuario o Botones de Login/Register - Solo cuando NO está autenticado */}
-              {!user && (
-                <HStack spacing={2}>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    leftIcon={<Icon as={FiLogIn} />}
-                    onClick={handleLogin}
-                    _hover={{
-                      bg: 'white',
-                      color: 'blue.500'
-                    }}
-                  >
-                    Iniciar Sesión
-                  </Button>
+            <HStack spacing={2}>
+              {/* Botones que se ocultan en dispositivos muy pequeños */}
+              {!isSmallMobile && (
+                <>
+                  {/* Botón de Escuchar */}
                   <Button
                     size="sm"
                     colorScheme="blue"
-                    leftIcon={<Icon as={FiUserPlus} />}
-                    onClick={handleRegister}
-                  >
-                    Registrarse
-                  </Button>
-                </HStack>
-              )}
-
-              {/* Menú de Usuario cuando SÍ está autenticado */}
-              {user && (
-                <Menu>
-                  <MenuButton
-                    as={Button}
-                    variant="ghost"
-                    leftIcon={<Avatar size="xs" name={user.name} />}
-                    size="sm"
+                    variant="outline"
+                    leftIcon={<Icon as={FiVolume2} />}
                     _hover={{
-                      bg: 'white',
-                      color: 'blue.500'
+                      bg: 'blue.500',
+                      color: 'white',
+                      borderColor: 'blue.500'
                     }}
                   >
-                    {user.name}
-                  </MenuButton>
-                  <MenuList>
-                    <MenuItem icon={<FiUser />}>
-                      Mi Perfil
-                    </MenuItem>
-                    <MenuDivider />
-                    <MenuItem icon={<FiLogIn />} onClick={handleLogout}>
-                      Cerrar Sesión
-                    </MenuItem>
-                  </MenuList>
-                </Menu>
+                    Escuchar
+                  </Button>
+
+                  {/* Menú de Usuario o Botones de Login/Register - Solo cuando NO está autenticado */}
+                  {!user && (
+                    <HStack spacing={2}>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        leftIcon={<Icon as={FiLogIn} />}
+                        onClick={handleLogin}
+                        _hover={{
+                          bg: 'white',
+                          color: 'blue.500'
+                        }}
+                      >
+                        Iniciar Sesión
+                      </Button>
+                      <Button
+                        size="sm"
+                        colorScheme="blue"
+                        leftIcon={<Icon as={FiUserPlus} />}
+                        onClick={handleRegister}
+                      >
+                        Registrarse
+                      </Button>
+                    </HStack>
+                  )}
+
+                  {/* Menú de Usuario cuando SÍ está autenticado */}
+                  {user && (
+                    <Menu>
+                      <MenuButton
+                        as={Button}
+                        variant="ghost"
+                        leftIcon={<Avatar size="xs" name={user.name} />}
+                        size="sm"
+                        _hover={{
+                          bg: 'white',
+                          color: 'blue.500'
+                        }}
+                      >
+                        {user.name}
+                      </MenuButton>
+                      <MenuList>
+                        <MenuItem icon={<FiUser />}>
+                          Mi Perfil
+                        </MenuItem>
+                        <MenuDivider />
+                        <MenuItem icon={<FiLogIn />} onClick={handleLogout}>
+                          Cerrar Sesión
+                        </MenuItem>
+                      </MenuList>
+                    </Menu>
+                  )}
+                </>
               )}
 
-              {/* Botón de Menú Móvil */}
+              {/* Botón de Menú Móvil - Siempre visible en móviles */}
               {isMobile && (
                 <IconButton
                   aria-label="Abrir menú"
                   icon={<FiMenu />}
                   variant="ghost"
                   onClick={onOpen}
+                  size="sm"
                 />
               )}
             </HStack>
@@ -302,6 +326,25 @@ const PublicMenu = () => {
           
           <DrawerBody>
             <VStack align="stretch" spacing={2} pt={4}>
+              {/* Botón de Escuchar - Siempre visible en el menú móvil */}
+              <Button
+                colorScheme="blue"
+                variant="outline"
+                leftIcon={<Icon as={FiVolume2} />}
+                onClick={onClose}
+                _hover={{
+                  bg: 'blue.500',
+                  color: 'white',
+                  borderColor: 'blue.500'
+                }}
+              >
+                Escuchar Radio
+              </Button>
+
+              {/* Separador */}
+              <Box borderTop="1px" borderColor={borderColor} my={2} />
+
+              {/* Elementos del menú de navegación */}
               {loading ? (
                 <Box textAlign="center" py={4}>
                   <Spinner size="md" color={hoverColor} />
@@ -325,49 +368,56 @@ const PublicMenu = () => {
                 ))
               )}
               
-              <Box pt={4} borderTop="1px" borderColor={borderColor}>
-                {user ? (
-                  <VStack align="stretch" spacing={2}>
-                    <Text fontSize="sm" color={textColor} px={3}>
-                      Hola, {user.name}
-                    </Text>
-                    <Button
-                      justifyContent="start"
-                      variant="ghost"
-                      leftIcon={<Icon as={FiUser} />}
-                    >
-                      Mi Perfil
-                    </Button>
-                    <Button
-                      justifyContent="start"
-                      variant="ghost"
-                      leftIcon={<Icon as={FiLogIn} />}
-                      onClick={handleLogout}
-                    >
-                      Cerrar Sesión
-                    </Button>
-                  </VStack>
-                ) : (
-                  <VStack align="stretch" spacing={2}>
-                    <Button
-                      justifyContent="start"
-                      variant="ghost"
-                      leftIcon={<Icon as={FiLogIn} />}
-                      onClick={handleLogin}
-                    >
-                      Iniciar Sesión
-                    </Button>
-                    <Button
-                      justifyContent="start"
-                      colorScheme="blue"
-                      leftIcon={<Icon as={FiUserPlus} />}
-                      onClick={handleRegister}
-                    >
-                      Registrarse
-                    </Button>
-                  </VStack>
-                )}
-              </Box>
+              {/* Separador */}
+              <Box borderTop="1px" borderColor={borderColor} my={2} />
+              
+              {/* Sección de usuario */}
+              {user ? (
+                <VStack align="stretch" spacing={2}>
+                  <Text fontSize="sm" color={textColor} px={3} fontWeight="medium">
+                    Hola, {user.name}
+                  </Text>
+                  <Button
+                    justifyContent="start"
+                    variant="ghost"
+                    leftIcon={<Icon as={FiUser} />}
+                    onClick={onClose}
+                  >
+                    Mi Perfil
+                  </Button>
+                  <Button
+                    justifyContent="start"
+                    variant="ghost"
+                    leftIcon={<Icon as={FiLogIn} />}
+                    onClick={handleLogout}
+                    colorScheme="red"
+                  >
+                    Cerrar Sesión
+                  </Button>
+                </VStack>
+              ) : (
+                <VStack align="stretch" spacing={2}>
+                  <Text fontSize="sm" color={textColor} px={3} fontWeight="medium">
+                    Acceso
+                  </Text>
+                  <Button
+                    justifyContent="start"
+                    variant="ghost"
+                    leftIcon={<Icon as={FiLogIn} />}
+                    onClick={handleLogin}
+                  >
+                    Iniciar Sesión
+                  </Button>
+                  <Button
+                    justifyContent="start"
+                    colorScheme="blue"
+                    leftIcon={<Icon as={FiUserPlus} />}
+                    onClick={handleRegister}
+                  >
+                    Registrarse
+                  </Button>
+                </VStack>
+              )}
             </VStack>
           </DrawerBody>
         </DrawerContent>
