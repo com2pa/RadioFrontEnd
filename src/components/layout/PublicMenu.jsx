@@ -67,6 +67,7 @@ const PublicMenu = () => {
   const navigate = useNavigate()
   const isMobile = useBreakpointValue({ base: true, md: false })
   const isSmallMobile = useBreakpointValue({ base: true, sm: false })
+  const isTablet = useBreakpointValue({ base: false, md: true, lg: false })
   
   // Estado para los elementos del menú desde el API
   const [menuItems, setMenuItems] = useState([])
@@ -148,30 +149,35 @@ const PublicMenu = () => {
         zIndex={1000}
         shadow="sm"
       >
-        <Container maxW="container.xl">
-          <HStack justify="space-between" py={4}>
+        <Container maxW="container.xl" px={isTablet ? 4 : 6}>
+          <HStack justify="space-between" py={isTablet ? 3 : 4}>
             {/* Logo */}
             <ChakraLink as={RouterLink} to="/" _hover={{ textDecoration: 'none' }}>
-              <HStack spacing={isSmallMobile ? 2 : 3}>
+              <HStack spacing={isSmallMobile ? 2 : isTablet ? 2.5 : 3}>
                 <Box
-                  p={isSmallMobile ? 1.5 : 2}
+                  p={isSmallMobile ? 1.5 : isTablet ? 1.5 : 2}
                   borderRadius="lg"
                   bgGradient="linear(to-r, blue.500, purple.500)"
                   color="white"
                 >
-                  <Icon as={FiRadio} boxSize={isSmallMobile ? 5 : 6} />
+                  <Icon as={FiRadio} boxSize={isSmallMobile ? 5 : isTablet ? 5 : 6} />
                 </Box>
                 {!isSmallMobile && (
                   <VStack align="start" spacing={0}>
                     <Text
-                      fontSize="xl"
+                      fontSize={isTablet ? "lg" : "xl"}
                       fontWeight="bold"
                       color={logoColor}
                       lineHeight="shorter"
                     >
                       OXÍ Radio
                     </Text>
-                    <Text fontSize="xs" color={textColor} fontWeight="medium">
+                    <Text 
+                      fontSize="xs" 
+                      color={textColor} 
+                      fontWeight="medium"
+                      display={isTablet ? "none" : "block"}
+                    >
                       88.1 FM Barquisimeto
                     </Text>
                   </VStack>
@@ -196,7 +202,7 @@ const PublicMenu = () => {
 
             {/* Menú Desktop */}
             {!isMobile && (
-              <HStack spacing={8}>
+              <HStack spacing={isTablet ? 4 : 8}>
                 {loading ? (
                   <Spinner size="sm" color={hoverColor} />
                 ) : (
@@ -207,6 +213,7 @@ const PublicMenu = () => {
                       to={item.href}
                       color={textColor}
                       fontWeight="medium"
+                      fontSize={isTablet ? "sm" : "md"}
                       _hover={{ 
                         color: hoverColor,
                         textDecoration: 'none'
@@ -221,13 +228,13 @@ const PublicMenu = () => {
             )}
 
             {/* Botones de Acción */}
-            <HStack spacing={2}>
+            <HStack spacing={isTablet ? 1 : 2}>
               {/* Botones que se ocultan en dispositivos muy pequeños */}
               {!isSmallMobile && (
                 <>
                   {/* Botón de Escuchar */}
                   <Button
-                    size="sm"
+                    size={isTablet ? "xs" : "sm"}
                     colorScheme="blue"
                     variant="outline"
                     leftIcon={<Icon as={FiVolume2} />}
@@ -237,14 +244,14 @@ const PublicMenu = () => {
                       borderColor: 'blue.500'
                     }}
                   >
-                    Escuchar
+                    {isTablet ? "Escuchar" : "Escuchar"}
                   </Button>
 
                   {/* Menú de Usuario o Botones de Login/Register - Solo cuando NO está autenticado */}
                   {!user && (
-                    <HStack spacing={2}>
+                    <HStack spacing={isTablet ? 1 : 2}>
                       <Button
-                        size="sm"
+                        size={isTablet ? "xs" : "sm"}
                         variant="ghost"
                         leftIcon={<Icon as={FiLogIn} />}
                         onClick={handleLogin}
@@ -252,16 +259,18 @@ const PublicMenu = () => {
                           bg: 'white',
                           color: 'blue.500'
                         }}
+                        fontSize={isTablet ? "xs" : "sm"}
                       >
-                        Iniciar Sesión
+                        {isTablet ? "Entrar" : "Iniciar Sesión"}
                       </Button>
                       <Button
-                        size="sm"
+                        size={isTablet ? "xs" : "sm"}
                         colorScheme="blue"
                         leftIcon={<Icon as={FiUserPlus} />}
                         onClick={handleRegister}
+                        fontSize={isTablet ? "xs" : "sm"}
                       >
-                        Registrarse
+                        {isTablet ? "Registro" : "Registrarse"}
                       </Button>
                     </HStack>
                   )}
@@ -273,13 +282,14 @@ const PublicMenu = () => {
                         as={Button}
                         variant="ghost"
                         leftIcon={<Avatar size="xs" name={user.name} />}
-                        size="sm"
+                        size={isTablet ? "xs" : "sm"}
                         _hover={{
                           bg: 'white',
                           color: 'blue.500'
                         }}
+                        fontSize={isTablet ? "xs" : "sm"}
                       >
-                        {user.name}
+                        {isTablet ? user.name?.split(' ')[0] : user.name}
                       </MenuButton>
                       <MenuList>
                         <MenuItem icon={<FiUser />}>
