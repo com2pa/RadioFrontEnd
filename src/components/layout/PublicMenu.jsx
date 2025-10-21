@@ -42,7 +42,8 @@ import {
   FiMusic,
   FiMic,
   FiCalendar,
-  FiHeadphones
+  FiHeadphones,
+  FiSettings
 } from 'react-icons/fi'
 import { useAuth } from '../../hooks/useAuth'
 import { getPublicMenuItems } from '../../config/publicMenuConfig'
@@ -63,11 +64,17 @@ const iconMap = {
 
 const PublicMenu = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const { user, logout } = useAuth()
+  const { auth, logout } = useAuth()
+  const user = auth // Extraer el usuario del objeto auth
   const navigate = useNavigate()
   const isMobile = useBreakpointValue({ base: true, md: false })
   const isSmallMobile = useBreakpointValue({ base: true, sm: false })
   const isTablet = useBreakpointValue({ base: false, md: true, lg: false })
+  
+  // Debug: Log del estado de autenticación (remover en producción)
+  console.log('PublicMenu - Auth state:', auth)
+  console.log('PublicMenu - User state:', user)
+  console.log('PublicMenu - Is authenticated:', !!user)
   
   // Estado para los elementos del menú desde el API
   const [menuItems, setMenuItems] = useState([])
@@ -91,6 +98,11 @@ const PublicMenu = () => {
 
   const handleLogout = () => {
     logout()
+    onClose()
+  }
+
+  const handleDashboard = () => {
+    navigate('/dashboard')
     onClose()
   }
 
@@ -163,24 +175,24 @@ const PublicMenu = () => {
                   <Icon as={FiRadio} boxSize={isSmallMobile ? 5 : isTablet ? 5 : 6} />
                 </Box>
                 {!isSmallMobile && (
-                  <VStack align="start" spacing={0}>
-                    <Text
+                <VStack align="start" spacing={0}>
+                  <Text
                       fontSize={isTablet ? "lg" : "xl"}
-                      fontWeight="bold"
-                      color={logoColor}
-                      lineHeight="shorter"
-                    >
-                      OXÍ Radio
-                    </Text>
+                    fontWeight="bold"
+                    color={logoColor}
+                    lineHeight="shorter"
+                  >
+                    OXÍ Radio
+                  </Text>
                     <Text 
                       fontSize="xs" 
                       color={textColor} 
                       fontWeight="medium"
                       display={isTablet ? "none" : "block"}
                     >
-                      88.1 FM Barquisimeto
-                    </Text>
-                  </VStack>
+                    88.1 FM Barquisimeto
+                  </Text>
+                </VStack>
                 )}
                 {isSmallMobile && (
                   <VStack align="start" spacing={0}>
@@ -292,6 +304,9 @@ const PublicMenu = () => {
                         {isTablet ? user.name?.split(' ')[0] : user.name}
                       </MenuButton>
                       <MenuList>
+                        <MenuItem icon={<FiSettings />} onClick={handleDashboard}>
+                          Dashboard
+                        </MenuItem>
                         <MenuItem icon={<FiUser />}>
                           Mi Perfil
                         </MenuItem>
@@ -382,52 +397,60 @@ const PublicMenu = () => {
               <Box borderTop="1px" borderColor={borderColor} my={2} />
               
               {/* Sección de usuario */}
-              {user ? (
-                <VStack align="stretch" spacing={2}>
+                {user ? (
+                  <VStack align="stretch" spacing={2}>
                   <Text fontSize="sm" color={textColor} px={3} fontWeight="medium">
-                    Hola, {user.name}
-                  </Text>
-                  <Button
-                    justifyContent="start"
-                    variant="ghost"
-                    leftIcon={<Icon as={FiUser} />}
+                      Hola, {user.name}
+                    </Text>
+                    <Button
+                      justifyContent="start"
+                      variant="ghost"
+                      leftIcon={<Icon as={FiSettings} />}
+                      onClick={handleDashboard}
+                    >
+                      Dashboard
+                    </Button>
+                    <Button
+                      justifyContent="start"
+                      variant="ghost"
+                      leftIcon={<Icon as={FiUser} />}
                     onClick={onClose}
-                  >
-                    Mi Perfil
-                  </Button>
-                  <Button
-                    justifyContent="start"
-                    variant="ghost"
-                    leftIcon={<Icon as={FiLogIn} />}
-                    onClick={handleLogout}
+                    >
+                      Mi Perfil
+                    </Button>
+                    <Button
+                      justifyContent="start"
+                      variant="ghost"
+                      leftIcon={<Icon as={FiLogIn} />}
+                      onClick={handleLogout}
                     colorScheme="red"
-                  >
-                    Cerrar Sesión
-                  </Button>
-                </VStack>
-              ) : (
-                <VStack align="stretch" spacing={2}>
+                    >
+                      Cerrar Sesión
+                    </Button>
+                  </VStack>
+                ) : (
+                  <VStack align="stretch" spacing={2}>
                   <Text fontSize="sm" color={textColor} px={3} fontWeight="medium">
                     Acceso
                   </Text>
-                  <Button
-                    justifyContent="start"
-                    variant="ghost"
-                    leftIcon={<Icon as={FiLogIn} />}
-                    onClick={handleLogin}
-                  >
-                    Iniciar Sesión
-                  </Button>
-                  <Button
-                    justifyContent="start"
-                    colorScheme="blue"
-                    leftIcon={<Icon as={FiUserPlus} />}
-                    onClick={handleRegister}
-                  >
-                    Registrarse
-                  </Button>
-                </VStack>
-              )}
+                    <Button
+                      justifyContent="start"
+                      variant="ghost"
+                      leftIcon={<Icon as={FiLogIn} />}
+                      onClick={handleLogin}
+                    >
+                      Iniciar Sesión
+                    </Button>
+                    <Button
+                      justifyContent="start"
+                      colorScheme="blue"
+                      leftIcon={<Icon as={FiUserPlus} />}
+                      onClick={handleRegister}
+                    >
+                      Registrarse
+                    </Button>
+                  </VStack>
+                )}
             </VStack>
           </DrawerBody>
         </DrawerContent>

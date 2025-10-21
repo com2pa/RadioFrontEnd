@@ -281,19 +281,19 @@ const ContactNotifications = () => {
 
       // Verificar si la operación fue exitosa según la respuesta del backend
       if (response.data.success) {
-        setMessages(prev => 
-          prev.map(msg => 
-            msg.id === messageId ? { ...msg, status: 'read' } : msg
-          )
+      setMessages(prev => 
+        prev.map(msg => 
+          msg.id === messageId ? { ...msg, status: 'read' } : msg
         )
+      )
 
-        toast({
-          title: 'Mensaje marcado como leído',
+      toast({
+        title: 'Mensaje marcado como leído',
           description: response.data.message || 'El mensaje ha sido marcado como leído exitosamente',
-          status: 'success',
-          duration: 2000,
-          isClosable: true,
-        })
+        status: 'success',
+        duration: 2000,
+        isClosable: true,
+      })
       } else {
         throw new Error(response.data.message || 'Error al marcar como leído')
       }
@@ -744,7 +744,7 @@ const ContactNotifications = () => {
             <HStack spacing={3}>
               <FiMessageSquare />
               <VStack align="start" spacing={0}>
-                <Text>Detalles del Mensaje</Text>
+              <Text>Detalles del Mensaje</Text>
                 <Text fontSize="sm" color="gray.500" fontWeight="normal">
                   Solo lectura - Para marcar como leído usa el botón correspondiente
                 </Text>
