@@ -8,7 +8,8 @@ import {
   FiMusic,
   FiMic,
   FiCalendar,
-  FiHeadphones
+  FiHeadphones,
+  FiTarget
 } from 'react-icons/fi'
 
 export const publicMenuItems = [
@@ -25,6 +26,13 @@ export const publicMenuItems = [
     href: '/about',
     icon: FiInfo,
     description: 'Conoce más sobre OXÍ Radio'
+  },
+  {
+    id: 'objective',
+    label: 'Objetivos',
+    href: '/objective',
+    icon: FiTarget,
+    description: 'Nuestros objetivos y metas'
   },
   {
     id: 'programs',
