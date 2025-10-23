@@ -15,8 +15,8 @@ export const useDynamicRoutes = () => {
   const { get: getFromCache, set: setCache, clear: clearCache } = useMenuCache()
 
   // Rutas públicas que no necesitan cargar rutas dinámicas
-  const publicRoutes = ['/', '/login', '/register']
-  const isPublicRoute = publicRoutes.includes(location.pathname)
+  const publicRoutes = ['/', '/login', '/register', '/about', '/objective', '/terms', '/privacy', '/cookies', '/legal', '/contact']
+  const isPublicRoute = publicRoutes.includes(location.pathname) || location.pathname.startsWith('/verify/')
 
   useEffect(() => {
     // Si es una ruta pública, no cargar rutas dinámicas

@@ -7,6 +7,10 @@ import Register from '../pages/public/Register'
 import Login from '../pages/public/Login'
 import About from '../pages/public/About'
 import Objective from '../pages/public/Objective'
+import Terms from '../pages/public/Terms'
+import Privacy from '../pages/public/Privacy'
+import Cookies from '../pages/public/Cookies'
+import Legal from '../pages/public/Legal'
 import EmailVerification from '../pages/public/EmailVerification'
 import Contact from '../pages/public/Contact'
 // Componente de carga
@@ -34,7 +38,7 @@ const Public = () => {
   const { routes, loading, error } = useDynamicRoutes()
   
   // Rutas públicas que no necesitan cargar rutas dinámicas
-  const publicRoutes = ['/', '/login', '/register', '/about', '/objective']
+  const publicRoutes = ['/', '/login', '/register', '/about', '/objective', '/terms', '/privacy', '/cookies', '/legal', '/contact']
   const isPublicRoute = publicRoutes.includes(location.pathname) || location.pathname.startsWith('/verify/')
   
   // Solo mostrar loading para rutas que no son públicas
@@ -55,6 +59,10 @@ const Public = () => {
         <Route path='/login' element={<Login />} />
         <Route path='/about' element={<About />} />
         <Route path='/objective' element={<Objective />} />
+        <Route path='/terms' element={<Terms />} />
+        <Route path='/privacy' element={<Privacy />} />
+        <Route path='/cookies' element={<Cookies />} />
+        <Route path='/legal' element={<Legal />} />
         <Route path='/verify/:id/:token' element={<EmailVerification />} />
         <Route path='/contact' element={<Contact />} />
         

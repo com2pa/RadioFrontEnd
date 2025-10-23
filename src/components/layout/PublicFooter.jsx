@@ -14,6 +14,7 @@ import {
   Image,
   Badge
 } from '@chakra-ui/react'
+import { Link as RouterLink } from 'react-router-dom'
 import { 
   FiMail, 
   FiPhone, 
@@ -62,10 +63,10 @@ const PublicFooter = ({
     { label: 'Publicidad', href: '/publicidad' }
   ],
   legalLinks = [
-    { label: 'Términos y Condiciones', href: '/terminos' },
-    { label: 'Política de Privacidad', href: '/privacidad' },
+    { label: 'Términos y Condiciones', href: '/terms' },
+    { label: 'Política de Privacidad', href: '/privacy' },
     { label: 'Cookies', href: '/cookies' },
-    { label: 'Aviso Legal', href: '/aviso-legal' }
+    { label: 'Aviso Legal', href: '/legal' }
   ],
   socialMedia = {
     facebook: 'https://facebook.com/radiofm',
@@ -192,7 +193,8 @@ const PublicFooter = ({
                   {quickLinks.map((link, index) => (
                     <Link
                       key={index}
-                      href={link.href}
+                      as={RouterLink}
+                      to={link.href}
                       color={linkColor}
                       _hover={{ 
                         color: linkHoverColor,
@@ -222,7 +224,8 @@ const PublicFooter = ({
                   {services.map((service, index) => (
                     <Link
                       key={index}
-                      href={service.href}
+                      as={RouterLink}
+                      to={service.href}
                       color={linkColor}
                       _hover={{ 
                         color: linkHoverColor,
@@ -348,7 +351,8 @@ const PublicFooter = ({
                   {legalLinks.map((link, index) => (
                     <Link
                       key={index}
-                      href={link.href}
+                      as={RouterLink}
+                      to={link.href}
                       color={linkColor}
                       _hover={{ 
                         color: linkHoverColor,
