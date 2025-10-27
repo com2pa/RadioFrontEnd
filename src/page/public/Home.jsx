@@ -7,13 +7,14 @@ import LivePrograms from '../../components/sections/LivePrograms'
 import TopSongs from '../../components/sections/TopSongs'
 import StatsSection from '../../components/sections/StatsSection'
 import CategoriesSection from '../../components/sections/CategoriesSection'
+import StickyRadioPlayer from '../../components/StickyRadioPlayer'
 
 const Home = () => {
   const bgColor = useColorModeValue('gray.50', 'gray.900')
 
   return (
     <PublicLayout>
-      <Box bg={bgColor} minH="100vh">
+      <Box bg={bgColor} minH="100vh" pb="120px"> {/* Padding bottom para el reproductor sticky */}
         <HeroSection />
         <LivePrograms />
         <TopSongs />
@@ -21,6 +22,9 @@ const Home = () => {
         <CategoriesSection />
       </Box>
       <PublicFooter />
+      
+      {/* Reproductor Sticky */}
+      <StickyRadioPlayer />
     </PublicLayout>
   )
 }
