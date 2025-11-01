@@ -7,6 +7,7 @@ import { getDashboardRoute } from '../utils/roleUtils'
 import DashboardUser from '../pages/private/DashboardUser'
 import DashboardAdmin from '../pages/private/DashboardAdmin'
 import PodcastsView from '../pages/private/PodcastsView'
+import NewsView from '../pages/private/NewsView'
 import PodcastCategory from '../pages/private/PodcastCategory'
 import PodcastSubcategory from '../pages/private/PodcastSubcategory'
 import PodcastUpload from '../pages/private/PodcastUpload'
@@ -45,6 +46,7 @@ const Private = () => {
     <Routes>
       {/* Rutas para usuarios suscriptores - DEBEN IR ANTES de la ruta genérica "user" */}
       <Route path="user/podcasts" element={<PodcastsView />} />
+      <Route path="user/noticias" element={<NewsView />} />
       
       {/* Rutas del dashboard */}
       <Route path="user" element={<DashboardUser />} />

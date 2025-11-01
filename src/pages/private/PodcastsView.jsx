@@ -49,7 +49,8 @@ import {
   FiCalendar,
   FiMessageSquare,
   FiSend,
-  FiUser
+  FiUser,
+  FiHeart
 } from 'react-icons/fi'
 import UserLayout from '../../components/layout/UserLayout'
 import axios from 'axios'
@@ -507,11 +508,36 @@ const PodcastsView = () => {
                       </Text>
                     </VStack>
 
-                    {podcast.subcategory_name && (
-                      <Badge colorScheme="blue" alignSelf="flex-start">
-                        {podcast.subcategory_name}
-                      </Badge>
-                    )}
+                    <HStack justify="space-between" align="center">
+                      {podcast.subcategory_name && (
+                        <Badge colorScheme="blue" alignSelf="flex-start">
+                          {podcast.subcategory_name}
+                        </Badge>
+                      )}
+                      {/* Botón de Like y contador */}
+                      <HStack spacing={2}>
+                        <IconButton
+                          aria-label="Me gusta"
+                          icon={<Icon as={FiHeart} />}
+                          variant="ghost"
+                          colorScheme="red"
+                          size="sm"
+                          _hover={{
+                            transform: 'scale(1.2)'
+                          }}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            // TODO: Lógica para dar like
+                          }}
+                          // TODO: Agregar estado para saber si el usuario ya dio like
+                          // colorScheme={userLiked ? 'red' : 'gray'}
+                        />
+                        <Text fontSize="xs" color={textColor} fontWeight="medium">
+                          {/* TODO: Mostrar contador de likes */}
+                          0
+                        </Text>
+                      </HStack>
+                    </HStack>
                   </VStack>
                 </CardBody>
               </Card>
@@ -570,38 +596,65 @@ const PodcastsView = () => {
                             {podcast.podcast_description}
                           </Text>
                         </VStack>
-                        <Button
-                          leftIcon={<Icon as={FiPlay} />}
-                          colorScheme="blue"
-                          size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            handlePodcastClick(podcast)
-                          }}
-                        >
-                          Escuchar
-                        </Button>
-                      </HStack>
-
-                      <HStack spacing={4}>
-                        {podcast.subcategory_name && (
-                          <Badge colorScheme="blue">
-                            {podcast.subcategory_name}
-                          </Badge>
-                        )}
-                        {podcast.category_name && (
-                          <Badge colorScheme="purple" variant="outline">
-                            {podcast.category_name}
-                          </Badge>
-                        )}
-                        {podcast.created_at && (
+                        <HStack spacing={2}>
+                          {/* Icono de Like */}
+                          <IconButton
+                            aria-label="Me gusta"
+                            icon={<Icon as={FiHeart} />}
+                            variant="ghost"
+                            colorScheme="red"
+                            size="sm"
+                            _hover={{
+                              transform: 'scale(1.2)'
+                            }}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              // TODO: Lógica para dar like
+                            }}
+                            // TODO: Agregar estado para saber si el usuario ya dio like
+                            // colorScheme={userLiked ? 'red' : 'gray'}
+                          />
                           <HStack spacing={1}>
-                            <Icon as={FiCalendar} color={textColor} boxSize={3} />
-                            <Text fontSize="xs" color={textColor}>
-                              {formatDate(podcast.created_at)}
+                            <Text fontSize="xs" color={textColor} fontWeight="medium">
+                              {/* TODO: Mostrar contador de likes */}
+                              0
                             </Text>
                           </HStack>
-                        )}
+                          <Button
+                            leftIcon={<Icon as={FiPlay} />}
+                            colorScheme="blue"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              handlePodcastClick(podcast)
+                            }}
+                          >
+                            Escuchar
+                          </Button>
+                        </HStack>
+                      </HStack>
+
+                      <HStack spacing={4} justify="space-between">
+                        <HStack spacing={4}>
+                          {podcast.subcategory_name && (
+                            <Badge colorScheme="blue">
+                              {podcast.subcategory_name}
+                            </Badge>
+                          )}
+                          {podcast.category_name && (
+                            <Badge colorScheme="purple" variant="outline">
+                              {podcast.category_name}
+                            </Badge>
+                          )}
+                          {podcast.created_at && (
+                            <HStack spacing={1}>
+                              <Icon as={FiCalendar} color={textColor} boxSize={3} />
+                              <Text fontSize="xs" color={textColor}>
+                                {formatDate(podcast.created_at)}
+                              </Text>
+                            </HStack>
+                          )}
+                        </HStack>
                       </HStack>
                     </VStack>
                   </HStack>
@@ -671,25 +724,49 @@ const PodcastsView = () => {
                   )}
 
                   {/* Información adicional */}
-                  <HStack spacing={4} flexWrap="wrap">
-                    {selectedPodcast.subcategory_name && (
-                      <Badge colorScheme="blue">
-                        {selectedPodcast.subcategory_name}
-                      </Badge>
-                    )}
-                    {selectedPodcast.category_name && (
-                      <Badge colorScheme="purple" variant="outline">
-                        {selectedPodcast.category_name}
-                      </Badge>
-                    )}
-                    {selectedPodcast.created_at && (
-                      <HStack spacing={1}>
-                        <Icon as={FiCalendar} color={textColor} boxSize={4} />
-                        <Text fontSize="sm" color={textColor}>
-                          {formatDate(selectedPodcast.created_at)}
-                        </Text>
-                      </HStack>
-                    )}
+                  <HStack spacing={4} flexWrap="wrap" justify="space-between">
+                    <HStack spacing={4} flexWrap="wrap">
+                      {selectedPodcast.subcategory_name && (
+                        <Badge colorScheme="blue">
+                          {selectedPodcast.subcategory_name}
+                        </Badge>
+                      )}
+                      {selectedPodcast.category_name && (
+                        <Badge colorScheme="purple" variant="outline">
+                          {selectedPodcast.category_name}
+                        </Badge>
+                      )}
+                      {selectedPodcast.created_at && (
+                        <HStack spacing={1}>
+                          <Icon as={FiCalendar} color={textColor} boxSize={4} />
+                          <Text fontSize="sm" color={textColor}>
+                            {formatDate(selectedPodcast.created_at)}
+                          </Text>
+                        </HStack>
+                      )}
+                    </HStack>
+                    {/* Botón de Like y contador en el modal */}
+                    <HStack spacing={2}>
+                      <IconButton
+                        aria-label="Me gusta"
+                        icon={<Icon as={FiHeart} />}
+                        variant="ghost"
+                        colorScheme="red"
+                        size="md"
+                        _hover={{
+                          transform: 'scale(1.2)'
+                        }}
+                        onClick={() => {
+                          // TODO: Lógica para dar like
+                        }}
+                        // TODO: Agregar estado para saber si el usuario ya dio like
+                        // colorScheme={userLiked ? 'red' : 'gray'}
+                      />
+                      <Text fontSize="sm" fontWeight="medium" color={textColor}>
+                        {/* TODO: Mostrar contador de likes */}
+                        0
+                      </Text>
+                    </HStack>
                   </HStack>
 
                   {/* URL externa si existe */}
