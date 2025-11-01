@@ -68,6 +68,54 @@ export const getMenuByType = async (menuType = 'main', userRoleId = 3) => {
   }
 }
 
+// Servicio para obtener el menú del dashboard del usuario suscriptor
+export const getUserDashboardMenu = async () => {
+  try {
+    // Obtener token de autenticación
+    const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken')
+    
+    console.log('🔄 Obteniendo menú del dashboard del usuario...')
+    const response = await api.get('/api/menu/user-dashboard', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+    
+    console.log('✅ Respuesta del backend:', response.data)
+    
+    // Adaptar la estructura del backend a nuestro formato
+    if (response.data.success && response.data.data) {
+      const menuData = response.data.data.map(item => ({
+        id: item.id,
+        title: item.title,
+        path: item.path,
+        order_index: item.order_index,
+        is_active: item.is_active,
+        role_id: item.role_id,
+        menu_type: item.menu_type,
+        level: item.level,
+        parent_id: item.parent_id,
+        children: item.children || [],
+        description: item.description || ''
+      }))
+      
+      console.log('🔄 Datos adaptados:', menuData)
+      return menuData
+    }
+    
+    return []
+  } catch (error) {
+    console.error('❌ Error al obtener el menú del dashboard:', error)
+    console.error('📊 Detalles del error:', {
+      message: error.message,
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      url: error.config?.url
+    })
+    throw error
+  }
+}
+
 // Servicio para refrescar menú (útil cuando se actualiza desde dashboard)
 export const refreshMenu = async (userRoleId = 3) => {
   try {
