@@ -128,15 +128,70 @@ const UserLayout = ({ children, title, subtitle }) => {
               return orderA - orderB
             })
           
-          // Mapear los items al formato esperado por el componente
-          const mappedMenuItems = userDashboardItems.map(item => ({
-            id: item.id,
-            icon: getIconByMenu(item.title, item.menu_type),
-            label: item.title,
-            href: item.path || '#',
-            description: item.description || ''
-          }))
+          // Función para mapear paths del backend a rutas del frontend
+          const mapPathToRoute = (path) => {
+            if (!path || path === '#') return '#'
+            
+            // Si ya empieza con /dashboard, retornarlo tal cual
+            if (path.toLowerCase().startsWith('/dashboard')) {
+              return path
+            }
+            
+            // Normalizar el path (remover barra inicial si existe y convertir a minúsculas)
+            const normalizedPath = path.replace(/^\/+/, '').toLowerCase().trim()
+            
+            console.log(`🔍 [UserLayout] Path normalizado: "${normalizedPath}" (original: "${path}")`)
+            
+            // Mapeo de paths conocidos - coincidencias exactas primero
+            const exactMatches = {
+              'podcasts': '/dashboard/user/podcasts',
+              'podcast': '/dashboard/user/podcasts',
+              'noticias': '/dashboard/user/noticias',
+              'noticia': '/dashboard/user/noticias',
+              'news': '/dashboard/user/noticias',
+              'dashboard/user': '/dashboard/user',
+              'user': '/dashboard/user',
+              'home': '/dashboard/user',
+              'home user': '/dashboard/user'
+            }
+            
+            // Buscar coincidencia exacta primero
+            if (exactMatches[normalizedPath]) {
+              console.log(`✅ [UserLayout] Coincidencia exacta encontrada: ${normalizedPath} → ${exactMatches[normalizedPath]}`)
+              return exactMatches[normalizedPath]
+            }
+            
+            // Buscar coincidencia parcial (incluye)
+            for (const [key, route] of Object.entries(exactMatches)) {
+              if (normalizedPath.includes(key) || key.includes(normalizedPath)) {
+                console.log(`✅ [UserLayout] Coincidencia parcial encontrada: ${key} en ${normalizedPath} → ${route}`)
+                return route
+              }
+            }
+            
+            // Si no hay coincidencia, construir la ruta con el prefijo /dashboard/user
+            const finalRoute = `/dashboard/user/${normalizedPath}`
+            console.log(`🔧 [UserLayout] Ruta construida automáticamente: ${finalRoute}`)
+            return finalRoute
+          }
           
+          // Mapear los items al formato esperado por el componente
+          const mappedMenuItems = userDashboardItems.map(item => {
+            const originalPath = item.path || '#'
+            const mappedRoute = mapPathToRoute(originalPath)
+            
+            console.log(`🔗 [UserLayout] Mapeando ruta: "${originalPath}" → "${mappedRoute}"`)
+            
+            return {
+              id: item.id,
+              icon: getIconByMenu(item.title, item.menu_type),
+              label: item.title,
+              href: mappedRoute,
+              description: item.description || ''
+            }
+          })
+          
+          console.log('✅ [UserLayout] Items del menú mapeados:', mappedMenuItems)
           setSubscriberMenuItems(mappedMenuItems)
         } else {
           console.error('❌ [UserLayout] Estructura de respuesta no esperada del API')
