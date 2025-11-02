@@ -50,10 +50,15 @@ import {
   FiMessageSquare,
   FiSend,
   FiUser,
-  FiHeart
+  FiHeart,
+  FiEdit,
+  FiTrash2
 } from 'react-icons/fi'
 import UserLayout from '../../components/layout/UserLayout'
 import axios from 'axios'
+import { useAuth } from '../../hooks/useAuth'
+import { canAdmin } from '../../utils/roleUtils'
+import webSocketService from '../../services/websocketService'
 
 const PodcastsView = () => {
   console.log('🎧 [PodcastsView] Componente renderizado')
@@ -65,6 +70,12 @@ const PodcastsView = () => {
   const textareaBg = useColorModeValue('white', 'gray.800')
   const borderDashedColor = useColorModeValue('gray.300', 'gray.600')
   const toast = useToast()
+  const { auth } = useAuth()
+  
+  // Estados para edición de comentarios
+  const [editingCommentId, setEditingCommentId] = useState(null)
+  const [editCommentText, setEditCommentText] = useState('')
+  const [deletingCommentId, setDeletingCommentId] = useState(null)
 
   // Estados
   const [podcasts, setPodcasts] = useState([])
@@ -76,16 +87,430 @@ const PodcastsView = () => {
   const [selectedPodcast, setSelectedPodcast] = useState(null)
   const { isOpen, onOpen, onClose } = useDisclosure()
   
+  // Estados de comentarios
+  const [comments, setComments] = useState([])
+  const [commentText, setCommentText] = useState('')
+  const [commentCount, setCommentCount] = useState(0)
+  const [loadingComments, setLoadingComments] = useState(false)
+  const [submittingComment, setSubmittingComment] = useState(false)
+  
   // Filtros
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('')
   const [selectedSubcategory, setSelectedSubcategory] = useState('')
   const [viewMode, setViewMode] = useState('grid') // 'grid' o 'list'
   
+  // Efecto para manejar WebSocket cuando se abre el modal
+  useEffect(() => {
+    if (!isOpen || !selectedPodcast?.podcast_id) return
+
+    let cleanup = null
+
+    const setupWebSocket = async () => {
+      try {
+        // Conectar si no está conectado
+        if (!webSocketService.isConnected) {
+          await webSocketService.connect()
+        }
+
+        const podcastId = selectedPodcast.podcast_id
+
+        // Unirse a la sala del podcast
+        webSocketService.joinPodcastRoom(podcastId)
+
+        // Listener para nuevo comentario
+        const handleNewComment = (data) => {
+          console.log('💬 [PodcastsView] Nuevo comentario recibido:', data)
+          
+          // Solo agregar si es del podcast actual
+          if (data.comment && data.comment.podcast_id === podcastId) {
+            // Verificar si el comentario ya existe (evitar duplicados)
+            setComments(prev => {
+              const exists = prev.some(c => 
+                (c.coment_podcast_id || c.id) === (data.comment.coment_podcast_id || data.comment.id)
+              )
+              if (!exists) {
+                return [data.comment, ...prev]
+              }
+              return prev
+            })
+
+            // Actualizar conteo
+            setCommentCount(prev => prev + 1)
+          }
+        }
+
+        // Listener para comentario actualizado
+        const handleCommentUpdated = (data) => {
+          console.log('✏️ [PodcastsView] Comentario actualizado:', data)
+          
+          if (data.comment && data.comment.podcast_id === podcastId) {
+            setComments(prev => 
+              prev.map(comment => 
+                (comment.coment_podcast_id || comment.id) === (data.comment.coment_podcast_id || data.comment.id)
+                  ? data.comment
+                  : comment
+              )
+            )
+          }
+        }
+
+        // Listener para comentario eliminado
+        const handleCommentDeleted = (data) => {
+          console.log('🗑️ [PodcastsView] Comentario eliminado:', data)
+          
+          if (data.podcast_id === podcastId && data.comment_id) {
+            setComments(prev => 
+              prev.filter(comment => 
+                (comment.coment_podcast_id || comment.id) !== data.comment_id
+              )
+            )
+
+            // Actualizar conteo
+            setCommentCount(prev => Math.max(0, prev - 1))
+          }
+        }
+
+        // Listener para actualización de conteo
+        const handleCountUpdated = (data) => {
+          console.log('🔢 [PodcastsView] Conteo actualizado:', data)
+          
+          if (data.podcast_id === podcastId && data.count !== undefined) {
+            setCommentCount(data.count)
+          }
+        }
+
+        // Registrar listeners
+        webSocketService.on('new-podcast-comment', handleNewComment)
+        webSocketService.on('podcast-comment-updated', handleCommentUpdated)
+        webSocketService.on('podcast-comment-deleted', handleCommentDeleted)
+        webSocketService.on('podcast-comment-count-updated', handleCountUpdated)
+
+        // Función de limpieza
+        cleanup = () => {
+          webSocketService.off('new-podcast-comment', handleNewComment)
+          webSocketService.off('podcast-comment-updated', handleCommentUpdated)
+          webSocketService.off('podcast-comment-deleted', handleCommentDeleted)
+          webSocketService.off('podcast-comment-count-updated', handleCountUpdated)
+          webSocketService.leavePodcastRoom(podcastId)
+        }
+      } catch (error) {
+        console.error('❌ [PodcastsView] Error conectando WebSocket:', error)
+        // No mostrar error al usuario, solo log
+      }
+    }
+
+    setupWebSocket()
+
+    // Limpiar al desmontar o cuando cambia el podcast
+    return () => {
+      if (cleanup) {
+        cleanup()
+      }
+    }
+  }, [isOpen, selectedPodcast?.podcast_id])
+
   // Abrir modal de podcast
   const handlePodcastClick = (podcast) => {
     setSelectedPodcast(podcast)
+    setCommentText('') // Limpiar texto del comentario al abrir modal
     onOpen()
+    // Cargar comentarios cuando se abre el modal
+    if (podcast.podcast_id) {
+      fetchComments(podcast.podcast_id)
+      fetchCommentCount(podcast.podcast_id)
+    }
+  }
+  
+  // Cerrar modal y limpiar estados
+  const handleCloseModal = () => {
+    setSelectedPodcast(null)
+    setComments([])
+    setCommentText('')
+    setCommentCount(0)
+    onClose()
+  }
+  
+  // Obtener comentarios de un podcast
+  const fetchComments = useCallback(async (podcastId) => {
+    if (!podcastId) return
+    
+    setLoadingComments(true)
+    try {
+      const response = await axios.get(`/api/coment-podcasts/podcast/${podcastId}`)
+      
+      if (response.data.success && response.data.data) {
+        setComments(Array.isArray(response.data.data) ? response.data.data : [])
+      } else {
+        setComments([])
+      }
+    } catch (error) {
+      console.error('❌ [PodcastsView] Error obteniendo comentarios:', error)
+      setComments([])
+    } finally {
+      setLoadingComments(false)
+    }
+  }, [])
+  
+  // Obtener conteo de comentarios
+  const fetchCommentCount = useCallback(async (podcastId) => {
+    if (!podcastId) return
+    
+    try {
+      const response = await axios.get(`/api/coment-podcasts/podcast/${podcastId}/count`)
+      
+      if (response.data.success && response.data.count !== undefined) {
+        setCommentCount(response.data.count)
+      } else {
+        setCommentCount(0)
+      }
+    } catch (error) {
+      console.error('❌ [PodcastsView] Error obteniendo conteo de comentarios:', error)
+      setCommentCount(0)
+    }
+  }, [])
+  
+  // Crear comentario
+  const handleSubmitComment = useCallback(async () => {
+    if (!selectedPodcast || !selectedPodcast.podcast_id) {
+      toast({
+        title: 'Error',
+        description: 'No hay podcast seleccionado',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      })
+      return
+    }
+    
+    if (!commentText.trim()) {
+      toast({
+        title: 'Error',
+        description: 'El comentario no puede estar vacío',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      })
+      return
+    }
+    
+    setSubmittingComment(true)
+    try {
+      const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken')
+      
+      if (!token) {
+        toast({
+          title: 'Error',
+          description: 'Debes estar autenticado para comentar',
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        })
+        return
+      }
+      
+      const comentData = {
+        podcast_id: selectedPodcast.podcast_id,
+        coment_podcast_text: commentText.trim()
+      }
+      
+      const response = await axios.post('/api/coment-podcasts/create', comentData, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+      
+      if (response.data.success) {
+        toast({
+          title: 'Comentario enviado',
+          description: 'Tu comentario ha sido publicado exitosamente',
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        })
+        
+        // Limpiar formulario
+        setCommentText('')
+        
+        // Recargar comentarios y conteo
+        await fetchComments(selectedPodcast.podcast_id)
+        await fetchCommentCount(selectedPodcast.podcast_id)
+      } else {
+        throw new Error(response.data.message || 'Error al crear el comentario')
+      }
+    } catch (error) {
+      console.error('❌ [PodcastsView] Error creando comentario:', error)
+      toast({
+        title: 'Error',
+        description: error.response?.data?.message || 'No se pudo crear el comentario',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      })
+    } finally {
+      setSubmittingComment(false)
+    }
+  }, [selectedPodcast, commentText, toast, fetchComments, fetchCommentCount])
+  
+  // Limpiar formulario de comentario
+  const handleClearCommentForm = () => {
+    setCommentText('')
+  }
+  
+  // Iniciar edición de comentario
+  const handleStartEdit = (comment) => {
+    setEditingCommentId(comment.coment_podcast_id || comment.id)
+    setEditCommentText(comment.coment_podcast_text || comment.content || '')
+  }
+  
+  // Cancelar edición
+  const handleCancelEdit = () => {
+    setEditingCommentId(null)
+    setEditCommentText('')
+  }
+  
+  // Actualizar comentario
+  const handleUpdateComment = useCallback(async (commentId) => {
+    if (!editCommentText.trim()) {
+      toast({
+        title: 'Error',
+        description: 'El comentario no puede estar vacío',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      })
+      return
+    }
+    
+    try {
+      const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken')
+      
+      if (!token) {
+        toast({
+          title: 'Error',
+          description: 'Debes estar autenticado para editar comentarios',
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        })
+        return
+      }
+      
+      const response = await axios.put(`/api/coment-podcasts/${commentId}`, {
+        coment_podcast_text: editCommentText.trim()
+      }, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+      
+      if (response.data.success) {
+        toast({
+          title: 'Comentario actualizado',
+          description: 'Tu comentario ha sido actualizado exitosamente',
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        })
+        
+        // Cancelar edición
+        handleCancelEdit()
+        
+        // Recargar comentarios
+        if (selectedPodcast?.podcast_id) {
+          await fetchComments(selectedPodcast.podcast_id)
+        }
+      } else {
+        throw new Error(response.data.message || 'Error al actualizar el comentario')
+      }
+    } catch (error) {
+      console.error('❌ [PodcastsView] Error actualizando comentario:', error)
+      toast({
+        title: 'Error',
+        description: error.response?.data?.message || 'No se pudo actualizar el comentario',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      })
+    }
+  }, [editCommentText, toast, selectedPodcast, fetchComments])
+  
+  // Eliminar comentario (autor)
+  const handleDeleteComment = useCallback(async (commentId, isAdminDelete = false) => {
+    try {
+      const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken')
+      
+      if (!token) {
+        toast({
+          title: 'Error',
+          description: 'Debes estar autenticado para eliminar comentarios',
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        })
+        return
+      }
+      
+      const endpoint = isAdminDelete 
+        ? `/api/coment-podcasts/admin/${commentId}`
+        : `/api/coment-podcasts/${commentId}`
+      
+      const response = await axios.delete(endpoint, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+      
+      if (response.data.success) {
+        toast({
+          title: 'Comentario eliminado',
+          description: 'El comentario ha sido eliminado exitosamente',
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        })
+        
+        // Cerrar modal de confirmación si estaba abierto
+        setDeletingCommentId(null)
+        
+        // Recargar comentarios y conteo
+        if (selectedPodcast?.podcast_id) {
+          await fetchComments(selectedPodcast.podcast_id)
+          await fetchCommentCount(selectedPodcast.podcast_id)
+        }
+      } else {
+        throw new Error(response.data.message || 'Error al eliminar el comentario')
+      }
+    } catch (error) {
+      console.error('❌ [PodcastsView] Error eliminando comentario:', error)
+      toast({
+        title: 'Error',
+        description: error.response?.data?.message || 'No se pudo eliminar el comentario',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      })
+      setDeletingCommentId(null)
+    }
+  }, [toast, selectedPodcast, fetchComments, fetchCommentCount])
+  
+  // Verificar si el usuario puede editar/eliminar un comentario
+  const canEditComment = (comment) => {
+    if (!auth) return false
+    // El usuario puede editar si es el autor del comentario
+    return comment.user_id?.toString() === auth.id?.toString() || 
+           comment.user?._id?.toString() === auth.id?.toString()
+  }
+  
+  const canDeleteComment = (comment) => {
+    if (!auth) return false
+    // El usuario puede eliminar si es el autor O si es admin/superAdmin
+    const isOwner = comment.user_id?.toString() === auth.id?.toString() || 
+                    comment.user?._id?.toString() === auth.id?.toString()
+    return isOwner || canAdmin(auth)
   }
 
   // Obtener todos los podcasts
@@ -665,7 +1090,7 @@ const PodcastsView = () => {
         )}
 
         {/* Modal para reproducir podcast */}
-        <Modal isOpen={isOpen} onClose={onClose} size="xl" isCentered>
+        <Modal isOpen={isOpen} onClose={handleCloseModal} size="xl" isCentered>
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>
@@ -792,8 +1217,7 @@ const PodcastsView = () => {
                         <Icon as={FiMessageSquare} color="blue.500" boxSize={5} />
                         <Heading size="md">Comentarios</Heading>
                         <Badge colorScheme="blue" variant="subtle">
-                          {/* TODO: Aquí irá el contador de comentarios */}
-                          0
+                          {commentCount}
                         </Badge>
                       </HStack>
                     </HStack>
@@ -811,18 +1235,17 @@ const PodcastsView = () => {
                               rows={3}
                               bg={textareaBg}
                               resize="none"
-                              // TODO: Agregar estado para el texto del comentario
-                              // value={commentText}
-                              // onChange={(e) => setCommentText(e.target.value)}
+                              value={commentText}
+                              onChange={(e) => setCommentText(e.target.value)}
+                              isDisabled={submittingComment}
                             />
                           </FormControl>
                           <HStack justify="flex-end">
                             <Button
                               size="sm"
                               variant="outline"
-                              onClick={() => {
-                                // TODO: Lógica para cancelar/limpiar el formulario
-                              }}
+                              onClick={handleClearCommentForm}
+                              isDisabled={submittingComment || !commentText.trim()}
                             >
                               Cancelar
                             </Button>
@@ -830,9 +1253,10 @@ const PodcastsView = () => {
                               size="sm"
                               colorScheme="blue"
                               leftIcon={<Icon as={FiSend} />}
-                              onClick={() => {
-                                // TODO: Lógica para enviar comentario
-                              }}
+                              onClick={handleSubmitComment}
+                              isLoading={submittingComment}
+                              loadingText="Enviando..."
+                              isDisabled={!commentText.trim() || submittingComment}
                             >
                               Comentar
                             </Button>
@@ -843,70 +1267,163 @@ const PodcastsView = () => {
 
                     {/* Lista de comentarios */}
                     <VStack spacing={3} align="stretch" maxH="400px" overflowY="auto">
-                      {/* TODO: Reemplazar con comentarios reales del backend */}
-                      {/* {comments.length > 0 ? (
-                        comments.map((comment) => (
-                          <Card key={comment.id} bg={cardBg} boxShadow="sm">
-                            <CardBody>
-                              <VStack align="stretch" spacing={3}>
-                                <HStack spacing={3}>
-                                  <Avatar
-                                    size="sm"
-                                    name={comment.user_name || 'Usuario'}
-                                    bg="blue.500"
-                                    color="white"
-                                  />
-                                  <VStack align="start" spacing={0} flex={1}>
-                                    <HStack spacing={2}>
-                                      <Text fontWeight="medium" fontSize="sm">
-                                        {comment.user_name || 'Usuario Anónimo'}
-                                      </Text>
-                                      {comment.created_at && (
-                                        <Text fontSize="xs" color={textColor}>
-                                          {formatDate(comment.created_at)}
-                                        </Text>
-                                      )}
+                      {loadingComments ? (
+                        <Flex justify="center" align="center" py={8}>
+                          <Spinner size="md" color="blue.500" />
+                        </Flex>
+                      ) : comments.length > 0 ? (
+                        comments.map((comment) => {
+                          const isEditing = editingCommentId === (comment.coment_podcast_id || comment.id)
+                          const canEdit = canEditComment(comment)
+                          const canDelete = canDeleteComment(comment)
+                          
+                          return (
+                            <Card key={comment.coment_podcast_id || comment.id} bg={cardBg} boxShadow="sm">
+                              <CardBody>
+                                <VStack align="stretch" spacing={3}>
+                                  <HStack spacing={3} justify="space-between">
+                                    <HStack spacing={3} flex={1}>
+                                      <Avatar
+                                        size="sm"
+                                        name={comment.user_name || comment.user?.user_name || 'Usuario'}
+                                        bg="blue.500"
+                                        color="white"
+                                      />
+                                      <VStack align="start" spacing={0} flex={1}>
+                                        <HStack spacing={2}>
+                                          <Text fontWeight="medium" fontSize="sm">
+                                            {comment.user_name || comment.user?.user_name || 'Usuario Anónimo'}
+                                          </Text>
+                                          {comment.created_at && (
+                                            <Text fontSize="xs" color={textColor}>
+                                              {formatDate(comment.created_at)}
+                                            </Text>
+                                          )}
+                                        </HStack>
+                                      </VStack>
                                     </HStack>
-                                  </VStack>
-                                </HStack>
-                                <Text fontSize="sm" color={textColor} whiteSpace="pre-wrap">
-                                  {comment.content}
-                                </Text>
-                                <HStack spacing={4}>
-                                  <Button
-                                    size="xs"
-                                    variant="ghost"
-                                    leftIcon={<Icon as={FiMessageSquare} />}
-                                    onClick={() => {
-                                      // TODO: Lógica para responder
-                                    }}
-                                  >
-                                    Responder
-                                  </Button>
-                                </HStack>
-                              </VStack>
-                            </CardBody>
-                          </Card>
-                        ))
-                      ) : ( */}
-                      <Box
-                        textAlign="center"
-                        py={8}
-                        borderWidth="1px"
-                        borderStyle="dashed"
-                        borderRadius="md"
-                        borderColor={borderDashedColor}
-                      >
-                        <Icon as={FiMessageSquare} boxSize={8} color="gray.400" mb={2} />
-                        <Text color={textColor} fontSize="sm">
-                          No hay comentarios aún. ¡Sé el primero en comentar!
-                        </Text>
-                      </Box>
-                      {/* )} */}
+                                    {(canEdit || canDelete) && (
+                                      <HStack spacing={2}>
+                                        {canEdit && (
+                                          <IconButton
+                                            aria-label="Editar comentario"
+                                            icon={<Icon as={FiEdit} />}
+                                            size="xs"
+                                            variant="ghost"
+                                            colorScheme="blue"
+                                            onClick={() => handleStartEdit(comment)}
+                                            isDisabled={isEditing}
+                                          />
+                                        )}
+                                        {canDelete && (
+                                          <IconButton
+                                            aria-label="Eliminar comentario"
+                                            icon={<Icon as={FiTrash2} />}
+                                            size="xs"
+                                            variant="ghost"
+                                            colorScheme="red"
+                                            onClick={() => setDeletingCommentId(comment.coment_podcast_id || comment.id)}
+                                            isDisabled={!!deletingCommentId}
+                                          />
+                                        )}
+                                      </HStack>
+                                    )}
+                                  </HStack>
+                                  
+                                  {isEditing ? (
+                                    <VStack align="stretch" spacing={2}>
+                                      <Textarea
+                                        value={editCommentText}
+                                        onChange={(e) => setEditCommentText(e.target.value)}
+                                        bg={textareaBg}
+                                        rows={3}
+                                        resize="none"
+                                      />
+                                      <HStack justify="flex-end" spacing={2}>
+                                        <Button
+                                          size="xs"
+                                          variant="outline"
+                                          onClick={handleCancelEdit}
+                                        >
+                                          Cancelar
+                                        </Button>
+                                        <Button
+                                          size="xs"
+                                          colorScheme="blue"
+                                          onClick={() => handleUpdateComment(comment.coment_podcast_id || comment.id)}
+                                          isDisabled={!editCommentText.trim()}
+                                        >
+                                          Guardar
+                                        </Button>
+                                      </HStack>
+                                    </VStack>
+                                  ) : (
+                                    <Text fontSize="sm" color={textColor} whiteSpace="pre-wrap">
+                                      {comment.coment_podcast_text || comment.content || 'Sin contenido'}
+                                    </Text>
+                                  )}
+                                </VStack>
+                              </CardBody>
+                            </Card>
+                          )
+                        })
+                      ) : (
+                        <Box
+                          textAlign="center"
+                          py={8}
+                          borderWidth="1px"
+                          borderStyle="dashed"
+                          borderRadius="md"
+                          borderColor={borderDashedColor}
+                        >
+                          <Icon as={FiMessageSquare} boxSize={8} color="gray.400" mb={2} />
+                          <Text color={textColor} fontSize="sm">
+                            No hay comentarios aún. ¡Sé el primero en comentar!
+                          </Text>
+                        </Box>
+                      )}
                     </VStack>
                   </VStack>
                 </VStack>
               )}
+            </ModalBody>
+          </ModalContent>
+        </Modal>
+        
+        {/* Modal de confirmación para eliminar comentario */}
+        <Modal 
+          isOpen={!!deletingCommentId} 
+          onClose={() => setDeletingCommentId(null)}
+          size="md"
+          isCentered
+        >
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Confirmar eliminación</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody pb={6}>
+              <VStack spacing={4} align="stretch">
+                <Text>
+                  ¿Estás seguro de que deseas eliminar este comentario? Esta acción no se puede deshacer.
+                </Text>
+                <HStack justify="flex-end" spacing={2}>
+                  <Button
+                    variant="outline"
+                    onClick={() => setDeletingCommentId(null)}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button
+                    colorScheme="red"
+                    onClick={() => {
+                      const isAdminDelete = canAdmin(auth)
+                      handleDeleteComment(deletingCommentId, isAdminDelete)
+                    }}
+                  >
+                    Eliminar
+                  </Button>
+                </HStack>
+              </VStack>
             </ModalBody>
           </ModalContent>
         </Modal>
