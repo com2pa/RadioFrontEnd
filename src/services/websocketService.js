@@ -86,6 +86,27 @@ class WebSocketService {
       console.log('📞 Nuevo contacto:', data);
       this.emit('new-contact', data);
     });
+
+    // Eventos de comentarios de podcasts
+    this.socket.on('new_podcast_comment', (data) => {
+      console.log('💬 Nuevo comentario de podcast:', data);
+      this.emit('new-podcast-comment', data);
+    });
+
+    this.socket.on('podcast_comment_updated', (data) => {
+      console.log('✏️ Comentario de podcast actualizado:', data);
+      this.emit('podcast-comment-updated', data);
+    });
+
+    this.socket.on('podcast_comment_deleted', (data) => {
+      console.log('🗑️ Comentario de podcast eliminado:', data);
+      this.emit('podcast-comment-deleted', data);
+    });
+
+    this.socket.on('podcast_comment_count_updated', (data) => {
+      console.log('🔢 Conteo de comentarios actualizado:', data);
+      this.emit('podcast-comment-count-updated', data);
+    });
   }
 
   // Unirse como administrador
@@ -99,6 +120,42 @@ class WebSocketService {
     this.isAdmin = true;
     console.log('👤 Unido como administrador');
     this.emit('admin-status', { isAdmin: true });
+    return true;
+  }
+
+  // Unirse a la sala de un podcast específico
+  joinPodcastRoom(podcastId) {
+    if (!this.socket || !this.isConnected) {
+      console.error('❌ No hay conexión WebSocket');
+      return false;
+    }
+
+    this.socket.emit('join-podcast-room', podcastId);
+    console.log(`🎧 Unido a la sala del podcast ${podcastId}`);
+    return true;
+  }
+
+  // Salir de la sala de un podcast específico
+  leavePodcastRoom(podcastId) {
+    if (!this.socket || !this.isConnected) {
+      console.error('❌ No hay conexión WebSocket');
+      return false;
+    }
+
+    this.socket.emit('leave-podcast-room', podcastId);
+    console.log(`👋 Salido de la sala del podcast ${podcastId}`);
+    return true;
+  }
+
+  // Salir de todas las salas de podcasts
+  leaveAllPodcastRooms() {
+    if (!this.socket || !this.isConnected) {
+      console.error('❌ No hay conexión WebSocket');
+      return false;
+    }
+
+    this.socket.emit('leave-all-podcast-rooms');
+    console.log('👋 Salido de todas las salas de podcasts');
     return true;
   }
 
