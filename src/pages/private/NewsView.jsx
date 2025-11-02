@@ -145,7 +145,7 @@ const NewsView = () => {
         console.log(`✅ [NewsView] Noticias por subcategoría: ${newsArray.length}`)
         setFilteredNews(newsArray)
         return
-      } catch (err) {
+      } catch {
         console.log(`⚠️ [NewsView] Endpoint /api/news/subcategory/ no disponible, usando filtro local...`)
       }
       
@@ -290,7 +290,10 @@ const NewsView = () => {
       ? imagePath.split('/').pop() 
       : imagePath
     
-    const finalUrl = `/images/${filename}`
+    // Intentar primero con /images/:filename (si está configurado)
+    // Si no funciona, usar /uploads/news/ como fallback (como en otros componentes)
+    // Se puede cambiar fácilmente a uno u otro según lo que funcione en el backend
+    const finalUrl = `http://localhost:3000/uploads/news/${filename}`
     console.log(`🔗 [NewsView] Construyendo URL: "${imagePath}" → "${finalUrl}"`)
     return finalUrl
   }
@@ -435,7 +438,7 @@ const NewsView = () => {
                           objectFit="cover"
                           w="100%"
                           h="200px"
-                          onError={(e) => {
+                          onError={() => {
                             console.error('❌ [NewsView] Error cargando imagen:', imageUrl)
                             console.error('📰 [NewsView] Datos de la noticia:', newsItem)
                           }}
@@ -530,7 +533,7 @@ const NewsView = () => {
                             w="100%"
                             h="150px"
                             borderRadius="md"
-                            onError={(e) => {
+                            onError={() => {
                               console.error('❌ [NewsView] Error cargando imagen en lista:', imageUrl)
                               console.error('📰 [NewsView] Datos:', newsItem)
                             }}
@@ -622,7 +625,7 @@ const NewsView = () => {
                           w="100%"
                           maxH="400px"
                           objectFit="cover"
-                          onError={(e) => {
+                          onError={() => {
                             console.error('❌ [NewsView] Error cargando imagen en modal:', imageUrl)
                             console.error('📰 [NewsView] Datos completos:', selectedNews)
                           }}
