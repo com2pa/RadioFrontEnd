@@ -13,7 +13,7 @@ import {
   Text,
   Divider
 } from '@chakra-ui/react'
-import { validateField } from '../../utils/validations'
+import { validateField, validateForm } from '../../utils/validations'
 import { registerUser } from '../../services/authService'
 
 const RegisterForm = ({ onSuccess, onError }) => {
@@ -49,7 +49,22 @@ const RegisterForm = ({ onSuccess, onError }) => {
     setIsLoading(true)
 
     try {
-      // Validar todos los campos
+      // Validar todos los campos antes de enviar
+      const validation = validateForm(formData)
+      if (!validation.isValid) {
+        setErrors(validation.errors)
+        toast({
+          title: 'Error de validación',
+          description: 'Por favor corrige los errores en el formulario',
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        })
+        setIsLoading(false)
+        return
+      }
+
+      // Verificar que no haya errores visibles
       const hasErrors = Object.values(errors).some(error => error !== '')
       if (hasErrors) {
         toast({
@@ -59,6 +74,7 @@ const RegisterForm = ({ onSuccess, onError }) => {
           duration: 3000,
           isClosable: true,
         })
+        setIsLoading(false)
         return
       }
 
@@ -88,13 +104,42 @@ const RegisterForm = ({ onSuccess, onError }) => {
       if (onSuccess) onSuccess(response)
       
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Error al registrar usuario'
+      // Obtener mensaje de error más descriptivo
+      let errorMessage = 'Error al registrar usuario'
+      let isTimeout = false
       
+      // Detectar timeout específicamente
+      if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
+        isTimeout = true
+        errorMessage = 'El registro está tardando más de lo esperado. El usuario puede haberse creado correctamente. Por favor intenta iniciar sesión o verifica tu correo electrónico.'
+      } else if (error.message) {
+        errorMessage = error.message
+      } else if (error.response?.data?.message) {
+        errorMessage = error.response.data.message
+      } else if (error.response?.status === 400) {
+        errorMessage = 'Datos inválidos. Por favor verifica que todos los campos estén completos.'
+      } else if (error.response?.status === 409) {
+        errorMessage = 'El correo electrónico ya está registrado'
+      } else if (error.response?.status === 500) {
+        errorMessage = 'Error del servidor. Por favor intenta más tarde.'
+      } else if (error.response?.statusText) {
+        errorMessage = error.response.statusText
+      }
+      
+      console.error('📋 [RegisterForm] Error completo:', {
+        message: error.message,
+        code: error.code,
+        response: error.response?.data,
+        status: error.response?.status,
+        isTimeout
+      })
+      
+      // Si es timeout, mostrar como warning (puede que el usuario se haya creado)
       toast({
-        title: 'Error de registro',
+        title: isTimeout ? 'Tiempo de espera agotado' : 'Error de registro',
         description: errorMessage,
-        status: 'error',
-        duration: 5000,
+        status: isTimeout ? 'warning' : 'error',
+        duration: 7000, // Más tiempo para leer el mensaje
         isClosable: true,
       })
 
