@@ -10,7 +10,11 @@ import CategoriesSection from '../../components/sections/CategoriesSection'
 import StickyRadioPlayer from '../../components/StickyRadioPlayer'
 
 const Home = () => {
-  const bgColor = useColorModeValue('gray.50', 'gray.900')
+  // Colores oficiales de OXÍGENO 88.1FM
+  const brandLightGray = '#CCCCCC' // Gris Claro
+  const brandDarkGray = '#333333' // Gris Oscuro
+  
+  const bgColor = useColorModeValue(brandLightGray + '40', brandDarkGray)
 
   return (
     <PublicLayout>

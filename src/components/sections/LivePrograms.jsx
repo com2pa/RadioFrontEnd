@@ -37,14 +37,21 @@ const float = keyframes`
 `
 
 const glow = keyframes`
-  0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
-  50% { box-shadow: 0 0 30px rgba(59, 130, 246, 0.6); }
+  0%, 100% { box-shadow: 0 0 20px rgba(229, 0, 0, 0.3); }
+  50% { box-shadow: 0 0 30px rgba(229, 0, 0, 0.6); }
 `
 
 const LivePrograms = () => {
-  const cardBg = useColorModeValue('white', 'gray.800')
-  const textColor = useColorModeValue('gray.600', 'gray.300')
-  const accentColor = useColorModeValue('blue.500', 'blue.300')
+  // Colores oficiales de OXÍGENO 88.1FM
+  const brandRed = '#E50000'      // Rojo Vibrante
+  const brandDarkGray = '#333333' // Gris Oscuro
+  const brandWhite = '#FFFFFF'    // Blanco Puro
+  const brandLightGray = '#CCCCCC' // Gris Claro
+  const brandOrange = '#FFA500'   // Naranja Vibrante
+
+  const cardBg = useColorModeValue(brandWhite, brandDarkGray)
+  const textColor = useColorModeValue(brandDarkGray, brandLightGray)
+  const accentColor = brandRed
   const toast = useToast()
 
   // Simular datos de la radio
@@ -107,7 +114,7 @@ const LivePrograms = () => {
   return (
     <Box 
       py={{ base: 12, md: 16, lg: 20 }}
-      bgGradient="linear(to-b, gray.50, white)"
+      bgGradient={`linear(to-b, ${brandLightGray}40, ${brandWhite})`}
       position="relative"
       overflow="hidden"
     >
@@ -118,7 +125,7 @@ const LivePrograms = () => {
         right="5%"
         w="200px"
         h="200px"
-        bgGradient="radial(circle, blue.100, transparent)"
+        bgGradient={`radial(circle, rgba(229, 0, 0, 0.1), transparent)`}
         borderRadius="full"
         opacity={0.3}
         animation={`${float} 6s ease-in-out infinite`}
@@ -129,7 +136,7 @@ const LivePrograms = () => {
         left="5%"
         w="150px"
         h="150px"
-        bgGradient="radial(circle, purple.100, transparent)"
+        bgGradient={`radial(circle, rgba(255, 165, 0, 0.1), transparent)`}
         borderRadius="full"
         opacity={0.3}
         animation={`${float} 8s ease-in-out infinite reverse`}
@@ -145,8 +152,8 @@ const LivePrograms = () => {
               px={{ base: 2, md: 3 }}
               py={{ base: 1, md: 1 }}
               borderRadius="full"
-              bg="red.500"
-              color="white"
+              bg={brandRed}
+              color={brandWhite}
               fontWeight="bold"
             >
               🔴 EN VIVO AHORA
@@ -154,7 +161,7 @@ const LivePrograms = () => {
             <Heading 
               size={{ base: "xl", md: "2xl", lg: "3xl" }}
               fontWeight="black"
-              bgGradient="linear(to-r, blue.600, purple.600)"
+              bgGradient={`linear(to-r, ${brandRed}, ${brandOrange})`}
               bgClip="text"
               lineHeight="shorter"
             >
@@ -197,8 +204,8 @@ const LivePrograms = () => {
                   >
                     <Badge
                       colorScheme="red"
-                      bg="red.500"
-                      color="white"
+                      bg={brandRed}
+                      color={brandWhite}
                       px={2}
                       py={1}
                       borderRadius="full"
@@ -236,11 +243,11 @@ const LivePrograms = () => {
                     align="start"
                     spacing={1}
                   >
-                    <Badge colorScheme="blue" variant="solid" fontSize="xs">
+                    <Badge bg={brandRed} color={brandWhite} variant="solid" fontSize="xs">
                       {show.category}
                     </Badge>
                     <HStack spacing={2}>
-                      <Icon as={FiStar} boxSize={3} color="yellow.400" />
+                      <Icon as={FiStar} boxSize={3} color={brandOrange} />
                       <Text fontSize="xs" color="white" fontWeight="bold">
                         {show.rating}
                       </Text>
@@ -258,7 +265,7 @@ const LivePrograms = () => {
                         Con {show.host}
                       </Text>
                       <HStack spacing={2}>
-                        <Icon as={FiClock} boxSize={{ base: 3, md: 4 }} color="blue.500" />
+                        <Icon as={FiClock} boxSize={{ base: 3, md: 4 }} color={brandRed} />
                         <Text fontSize={{ base: "xs", md: "sm" }} color="gray.600" fontWeight="medium">
                           {show.time}
                         </Text>
@@ -268,13 +275,13 @@ const LivePrograms = () => {
                     <HStack justify="space-between" w="full" align="center" flexWrap="wrap">
                       <VStack align="start" spacing={1}>
                         <HStack spacing={1}>
-                          <Icon as={FiUsers} boxSize={{ base: 3, md: 4 }} color="green.500" />
+                          <Icon as={FiUsers} boxSize={{ base: 3, md: 4 }} color={brandRed} />
                           <Text fontSize={{ base: "xs", md: "sm" }} color="gray.600" fontWeight="medium">
                             {show.listeners} oyentes
                           </Text>
                         </HStack>
                         <HStack spacing={1}>
-                          <Icon as={FiTrendingUp} boxSize={{ base: 3, md: 4 }} color="orange.500" />
+                          <Icon as={FiTrendingUp} boxSize={{ base: 3, md: 4 }} color={brandOrange} />
                           <Text fontSize={{ base: "xs", md: "sm" }} color="gray.600" fontWeight="medium">
                             Trending
                           </Text>
@@ -290,15 +297,15 @@ const LivePrograms = () => {
                     >
                       <Button 
                         size={{ base: "sm", md: "md" }}
-                        colorScheme="blue" 
                         variant="solid"
                         leftIcon={<Icon as={FiVolume2} />}
                         onClick={() => handleListen(show.title)}
-                        bgGradient="linear(to-r, blue.500, blue.600)"
+                        bgGradient={`linear(to-r, ${brandRed}, #C00000)`}
+                        color={brandWhite}
                         _hover={{
-                          bgGradient: 'linear(to-r, blue.600, blue.700)',
+                          bgGradient: `linear(to-r, #C00000, #A00000)`,
                           transform: 'translateY(-2px)',
-                          boxShadow: '0 10px 25px rgba(59, 130, 246, 0.4)'
+                          boxShadow: `0 10px 25px rgba(229, 0, 0, 0.4)`
                         }}
                         flex={1}
                         w={{ base: "full", sm: "auto" }}
@@ -308,15 +315,15 @@ const LivePrograms = () => {
                       </Button>
                       <Button 
                         size={{ base: "sm", md: "md" }}
-                        colorScheme="purple" 
                         variant="solid"
                         leftIcon={<Icon as={FiVideo} />}
                         onClick={() => handleWatch(show.title)}
-                        bgGradient="linear(to-r, purple.500, purple.600)"
+                        bgGradient={`linear(to-r, ${brandOrange}, #FF8C00)`}
+                        color={brandWhite}
                         _hover={{
-                          bgGradient: 'linear(to-r, purple.600, purple.700)',
+                          bgGradient: `linear(to-r, #FF8C00, #FF7700)`,
                           transform: 'translateY(-2px)',
-                          boxShadow: '0 10px 25px rgba(147, 51, 234, 0.4)'
+                          boxShadow: `0 10px 25px rgba(255, 165, 0, 0.4)`
                         }}
                         flex={1}
                         w={{ base: "full", sm: "auto" }}

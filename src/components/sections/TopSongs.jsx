@@ -43,14 +43,21 @@ const pulse = keyframes`
 `
 
 const glow = keyframes`
-  0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
-  50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.6); }
+  0%, 100% { box-shadow: 0 0 20px rgba(229, 0, 0, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(229, 0, 0, 0.6); }
 `
 
 const TopSongs = () => {
-  const cardBg = useColorModeValue('white', 'gray.800')
-  const textColor = useColorModeValue('gray.600', 'gray.300')
-  const accentColor = useColorModeValue('blue.500', 'blue.300')
+  // Colores oficiales de OXÍGENO 88.1FM
+  const brandRed = '#E50000'      // Rojo Vibrante
+  const brandDarkGray = '#333333' // Gris Oscuro
+  const brandWhite = '#FFFFFF'    // Blanco Puro
+  const brandLightGray = '#CCCCCC' // Gris Claro
+  const brandOrange = '#FFA500'   // Naranja Vibrante
+
+  const cardBg = useColorModeValue(brandWhite, brandDarkGray)
+  const textColor = useColorModeValue(brandDarkGray, brandLightGray)
+  const accentColor = brandRed
 
   const topSongs = [
     { 
@@ -98,7 +105,7 @@ const TopSongs = () => {
   return (
     <Box 
       py={{ base: 12, md: 16, lg: 20 }}
-      bgGradient="linear(to-b, white, gray.50)"
+      bgGradient={`linear(to-b, ${brandWhite}, ${brandLightGray}40)`}
       position="relative"
       overflow="hidden"
     >
@@ -109,7 +116,7 @@ const TopSongs = () => {
         right="10%"
         w="250px"
         h="250px"
-        bgGradient="radial(circle, yellow.100, transparent)"
+        bgGradient={`radial(circle, rgba(255, 165, 0, 0.1), transparent)`}
         borderRadius="full"
         opacity={0.4}
         animation={`${float} 12s ease-in-out infinite`}
@@ -120,7 +127,7 @@ const TopSongs = () => {
         left="10%"
         w="200px"
         h="200px"
-        bgGradient="radial(circle, orange.100, transparent)"
+        bgGradient={`radial(circle, rgba(229, 0, 0, 0.1), transparent)`}
         borderRadius="full"
         opacity={0.4}
         animation={`${float} 10s ease-in-out infinite reverse`}
@@ -136,8 +143,8 @@ const TopSongs = () => {
               px={{ base: 3, md: 4 }}
               py={{ base: 1, md: 2 }}
               borderRadius="full"
-              bg="yellow.500"
-              color="black"
+              bg={brandOrange}
+              color={brandWhite}
               fontWeight="bold"
             >
               🎵 TOP HITS
@@ -145,7 +152,7 @@ const TopSongs = () => {
             <Heading 
               size={{ base: "xl", md: "2xl", lg: "3xl" }}
               fontWeight="black"
-              bgGradient="linear(to-r, yellow.600, orange.600, red.600)"
+              bgGradient={`linear(to-r, ${brandRed}, ${brandOrange})`}
               bgClip="text"
               lineHeight="shorter"
             >
@@ -168,12 +175,12 @@ const TopSongs = () => {
             borderRadius={{ base: "2xl", md: "3xl" }}
             overflow="hidden"
             border="2px solid"
-            borderColor="yellow.200"
+            borderColor={brandOrange + '80'}
           >
             <CardHeader 
-              bgGradient="linear(to-r, yellow.50, orange.50)"
+              bgGradient={`linear(to-r, ${brandOrange}20, ${brandRed}20)`}
               borderBottom="2px solid"
-              borderColor="yellow.200"
+              borderColor={brandOrange + '80'}
               p={{ base: 4, md: 6 }}
             >
               <HStack justify="space-between" flexDir={{ base: "column", sm: "row" }} spacing={{ base: 3, sm: 0 }}>
@@ -189,7 +196,7 @@ const TopSongs = () => {
                   <Badge 
                     colorScheme="red" 
                     variant="solid"
-                    bg="red.500"
+                    bg={brandRed}
                     color="white"
                     px={{ base: 2, md: 3 }}
                     py={1}
@@ -216,10 +223,10 @@ const TopSongs = () => {
                     p={{ base: 4, md: 5, lg: 6 }}
                     borderRadius={{ base: "xl", md: "2xl" }}
                     border="2px solid"
-                    borderColor={index < 3 ? "yellow.200" : "gray.200"}
-                    bg={index < 3 ? "yellow.50" : "white"}
+                    borderColor={index < 3 ? brandOrange + '80' : brandLightGray}
+                    bg={index < 3 ? brandOrange + '20' : brandWhite}
                     _hover={{ 
-                      bg: index < 3 ? "yellow.100" : "gray.50",
+                      bg: index < 3 ? brandOrange + '30' : brandLightGray + '40',
                       transform: 'translateX(10px)',
                       transition: 'all 0.3s ease'
                     }}
@@ -234,7 +241,7 @@ const TopSongs = () => {
                         right={-20}
                         w="100px"
                         h="100px"
-                        bgGradient="radial(circle, yellow.200, transparent)"
+                        bgGradient={`radial(circle, ${brandOrange}80, transparent)`}
                         borderRadius="full"
                         opacity={0.3}
                         animation={`${pulse} 3s ease-in-out infinite`}
@@ -255,8 +262,8 @@ const TopSongs = () => {
                           justifyContent="center"
                           fontSize={{ base: "sm", md: "md", lg: "lg" }}
                           fontWeight="black"
-                          bgGradient={index < 3 ? "linear(135deg, yellow.400, orange.400)" : "linear(135deg, gray.400, gray.500)"}
-                          boxShadow={index < 3 ? "0 10px 30px rgba(234, 179, 8, 0.4)" : "0 5px 15px rgba(0,0,0,0.1)"}
+                        bgGradient={index < 3 ? `linear(135deg, ${brandOrange}, #FF8C00)` : `linear(135deg, ${brandDarkGray}, #555555)`}
+                        boxShadow={index < 3 ? `0 10px 30px rgba(255, 165, 0, 0.4)` : "0 5px 15px rgba(0,0,0,0.1)"}
                           animation={index < 3 ? `${pulse} 2s ease-in-out infinite` : 'none'}
                         >
                           {index + 1}
@@ -268,7 +275,7 @@ const TopSongs = () => {
                             right={-2}
                             w="4"
                             h="4"
-                            bg="red.500"
+                            bg={brandRed}
                             borderRadius="full"
                             border="2px solid white"
                             animation={`${glow} 1.5s ease-in-out infinite`}
@@ -293,7 +300,7 @@ const TopSongs = () => {
                             right={-2}
                             w="6"
                             h="6"
-                            bg="red.500"
+                            bg={brandRed}
                             borderRadius="full"
                             border="2px solid white"
                             animation={`${glow} 2s ease-in-out infinite`}
@@ -318,7 +325,7 @@ const TopSongs = () => {
                         </Text>
                         <HStack spacing={{ base: 2, md: 4 }} flexWrap="wrap" justify={{ base: "center", sm: "start" }}>
                           <HStack spacing={1}>
-                            <Icon as={FiStar} boxSize={{ base: 2, md: 3 }} color="yellow.500" />
+                            <Icon as={FiStar} boxSize={{ base: 2, md: 3 }} color={brandOrange} />
                             <Text fontSize={{ base: "xs", md: "sm" }} color="gray.600" fontWeight="medium">
                               {song.rating}
                             </Text>
@@ -335,7 +342,7 @@ const TopSongs = () => {
                       {/* Estadísticas */}
                       <VStack align={{ base: "center", sm: "end" }} spacing={1}>
                         <HStack spacing={1}>
-                          <Icon as={FiVolume2} boxSize={{ base: 3, md: 4 }} color="blue.500" />
+                          <Icon as={FiVolume2} boxSize={{ base: 3, md: 4 }} color={brandRed} />
                           <Text fontSize={{ base: "xs", md: "sm" }} color="gray.600" fontWeight="bold">
                             {song.plays.toLocaleString()}
                           </Text>
@@ -353,7 +360,7 @@ const TopSongs = () => {
                           size={{ base: "xs", md: "sm" }}
                           variant="ghost"
                           colorScheme="red"
-                          _hover={{ bg: 'red.50', color: 'red.500' }}
+                          _hover={{ bg: brandRed + '20', color: brandRed }}
                         />
                         <IconButton
                           aria-label="Compartir"
@@ -361,19 +368,18 @@ const TopSongs = () => {
                           size={{ base: "xs", md: "sm" }}
                           variant="ghost"
                           colorScheme="blue"
-                          _hover={{ bg: 'blue.50', color: 'blue.500' }}
+                          _hover={{ bg: brandRed + '20', color: brandRed }}
                         />
                         <IconButton
                           aria-label="Reproducir"
                           icon={<Icon as={FiPlay} />}
                           size={{ base: "sm", md: "md" }}
-                          colorScheme="blue"
-                          bgGradient="linear(135deg, blue.500, blue.600)"
-                          color="white"
+                          bgGradient={`linear(135deg, ${brandRed}, #C00000)`}
+                          color={brandWhite}
                           _hover={{
-                            bgGradient: 'linear(135deg, blue.600, blue.700)',
+                            bgGradient: `linear(135deg, #C00000, #A00000)`,
                             transform: 'scale(1.1)',
-                            boxShadow: '0 10px 25px rgba(59, 130, 246, 0.4)'
+                            boxShadow: `0 10px 25px rgba(229, 0, 0, 0.4)`
                           }}
                           animation={index < 3 ? `${pulse} 2s ease-in-out infinite` : 'none'}
                         />
@@ -388,9 +394,9 @@ const TopSongs = () => {
                           colorScheme="yellow" 
                           size="sm" 
                           borderRadius="full"
-                          bg="yellow.100"
+                          bg={brandOrange + '20'}
                           _filledTrack={{
-                            bgGradient: 'linear(to-r, yellow.400, orange.400)'
+                            bgGradient: `linear(to-r, ${brandOrange}, #FF8C00)`
                           }}
                         />
                       </Box>

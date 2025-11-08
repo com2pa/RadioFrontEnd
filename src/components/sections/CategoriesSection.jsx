@@ -39,14 +39,21 @@ const pulse = keyframes`
 `
 
 const glow = keyframes`
-  0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
-  50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.6); }
+  0%, 100% { box-shadow: 0 0 20px rgba(229, 0, 0, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(229, 0, 0, 0.6); }
 `
 
 const CategoriesSection = () => {
-  const cardBg = useColorModeValue('white', 'gray.800')
-  const textColor = useColorModeValue('gray.600', 'gray.300')
-  const accentColor = useColorModeValue('blue.500', 'blue.300')
+  // Colores oficiales de OXÍGENO 88.1FM
+  const brandRed = '#E50000'      // Rojo Vibrante
+  const brandDarkGray = '#333333' // Gris Oscuro
+  const brandWhite = '#FFFFFF'    // Blanco Puro
+  const brandLightGray = '#CCCCCC' // Gris Claro
+  const brandOrange = '#FFA500'   // Naranja Vibrante
+
+  const cardBg = useColorModeValue(brandWhite, brandDarkGray)
+  const textColor = useColorModeValue(brandDarkGray, brandLightGray)
+  const accentColor = brandRed
   const toast = useToast()
 
   const categories = [
@@ -55,39 +62,39 @@ const CategoriesSection = () => {
       title: "Programas en Vivo",
       description: "Sintoniza tus programas favoritos con nuestros locutores en directo. Música, noticias y entretenimiento 24/7.",
       icon: FiMic,
-      colorScheme: "purple",
-      gradient: "linear(135deg, purple.500, purple.700, pink.600)",
-      textGradient: "linear(to-r, purple.600, pink.600)",
-      indicatorColor: "green.400",
-      borderColor: "purple.100",
-      hoverBorderColor: "purple.200",
-      shadowColor: "rgba(147, 51, 234, 0.3)"
+      colorScheme: brandRed,
+      gradient: `linear(135deg, ${brandRed}, #C00000)`,
+      textGradient: `linear(to-r, ${brandRed}, #C00000)`,
+      indicatorColor: brandOrange,
+      borderColor: brandRed + '80',
+      hoverBorderColor: brandRed,
+      shadowColor: "rgba(229, 0, 0, 0.3)"
     },
     {
       id: 2,
       title: "Últimas Noticias",
       description: "Mantente informado con los titulares más relevantes del día. Noticias locales, nacionales e internacionales.",
       icon: FiRss,
-      colorScheme: "teal",
-      gradient: "linear(135deg, teal.500, teal.700, cyan.600)",
-      textGradient: "linear(to-r, teal.600, cyan.600)",
-      indicatorColor: "blue.400",
-      borderColor: "teal.100",
-      hoverBorderColor: "teal.200",
-      shadowColor: "rgba(20, 184, 166, 0.3)"
+      colorScheme: brandOrange,
+      gradient: `linear(135deg, ${brandOrange}, #FF8C00)`,
+      textGradient: `linear(to-r, ${brandOrange}, #FF8C00)`,
+      indicatorColor: brandRed,
+      borderColor: brandOrange + '80',
+      hoverBorderColor: brandOrange,
+      shadowColor: "rgba(255, 165, 0, 0.3)"
     },
     {
       id: 3,
       title: "Nuestros Podcasts",
       description: "Explora nuestra biblioteca de podcasts exclusivos y a la carta. Contenido especializado para todos los gustos.",
       icon: FiHeadphones,
-      colorScheme: "orange",
-      gradient: "linear(135deg, orange.500, orange.700, red.600)",
-      textGradient: "linear(to-r, orange.600, red.600)",
-      indicatorColor: "yellow.400",
-      borderColor: "orange.100",
-      hoverBorderColor: "orange.200",
-      shadowColor: "rgba(251, 146, 60, 0.3)"
+      colorScheme: brandRed,
+      gradient: `linear(135deg, ${brandRed}, #C00000)`,
+      textGradient: `linear(to-r, ${brandRed}, #C00000)`,
+      indicatorColor: brandOrange,
+      borderColor: brandRed + '80',
+      hoverBorderColor: brandRed,
+      shadowColor: "rgba(229, 0, 0, 0.3)"
     }
   ]
 
@@ -104,7 +111,7 @@ const CategoriesSection = () => {
   return (
     <Box 
       py={{ base: 12, md: 16, lg: 20 }} 
-      bgGradient="linear(to-b, white, gray.50)"
+      bgGradient={`linear(to-b, ${brandWhite}, ${brandLightGray}40)`}
       position="relative"
       overflow="hidden"
     >
@@ -115,7 +122,7 @@ const CategoriesSection = () => {
         left="10%"
         w="300px"
         h="300px"
-        bgGradient="radial(circle, blue.100, transparent)"
+        bgGradient={`radial(circle, rgba(229, 0, 0, 0.1), transparent)`}
         borderRadius="full"
         opacity={0.4}
         animation={`${float} 10s ease-in-out infinite`}
@@ -126,7 +133,7 @@ const CategoriesSection = () => {
         right="10%"
         w="250px"
         h="250px"
-        bgGradient="radial(circle, purple.100, transparent)"
+        bgGradient={`radial(circle, rgba(255, 165, 0, 0.1), transparent)`}
         borderRadius="full"
         opacity={0.4}
         animation={`${float} 12s ease-in-out infinite reverse`}
@@ -142,8 +149,8 @@ const CategoriesSection = () => {
               px={{ base: 3, md: 4 }}
               py={{ base: 1, md: 2 }}
               borderRadius="full"
-              bg="blue.500"
-              color="white"
+              bg={brandRed}
+              color={brandWhite}
               fontWeight="bold"
             >
               ✨ CATEGORÍAS
@@ -151,7 +158,7 @@ const CategoriesSection = () => {
             <Heading 
               size={{ base: "xl", md: "2xl", lg: "3xl" }}
               fontWeight="black"
-              bgGradient="linear(to-r, blue.600, purple.600, pink.600)"
+              bgGradient={`linear(to-r, ${brandRed}, ${brandOrange})`}
               bgClip="text"
               lineHeight="shorter"
             >
@@ -217,7 +224,7 @@ const CategoriesSection = () => {
                     right={-60}
                     w="120px"
                     h="120px"
-                    bgGradient={`radial(circle, ${category.colorScheme}.300, transparent)`}
+                    bgGradient={`radial(circle, ${category.colorScheme}60, transparent)`}
                     borderRadius="full"
                     opacity={0.2}
                     animation={`${pulse} 3s ease-in-out infinite`}
@@ -228,7 +235,7 @@ const CategoriesSection = () => {
                     left={-40}
                     w="80px"
                     h="80px"
-                    bgGradient={`radial(circle, ${category.colorScheme}.200, transparent)`}
+                    bgGradient={`radial(circle, ${category.colorScheme}40, transparent)`}
                     borderRadius="full"
                     opacity={0.3}
                     animation={`${float} 6s ease-in-out infinite`}
@@ -279,7 +286,7 @@ const CategoriesSection = () => {
                           h="100px"
                           borderRadius="full"
                           border="2px solid"
-                          borderColor={`${category.colorScheme}.300`}
+                          borderColor={`${category.colorScheme}60`}
                           opacity={0.3}
                           animation={`${pulse} 3s ease-in-out infinite`}
                         />
@@ -297,19 +304,19 @@ const CategoriesSection = () => {
                         {/* Estadísticas */}
                         <HStack spacing={{ base: 3, md: 4, lg: 6 }} mt={2} flexWrap="wrap" justify="center">
                           <VStack spacing={1}>
-                            <Icon as={FiStar} boxSize={{ base: 3, md: 4 }} color="yellow.500" />
+                            <Icon as={FiStar} boxSize={{ base: 3, md: 4 }} color={brandOrange} />
                             <Text fontSize={{ base: "xs", md: "sm" }} fontWeight="bold" color="gray.700">
                               4.8
                             </Text>
                           </VStack>
                           <VStack spacing={1}>
-                            <Icon as={FiTrendingUp} boxSize={{ base: 3, md: 4 }} color="green.500" />
+                            <Icon as={FiTrendingUp} boxSize={{ base: 3, md: 4 }} color={brandRed} />
                             <Text fontSize={{ base: "xs", md: "sm" }} fontWeight="bold" color="gray.700">
                               Trending
                             </Text>
                           </VStack>
                           <VStack spacing={1}>
-                            <Icon as={FiZap} boxSize={{ base: 3, md: 4 }} color="orange.500" />
+                            <Icon as={FiZap} boxSize={{ base: 3, md: 4 }} color={brandOrange} />
                             <Text fontSize={{ base: "xs", md: "sm" }} fontWeight="bold" color="gray.700">
                               Live
                             </Text>

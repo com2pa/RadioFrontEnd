@@ -28,10 +28,17 @@ import PageWithFooter from '../../components/layout/PageWithFooter'
 import PublicLayout from '../../components/layout/PublicLayout'
 
 const Cookies = () => {
-  const bgColor = useColorModeValue('gray.50', 'gray.900')
-  const textColor = useColorModeValue('gray.700', 'gray.200')
-  const headingColor = useColorModeValue('gray.800', 'white')
-  const accentColor = useColorModeValue('blue.500', 'blue.300')
+  // Colores oficiales de OXÍGENO 88.1FM
+  const brandRed = '#E50000'      // Rojo Vibrante
+  const brandDarkGray = '#333333' // Gris Oscuro
+  const brandWhite = '#FFFFFF'    // Blanco Puro
+  const brandLightGray = '#CCCCCC' // Gris Claro
+  const brandOrange = '#FFA500'   // Naranja Vibrante
+
+  const bgColor = useColorModeValue(brandLightGray + '40', brandDarkGray)
+  const textColor = useColorModeValue(brandDarkGray, brandLightGray)
+  const headingColor = useColorModeValue(brandDarkGray, brandWhite)
+  const accentColor = brandRed
 
   const cookieTypes = [
     {

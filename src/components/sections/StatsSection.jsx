@@ -36,14 +36,21 @@ const pulse = keyframes`
 `
 
 const glow = keyframes`
-  0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
-  50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.6); }
+  0%, 100% { box-shadow: 0 0 20px rgba(229, 0, 0, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(229, 0, 0, 0.6); }
 `
 
 const StatsSection = () => {
-  const cardBg = useColorModeValue('white', 'gray.800')
-  const textColor = useColorModeValue('gray.600', 'gray.300')
-  const accentColor = useColorModeValue('blue.500', 'blue.300')
+  // Colores oficiales de OXÍGENO 88.1FM
+  const brandRed = '#E50000'      // Rojo Vibrante
+  const brandDarkGray = '#333333' // Gris Oscuro
+  const brandWhite = '#FFFFFF'    // Blanco Puro
+  const brandLightGray = '#CCCCCC' // Gris Claro
+  const brandOrange = '#FFA500'   // Naranja Vibrante
+
+  const cardBg = useColorModeValue(brandWhite, brandDarkGray)
+  const textColor = useColorModeValue(brandDarkGray, brandLightGray)
+  const accentColor = brandRed
   const listeners = 1247
 
   const stats = [
@@ -51,56 +58,56 @@ const StatsSection = () => {
       icon: FiUsers,
       value: listeners.toLocaleString(),
       label: "Oyentes en Vivo",
-      color: "blue.500",
-      gradient: "linear(135deg, blue.500, blue.600)",
-      bgGradient: "linear(135deg, blue.50, blue.100)",
-      borderColor: "blue.200",
-      shadowColor: "rgba(59, 130, 246, 0.3)",
+      color: brandRed,
+      gradient: `linear(135deg, ${brandRed}, #C00000)`,
+      bgGradient: `linear(135deg, rgba(229, 0, 0, 0.1), rgba(229, 0, 0, 0.2))`,
+      borderColor: brandRed + '80',
+      shadowColor: "rgba(229, 0, 0, 0.3)",
       trend: "+12%",
-      trendColor: "green.500"
+      trendColor: brandOrange
     },
     {
       icon: FiRadio,
       value: "24/7",
       label: "Transmisión Continua",
-      color: "green.500",
-      gradient: "linear(135deg, green.500, green.600)",
-      bgGradient: "linear(135deg, green.50, green.100)",
-      borderColor: "green.200",
-      shadowColor: "rgba(34, 197, 94, 0.3)",
+      color: brandOrange,
+      gradient: `linear(135deg, ${brandOrange}, #FF8C00)`,
+      bgGradient: `linear(135deg, rgba(255, 165, 0, 0.1), rgba(255, 165, 0, 0.2))`,
+      borderColor: brandOrange + '80',
+      shadowColor: "rgba(255, 165, 0, 0.3)",
       trend: "Live",
-      trendColor: "red.500"
+      trendColor: brandRed
     },
     {
       icon: FiMusic,
       value: "50+",
       label: "Canciones por Hora",
-      color: "purple.500",
-      gradient: "linear(135deg, purple.500, purple.600)",
-      bgGradient: "linear(135deg, purple.50, purple.100)",
-      borderColor: "purple.200",
-      shadowColor: "rgba(147, 51, 234, 0.3)",
+      color: brandRed,
+      gradient: `linear(135deg, ${brandRed}, #C00000)`,
+      bgGradient: `linear(135deg, rgba(229, 0, 0, 0.1), rgba(229, 0, 0, 0.2))`,
+      borderColor: brandRed + '80',
+      shadowColor: "rgba(229, 0, 0, 0.3)",
       trend: "Hot",
-      trendColor: "orange.500"
+      trendColor: brandOrange
     },
     {
       icon: FiAward,
       value: "15+",
       label: "Años de Experiencia",
-      color: "yellow.500",
-      gradient: "linear(135deg, yellow.500, yellow.600)",
-      bgGradient: "linear(135deg, yellow.50, yellow.100)",
-      borderColor: "yellow.200",
-      shadowColor: "rgba(234, 179, 8, 0.3)",
+      color: brandOrange,
+      gradient: `linear(135deg, ${brandOrange}, #FF8C00)`,
+      bgGradient: `linear(135deg, rgba(255, 165, 0, 0.1), rgba(255, 165, 0, 0.2))`,
+      borderColor: brandOrange + '80',
+      shadowColor: "rgba(255, 165, 0, 0.3)",
       trend: "Pro",
-      trendColor: "blue.500"
+      trendColor: brandRed
     }
   ]
 
   return (
     <Box 
       py={{ base: 12, md: 16, lg: 20 }}
-      bgGradient="linear(to-b, gray.50, white)"
+      bgGradient={`linear(to-b, ${brandLightGray}40, ${brandWhite})`}
       position="relative"
       overflow="hidden"
     >
@@ -111,7 +118,7 @@ const StatsSection = () => {
         left="5%"
         w="200px"
         h="200px"
-        bgGradient="radial(circle, blue.100, transparent)"
+        bgGradient={`radial(circle, rgba(229, 0, 0, 0.1), transparent)`}
         borderRadius="full"
         opacity={0.4}
         animation={`${float} 8s ease-in-out infinite`}
@@ -122,7 +129,7 @@ const StatsSection = () => {
         right="5%"
         w="150px"
         h="150px"
-        bgGradient="radial(circle, purple.100, transparent)"
+        bgGradient={`radial(circle, rgba(255, 165, 0, 0.1), transparent)`}
         borderRadius="full"
         opacity={0.4}
         animation={`${float} 10s ease-in-out infinite reverse`}
@@ -138,8 +145,8 @@ const StatsSection = () => {
               px={{ base: 3, md: 4 }}
               py={{ base: 1, md: 2 }}
               borderRadius="full"
-              bg="blue.500"
-              color="white"
+              bg={brandRed}
+              color={brandWhite}
               fontWeight="bold"
             >
               📊 ESTADÍSTICAS
@@ -147,7 +154,7 @@ const StatsSection = () => {
             <Heading 
               size={{ base: "xl", md: "2xl", lg: "3xl" }}
               fontWeight="black"
-              bgGradient="linear(to-r, blue.600, purple.600)"
+              bgGradient={`linear(to-r, ${brandRed}, ${brandOrange})`}
               bgClip="text"
               lineHeight="shorter"
             >
@@ -191,7 +198,7 @@ const StatsSection = () => {
                   right={-20}
                   w="80px"
                   h="80px"
-                  bgGradient={`radial(circle, ${stat.color.replace('.500', '.200')}, transparent)`}
+                  bgGradient={`radial(circle, ${stat.color}40, transparent)`}
                   borderRadius="full"
                   opacity={0.3}
                   animation={`${pulse} 4s ease-in-out infinite`}

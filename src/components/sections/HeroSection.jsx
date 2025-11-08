@@ -47,13 +47,20 @@ const float = keyframes`
 `
 
 const glow = keyframes`
-  0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
-  50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.8); }
+  0%, 100% { box-shadow: 0 0 20px rgba(229, 0, 0, 0.5); }
+  50% { box-shadow: 0 0 40px rgba(229, 0, 0, 0.8); }
 `
 
 
 
 const HeroSection = () => {
+  // Colores oficiales de OXÍGENO 88.1FM
+  const brandRed = '#E50000'      // Rojo Vibrante
+  const brandDarkGray = '#333333' // Gris Oscuro
+  const brandWhite = '#FFFFFF'    // Blanco Puro
+  const brandLightGray = '#CCCCCC' // Gris Claro
+  const brandOrange = '#FFA500'   // Naranja Vibrante
+
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentSong] = useState({
     title: "Música en Vivo",
@@ -75,21 +82,21 @@ const HeroSection = () => {
       title: "🎵 Música en Vivo 24/7",
       subtitle: "Los mejores hits del momento",
       bgImage: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1920&h=1080&fit=crop&q=80",
-      color: "blue"
+      color: brandRed
     },
     {
       id: 2,
       title: "📻 Noticias Locales",
       subtitle: "Información actualizada de Barquisimeto",
       bgImage: "https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=1920&h=1080&fit=crop&q=80",
-      color: "purple"
+      color: brandOrange
     },
     {
       id: 3,
       title: "🎤 Programas Especiales",
       subtitle: "Entrevistas y eventos exclusivos",
       bgImage: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=1920&h=1080&fit=crop&q=80",
-      color: "pink"
+      color: brandRed
     }
   ]
   
@@ -204,7 +211,7 @@ const HeroSection = () => {
           left="5%"
           w="60px"
           h="60px"
-          bg="rgba(59, 130, 246, 0.2)"
+          bg={`rgba(229, 0, 0, 0.2)`}
           borderRadius="full"
           zIndex={3}
           animation={`${float} 4s ease-in-out infinite`}
@@ -217,7 +224,7 @@ const HeroSection = () => {
           right="10%"
           w="40px"
           h="40px"
-          bg="rgba(236, 72, 153, 0.3)"
+          bg={`rgba(255, 165, 0, 0.3)`}
           borderRadius="full"
           zIndex={3}
           animation={`${float} 3s ease-in-out infinite reverse`}
@@ -230,7 +237,7 @@ const HeroSection = () => {
           left="15%"
           w="80px"
           h="80px"
-          bg="rgba(147, 51, 234, 0.15)"
+          bg={`rgba(229, 0, 0, 0.15)`}
           borderRadius="full"
           zIndex={3}
           animation={`${float} 5s ease-in-out infinite`}
@@ -257,7 +264,7 @@ const HeroSection = () => {
           right="5%"
           w="50px"
           h="50px"
-          bg="rgba(59, 130, 246, 0.1)"
+          bg={`rgba(229, 0, 0, 0.1)`}
           borderRadius="20%"
           zIndex={3}
           animation={`${float} 6s ease-in-out infinite`}
@@ -297,7 +304,7 @@ const HeroSection = () => {
                 left: 0,
                 right: 0,
                 bottom: 0,
-                bg: `linear-gradient(135deg, ${slide.color}.600, ${slide.color}.800)`,
+                bg: slide.color === brandRed ? `linear-gradient(135deg, ${brandRed}, #C00000)` : `linear-gradient(135deg, ${brandOrange}, #FF8C00)`,
                 opacity: 0.2,
                 zIndex: 1
               }}
@@ -346,13 +353,12 @@ const HeroSection = () => {
                   {/* Header con animación */}
                   <VStack spacing={{ base: 4, md: 6 }} animation={`${pulse} 2s ease-in-out infinite`}>
                     <Badge 
-                      colorScheme="yellow" 
+                      bg={brandRed}
+                      color={brandWhite}
                       fontSize={{ base: "sm", md: "md" }}
                       px={{ base: 3, md: 4 }}
                       py={{ base: 1, md: 2 }}
                       borderRadius="full"
-                      bg="yellow.400"
-                      color="black"
                       fontWeight="bold"
                       animation={`${glow} 2s ease-in-out infinite`}
                     >
@@ -361,7 +367,7 @@ const HeroSection = () => {
                     <Heading 
                       size={{ base: "2xl", md: "3xl", lg: "4xl" }}
                       fontWeight="black"
-                      bgGradient="linear(to-r, white, yellow.200, white)"
+                      bgGradient={`linear(to-r, ${brandWhite}, ${brandOrange}, ${brandWhite})`}
                       bgClip="text"
                       textShadow="0 0 30px rgba(255,255,255,0.5)"
                       lineHeight="shorter"
@@ -386,17 +392,17 @@ const HeroSection = () => {
                       justify="center"
                     >
                       <VStack spacing={1}>
-                        <Icon as={FiUsers} boxSize={{ base: 5, md: 6 }} color="yellow.300" />
+                        <Icon as={FiUsers} boxSize={{ base: 5, md: 6 }} color={brandOrange} />
                         <Text fontSize={{ base: "md", md: "lg" }} fontWeight="bold">{listeners.toLocaleString()}</Text>
                         <Text fontSize={{ base: "xs", md: "sm" }} opacity={0.8}>Oyentes</Text>
                       </VStack>
                       <VStack spacing={1}>
-                        <Icon as={FiStar} boxSize={{ base: 5, md: 6 }} color="yellow.300" />
+                        <Icon as={FiStar} boxSize={{ base: 5, md: 6 }} color={brandOrange} />
                         <Text fontSize={{ base: "md", md: "lg" }} fontWeight="bold">4.9</Text>
                         <Text fontSize={{ base: "xs", md: "sm" }} opacity={0.8}>Rating</Text>
                       </VStack>
                       <VStack spacing={1}>
-                        <Icon as={FiTrendingUp} boxSize={{ base: 5, md: 6 }} color="yellow.300" />
+                        <Icon as={FiTrendingUp} boxSize={{ base: 5, md: 6 }} color={brandOrange} />
                         <Text fontSize={{ base: "md", md: "lg" }} fontWeight="bold">#1</Text>
                         <Text fontSize={{ base: "xs", md: "sm" }} opacity={0.8}>En la ciudad</Text>
                       </VStack>
@@ -421,8 +427,8 @@ const HeroSection = () => {
                       border="2px solid white"
                       color="white"
                       _hover={{
-                        bg: 'white',
-                        color: 'blue.600',
+                        bg: brandWhite,
+                        color: brandRed,
                         transform: 'translateY(-3px)',
                         boxShadow: '0 10px 25px rgba(0,0,0,0.2)'
                       }}
@@ -439,12 +445,12 @@ const HeroSection = () => {
                       variant="solid"
                       colorScheme="yellow"
                       size={{ base: "md", md: "lg", lg: "xl" }}
-                      bgGradient="linear(135deg, yellow.400, orange.400)"
-                      color="black"
+                      bgGradient={`linear(135deg, ${brandOrange}, #FF8C00)`}
+                      color={brandWhite}
                       _hover={{
-                        bgGradient: 'linear(135deg, yellow.500, orange.500)',
+                        bgGradient: `linear(135deg, ${brandOrange}, #FF8C00)`,
                         transform: 'translateY(-3px)',
-                        boxShadow: '0 10px 25px rgba(255, 193, 7, 0.4)'
+                        boxShadow: `0 10px 25px rgba(255, 165, 0, 0.4)`
                       }}
                       px={{ base: 6, md: 8 }}
                       py={{ base: 4, md: 6 }}
@@ -536,8 +542,8 @@ const HeroSection = () => {
 
       {/* SECCIÓN HERO ORIGINAL RESTAURADA */}
       <Box
-        bgGradient="linear(135deg, blue.600, purple.600, pink.500)"
-        color="white"
+        bgGradient={`linear(135deg, ${brandRed}, ${brandOrange})`}
+        color={brandWhite}
         py={{ base: 12, md: 16, lg: 24 }}
         position="relative"
         overflow="hidden"
@@ -607,8 +613,8 @@ const HeroSection = () => {
               px={{ base: 3, md: 4 }}
               py={{ base: 1, md: 2 }}
               borderRadius="full"
-              bg="yellow.400"
-              color="black"
+              bg={brandRed}
+              color={brandWhite}
               fontWeight="bold"
               animation={`${glow} 2s ease-in-out infinite`}
             >
@@ -617,7 +623,7 @@ const HeroSection = () => {
             <Heading 
               size={{ base: "2xl", md: "3xl", lg: "4xl" }}
               fontWeight="black"
-              bgGradient="linear(to-r, white, yellow.200, white)"
+              bgGradient={`linear(to-r, ${brandWhite}, ${brandOrange}, ${brandWhite})`}
               bgClip="text"
               textShadow="0 0 30px rgba(255,255,255,0.5)"
               lineHeight="shorter"
@@ -641,17 +647,17 @@ const HeroSection = () => {
               justify="center"
             >
               <VStack spacing={1}>
-                <Icon as={FiUsers} boxSize={{ base: 5, md: 6 }} color="yellow.300" />
+                <Icon as={FiUsers} boxSize={{ base: 5, md: 6 }} color={brandOrange} />
                 <Text fontSize={{ base: "md", md: "lg" }} fontWeight="bold">{listeners.toLocaleString()}</Text>
                 <Text fontSize={{ base: "xs", md: "sm" }} opacity={0.8}>Oyentes</Text>
               </VStack>
               <VStack spacing={1}>
-                <Icon as={FiStar} boxSize={{ base: 5, md: 6 }} color="yellow.300" />
+                <Icon as={FiStar} boxSize={{ base: 5, md: 6 }} color={brandOrange} />
                 <Text fontSize={{ base: "md", md: "lg" }} fontWeight="bold">4.9</Text>
                 <Text fontSize={{ base: "xs", md: "sm" }} opacity={0.8}>Rating</Text>
               </VStack>
               <VStack spacing={1}>
-                <Icon as={FiTrendingUp} boxSize={{ base: 5, md: 6 }} color="yellow.300" />
+                <Icon as={FiTrendingUp} boxSize={{ base: 5, md: 6 }} color={brandOrange} />
                 <Text fontSize={{ base: "md", md: "lg" }} fontWeight="bold">#1</Text>
                 <Text fontSize={{ base: "xs", md: "sm" }} opacity={0.8}>En la ciudad</Text>
               </VStack>
@@ -678,10 +684,10 @@ const HeroSection = () => {
                 <HStack spacing={{ base: 4, md: 6 }} w="full" flexDir={{ base: "column", sm: "row" }}>
                   <Avatar
                     size={{ base: "lg", md: "xl" }}
-                    bgGradient="linear(135deg, blue.500, purple.500, pink.500)"
+                    bgGradient={`linear(135deg, ${brandRed}, ${brandOrange})`}
                     icon={<Icon as={FiRadio} boxSize={{ base: 6, md: 8, lg: 10 }} />}
                     animation={isPlaying ? `${pulse} 1s ease-in-out infinite` : 'none'}
-                    boxShadow="0 10px 30px rgba(59, 130, 246, 0.4)"
+                    boxShadow={`0 10px 30px rgba(229, 0, 0, 0.4)`}
                   />
                   <VStack align={{ base: "center", sm: "start" }} spacing={2} flex={1} textAlign={{ base: "center", sm: "left" }}>
                     <Text fontWeight="bold" fontSize={{ base: "lg", md: "xl" }} color="gray.800">
@@ -712,27 +718,27 @@ const HeroSection = () => {
                     aria-label={isPlaying ? 'Pausar' : 'Reproducir'}
                     icon={<Icon as={isPlaying ? FiPause : FiPlay} />}
                     size={{ base: "lg", md: "xl" }}
-                    colorScheme="blue"
                     onClick={handlePlayPause}
                     borderRadius="full"
-                    bgGradient="linear(135deg, blue.500, purple.500)"
-                    color="white"
+                    bgGradient={`linear(135deg, ${brandRed}, ${brandOrange})`}
+                    color={brandWhite}
                     _hover={{
-                      bgGradient: 'linear(135deg, blue.600, purple.600)',
+                      bgGradient: `linear(135deg, #C00000, #FF8C00)`,
                       transform: 'scale(1.1)',
-                      boxShadow: '0 10px 30px rgba(59, 130, 246, 0.6)'
+                      boxShadow: `0 10px 30px rgba(229, 0, 0, 0.6)`
                     }}
                     animation={isPlaying ? `${pulse} 1.5s ease-in-out infinite` : 'none'}
                   />
                   <VStack spacing={2} flex={1} w="full">
                     <Progress 
                       value={65} 
-                      colorScheme="blue" 
                       size={{ base: "md", md: "lg" }}
                       borderRadius="full"
-                      bg="gray.200"
-                      _filledTrack={{
-                        bgGradient: 'linear(to-r, blue.400, purple.400)'
+                      bg={brandLightGray}
+                      sx={{
+                        '& > div': {
+                          bgGradient: `linear(to-r, ${brandRed}, ${brandOrange})`
+                        }
                       }}
                     />
                     <HStack justify="space-between" w="full" fontSize={{ base: "xs", md: "sm" }} color="gray.600" fontWeight="medium">
@@ -798,12 +804,12 @@ const HeroSection = () => {
               variant="solid"
               colorScheme="yellow"
               size={{ base: "md", md: "lg", lg: "xl" }}
-              bgGradient="linear(135deg, yellow.400, orange.400)"
-              color="black"
+              bgGradient={`linear(135deg, ${brandOrange}, #FF8C00)`}
+              color={brandWhite}
               _hover={{
-                bgGradient: 'linear(135deg, yellow.500, orange.500)',
+                bgGradient: `linear(135deg, ${brandOrange}, #FF8C00)`,
                 transform: 'translateY(-3px)',
-                boxShadow: '0 10px 25px rgba(255, 193, 7, 0.4)'
+                boxShadow: `0 10px 25px rgba(255, 165, 0, 0.4)`
               }}
               px={{ base: 6, md: 8 }}
               py={{ base: 4, md: 6 }}

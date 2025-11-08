@@ -52,14 +52,21 @@ import PageWithFooter from '../../components/layout/PageWithFooter'
 import PublicLayout from '../../components/layout/PublicLayout'
 
 const Objective = () => {
+  // Colores oficiales de OXÍGENO 88.1FM
+  const brandRed = '#E50000'      // Rojo Vibrante
+  const brandDarkGray = '#333333' // Gris Oscuro
+  const brandWhite = '#FFFFFF'    // Blanco Puro
+  const brandLightGray = '#CCCCCC' // Gris Claro
+  const brandOrange = '#FFA500'   // Naranja Vibrante
+
   const bgGradient = useColorModeValue(
-    'linear(to-br, green.50, blue.50, purple.50)',
-    'linear(to-br, green.900, blue.900, purple.900)'
+    `linear(to-br, ${brandWhite}, ${brandLightGray})`,
+    `linear(to-br, ${brandDarkGray}, #1a1a1a)`
   )
-  const cardBg = useColorModeValue('white', 'gray.800')
-  const textColor = useColorModeValue('gray.700', 'gray.200')
-  const headingColor = useColorModeValue('gray.800', 'white')
-  const accentColor = useColorModeValue('green.500', 'green.300')
+  const cardBg = useColorModeValue(brandWhite, brandDarkGray)
+  const textColor = useColorModeValue(brandDarkGray, brandLightGray)
+  const headingColor = useColorModeValue(brandDarkGray, brandWhite)
+  const accentColor = brandOrange
 
   return (
     <PublicLayout>
@@ -74,8 +81,9 @@ const Objective = () => {
         <Container maxW="container.xl">
           <VStack spacing={8} textAlign="center">
             <Badge
-              colorScheme="green"
-              variant="subtle"
+              bg={brandOrange}
+              color={brandWhite}
+              variant="solid"
               px={4}
               py={2}
               borderRadius="full"
@@ -89,7 +97,7 @@ const Objective = () => {
             <Heading
               as="h1"
               size="4xl"
-              bgGradient="linear(to-r, green.600, blue.600, purple.600)"
+              bgGradient={`linear(to-r, ${brandRed}, ${brandOrange})`}
               bgClip="text"
               fontWeight="bold"
               lineHeight="shorter"
@@ -129,7 +137,7 @@ const Objective = () => {
       </Box>
 
       {/* Objetivos Principales Section */}
-      <Box py={20} bg={useColorModeValue('gray.50', 'gray.900')}>
+      <Box py={20} bg={useColorModeValue(brandLightGray + '40', brandDarkGray)}>
         <Container maxW="container.xl">
           <VStack spacing={16}>
             <VStack spacing={4} textAlign="center">
@@ -144,7 +152,7 @@ const Objective = () => {
             <Grid templateColumns={{ base: '1fr', lg: '1fr 1fr' }} gap={8} w="full">
               {/* Objetivo 1: Cobertura */}
               <Card bg={cardBg} shadow="xl" borderRadius="xl" overflow="hidden">
-                <CardHeader bgGradient="linear(to-r, green.500, green.600)" color="white">
+                <CardHeader bgGradient={`linear(to-r, ${brandOrange}, #FF8C00)`} color={brandWhite}>
                   <HStack>
                     <Icon as={FiGlobe} boxSize={6} />
                     <Heading size="lg">Ampliar Cobertura</Heading>
@@ -168,14 +176,14 @@ const Objective = () => {
                         <Text fontSize="sm" fontWeight="medium">Cobertura Actual</Text>
                         <Text fontSize="sm" fontWeight="bold">75%</Text>
                       </HStack>
-                      <Progress value={75} colorScheme="green" size="sm" borderRadius="full" />
+                      <Progress value={75} bg={brandLightGray} colorScheme="orange" size="sm" borderRadius="full" />
                     </Box>
                     <Box>
                       <HStack justify="space-between" mb={1}>
                         <Text fontSize="sm" fontWeight="medium">Meta 2024</Text>
                         <Text fontSize="sm" fontWeight="bold">95%</Text>
                       </HStack>
-                      <Progress value={95} colorScheme="blue" size="sm" borderRadius="full" />
+                      <Progress value={95} bg={brandLightGray} colorScheme="red" size="sm" borderRadius="full" />
                     </Box>
                   </VStack>
                 </CardBody>
@@ -183,7 +191,7 @@ const Objective = () => {
 
               {/* Objetivo 2: Calidad */}
               <Card bg={cardBg} shadow="xl" borderRadius="xl" overflow="hidden">
-                <CardHeader bgGradient="linear(to-r, blue.500, blue.600)" color="white">
+                <CardHeader bgGradient={`linear(to-r, ${brandRed}, #C00000)`} color={brandWhite}>
                   <HStack>
                     <Icon as={FiHeadphones} boxSize={6} />
                     <Heading size="lg">Mejorar Calidad</Heading>
@@ -207,14 +215,14 @@ const Objective = () => {
                         <Text fontSize="sm" fontWeight="medium">Calidad Actual</Text>
                         <Text fontSize="sm" fontWeight="bold">HD</Text>
                       </HStack>
-                      <Progress value={85} colorScheme="blue" size="sm" borderRadius="full" />
+                      <Progress value={85} bg={brandLightGray} colorScheme="red" size="sm" borderRadius="full" />
                     </Box>
                     <Box>
                       <HStack justify="space-between" mb={1}>
                         <Text fontSize="sm" fontWeight="medium">Meta 2024</Text>
                         <Text fontSize="sm" fontWeight="bold">Ultra HD</Text>
                       </HStack>
-                      <Progress value={100} colorScheme="purple" size="sm" borderRadius="full" />
+                      <Progress value={100} bg={brandLightGray} colorScheme="orange" size="sm" borderRadius="full" />
                     </Box>
                   </VStack>
                 </CardBody>
@@ -243,7 +251,7 @@ const Objective = () => {
                   icon: FiUsers,
                   title: 'Comunidad Activa',
                   description: 'Fortalecer la participación de nuestra audiencia en programas interactivos y eventos comunitarios',
-                  color: 'blue',
+                  color: brandRed,
                   progress: 80,
                   target: '100K seguidores'
                 },
@@ -251,7 +259,7 @@ const Objective = () => {
                   icon: FiMusic,
                   title: 'Diversidad Musical',
                   description: 'Ampliar nuestro repertorio para incluir todos los géneros y promover artistas locales',
-                  color: 'purple',
+                  color: brandOrange,
                   progress: 70,
                   target: '50 géneros'
                 },
@@ -259,7 +267,7 @@ const Objective = () => {
                   icon: FiBookOpen,
                   title: 'Educación',
                   description: 'Desarrollar contenido educativo que contribuya al crecimiento personal de nuestros oyentes',
-                  color: 'green',
+                  color: brandRed,
                   progress: 60,
                   target: '20 programas educativos'
                 },
@@ -267,7 +275,7 @@ const Objective = () => {
                   icon: FiShield,
                   title: 'Transparencia',
                   description: 'Mantener los más altos estándares de ética y transparencia en toda nuestra programación',
-                  color: 'orange',
+                  color: brandOrange,
                   progress: 90,
                   target: '100% transparencia'
                 },
@@ -275,7 +283,7 @@ const Objective = () => {
                   icon: FiGift,
                   title: 'Responsabilidad Social',
                   description: 'Incrementar nuestro compromiso con causas sociales y el desarrollo de la comunidad',
-                  color: 'pink',
+                  color: brandRed,
                   progress: 65,
                   target: '12 campañas anuales'
                 },
@@ -283,7 +291,7 @@ const Objective = () => {
                   icon: FiActivity,
                   title: 'Innovación',
                   description: 'Implementar nuevas tecnologías y formatos de programación para mantenernos a la vanguardia',
-                  color: 'teal',
+                  color: brandOrange,
                   progress: 75,
                   target: '5 nuevas tecnologías'
                 }
@@ -305,8 +313,8 @@ const Objective = () => {
                       <Box
                         p={3}
                         borderRadius="full"
-                        bgGradient={`linear(to-r, ${objective.color}.400, ${objective.color}.500)`}
-                        color="white"
+                        bg={objective.color}
+                        color={brandWhite}
                       >
                         <Icon as={objective.icon} boxSize={6} />
                       </Box>
@@ -314,7 +322,7 @@ const Objective = () => {
                         <Heading size="md" color={headingColor}>
                           {objective.title}
                         </Heading>
-                        <Text fontSize="sm" color={objective.color + '.500'} fontWeight="bold">
+                        <Text fontSize="sm" color={objective.color} fontWeight="bold">
                           Meta: {objective.target}
                         </Text>
                       </VStack>
@@ -327,13 +335,18 @@ const Objective = () => {
                     <Box w="full">
                       <HStack justify="space-between" mb={2}>
                         <Text fontSize="xs" color={textColor}>Progreso</Text>
-                        <Text fontSize="xs" fontWeight="bold" color={objective.color + '.500'}>
+                        <Text fontSize="xs" fontWeight="bold" color={objective.color}>
                           {objective.progress}%
                         </Text>
                       </HStack>
                       <Progress 
                         value={objective.progress} 
-                        colorScheme={objective.color} 
+                        bg={brandLightGray}
+                        sx={{
+                          '& > div': {
+                            bg: objective.color
+                          }
+                        }}
                         size="sm" 
                         borderRadius="full"
                       />
@@ -347,7 +360,7 @@ const Objective = () => {
       </Box>
 
       {/* Metas a Largo Plazo Section */}
-      <Box py={20} bg={useColorModeValue('gray.50', 'gray.900')}>
+      <Box py={20} bg={useColorModeValue(brandLightGray + '40', brandDarkGray)}>
         <Container maxW="container.xl">
           <Grid templateColumns={{ base: '1fr', lg: '1fr 1fr' }} gap={12} alignItems="center">
             <VStack spacing={6} align="start">
@@ -381,10 +394,10 @@ const Objective = () => {
             
             <Box position="relative">
               <Box
-                bgGradient="linear(to-br, green.400, blue.500, purple.500)"
+                bgGradient={`linear(to-br, ${brandRed}, ${brandOrange})`}
                 borderRadius="xl"
                 p={8}
-                color="white"
+                color={brandWhite}
                 textAlign="center"
               >
                 <VStack spacing={6}>
@@ -424,7 +437,7 @@ const Objective = () => {
                   title: 'Audiencia',
                   number: '50K+',
                   description: 'Oyentes diarios',
-                  color: 'blue',
+                  color: brandRed,
                   trend: 'up'
                 },
                 {
@@ -432,7 +445,7 @@ const Objective = () => {
                   title: 'Programación',
                   number: '24/7',
                   description: 'Horas de transmisión',
-                  color: 'purple',
+                  color: brandOrange,
                   trend: 'up'
                 },
                 {
@@ -440,7 +453,7 @@ const Objective = () => {
                   title: 'Satisfacción',
                   number: '98%',
                   description: 'Nivel de satisfacción',
-                  color: 'red',
+                  color: brandRed,
                   trend: 'up'
                 },
                 {
@@ -448,7 +461,7 @@ const Objective = () => {
                   title: 'Reconocimientos',
                   number: '15+',
                   description: 'Premios y distinciones',
-                  color: 'yellow',
+                  color: brandOrange,
                   trend: 'up'
                 }
               ].map((stat, index) => (
@@ -469,8 +482,8 @@ const Objective = () => {
                     <Box
                       p={4}
                       borderRadius="full"
-                      bgGradient={`linear(to-r, ${stat.color}.400, ${stat.color}.500)`}
-                      color="white"
+                      bg={stat.color}
+                      color={brandWhite}
                     >
                       <Icon as={stat.icon} boxSize={8} />
                     </Box>
@@ -484,7 +497,7 @@ const Objective = () => {
                       <StatHelpText color={textColor} fontSize="sm">
                         {stat.description}
                       </StatHelpText>
-                      <StatArrow type="increase" color="green.500" />
+                      <StatArrow type="increase" color={brandRed} />
                     </Stat>
                   </VStack>
                 </Card>
@@ -497,8 +510,8 @@ const Objective = () => {
       {/* Call to Action Section */}
       <Box
         py={20}
-        bgGradient="linear(to-r, green.600, blue.600, purple.600)"
-        color="white"
+        bgGradient={`linear(to-r, ${brandRed}, ${brandOrange})`}
+        color={brandWhite}
       >
         <Container maxW="container.xl">
           <VStack spacing={8} textAlign="center">
@@ -515,8 +528,8 @@ const Objective = () => {
                 variant="outline"
                 leftIcon={<Icon as={FiRadio} />}
                 _hover={{
-                  bg: 'white',
-                  color: 'green.600'
+                  bg: brandWhite,
+                  color: brandRed
                 }}
               >
                 Escuchar Ahora

@@ -40,14 +40,21 @@ import PageWithFooter from '../../components/layout/PageWithFooter'
 import PublicLayout from '../../components/layout/PublicLayout'
 
 const About = () => {
+  // Colores oficiales de OXÍGENO 88.1FM
+  const brandRed = '#E50000'      // Rojo Vibrante
+  const brandDarkGray = '#333333' // Gris Oscuro
+  const brandWhite = '#FFFFFF'    // Blanco Puro
+  const brandLightGray = '#CCCCCC' // Gris Claro
+  const brandOrange = '#FFA500'   // Naranja Vibrante
+
   const bgGradient = useColorModeValue(
-    'linear(to-br, blue.50, purple.50, pink.50)',
-    'linear(to-br, blue.900, purple.900, pink.900)'
+    `linear(to-br, ${brandWhite}, ${brandLightGray})`,
+    `linear(to-br, ${brandDarkGray}, #1a1a1a)`
   )
-  const cardBg = useColorModeValue('white', 'gray.800')
-  const textColor = useColorModeValue('gray.700', 'gray.200')
-  const headingColor = useColorModeValue('gray.800', 'white')
-  const accentColor = useColorModeValue('blue.500', 'blue.300')
+  const cardBg = useColorModeValue(brandWhite, brandDarkGray)
+  const textColor = useColorModeValue(brandDarkGray, brandLightGray)
+  const headingColor = useColorModeValue(brandDarkGray, brandWhite)
+  const accentColor = brandRed
 
   return (
     <PublicLayout>
@@ -62,8 +69,9 @@ const About = () => {
         <Container maxW="container.xl">
           <VStack spacing={8} textAlign="center">
             <Badge
-              colorScheme="blue"
-              variant="subtle"
+              bg={brandRed}
+              color={brandWhite}
+              variant="solid"
               px={4}
               py={2}
               borderRadius="full"
@@ -77,7 +85,7 @@ const About = () => {
             <Heading
               as="h1"
               size="4xl"
-              bgGradient="linear(to-r, blue.600, purple.600, pink.600)"
+              bgGradient={`linear(to-r, ${brandRed}, ${brandOrange})`}
               bgClip="text"
               fontWeight="bold"
               lineHeight="shorter"
@@ -117,7 +125,7 @@ const About = () => {
       </Box>
 
       {/* Misión y Visión Section */}
-      <Box py={20} bg={useColorModeValue('gray.50', 'gray.900')}>
+      <Box py={20} bg={useColorModeValue(brandLightGray + '40', brandDarkGray)}>
         <Container maxW="container.xl">
           <VStack spacing={16}>
             <VStack spacing={4} textAlign="center">
@@ -132,7 +140,7 @@ const About = () => {
             <Grid templateColumns={{ base: '1fr', lg: '1fr 1fr' }} gap={8} w="full">
               {/* Misión */}
               <Card bg={cardBg} shadow="xl" borderRadius="xl" overflow="hidden">
-                <CardHeader bgGradient="linear(to-r, blue.500, blue.600)" color="white">
+                <CardHeader bgGradient={`linear(to-r, ${brandRed}, #C00000)`} color={brandWhite}>
                   <HStack>
                     <Icon as={FiHeart} boxSize={6} />
                     <Heading size="lg">Nuestra Misión</Heading>
@@ -156,7 +164,7 @@ const About = () => {
 
               {/* Visión */}
               <Card bg={cardBg} shadow="xl" borderRadius="xl" overflow="hidden">
-                <CardHeader bgGradient="linear(to-r, purple.500, purple.600)" color="white">
+                <CardHeader bgGradient={`linear(to-r, ${brandOrange}, #FF8C00)`} color={brandWhite}>
                   <HStack>
                     <Icon as={FiAward} boxSize={6} />
                     <Heading size="lg">Nuestra Visión</Heading>
@@ -201,25 +209,25 @@ const About = () => {
                   icon: FiHeart,
                   title: 'Pasión',
                   description: 'Amamos lo que hacemos y lo transmitimos en cada programa',
-                  color: 'red'
+                  color: brandRed
                 },
                 {
                   icon: FiUsers,
                   title: 'Comunidad',
                   description: 'Construimos lazos que unen a toda Barquisimeto',
-                  color: 'blue'
+                  color: brandOrange
                 },
                 {
                   icon: FiStar,
                   title: 'Calidad',
                   description: 'Excelencia en sonido, contenido y servicio',
-                  color: 'yellow'
+                  color: brandDarkGray
                 },
                 {
                   icon: FiTrendingUp,
                   title: 'Innovación',
                   description: 'Siempre buscamos nuevas formas de conectar',
-                  color: 'green'
+                  color: brandRed
                 }
               ].map((value, index) => (
                 <Card
@@ -239,8 +247,8 @@ const About = () => {
                     <Box
                       p={4}
                       borderRadius="full"
-                      bgGradient={`linear(to-r, ${value.color}.400, ${value.color}.500)`}
-                      color="white"
+                      bg={value.color}
+                      color={brandWhite}
                     >
                       <Icon as={value.icon} boxSize={8} />
                     </Box>
@@ -259,7 +267,7 @@ const About = () => {
       </Box>
 
       {/* Historia Section */}
-      <Box py={20} bg={useColorModeValue('gray.50', 'gray.900')}>
+      <Box py={20} bg={useColorModeValue(brandLightGray + '40', brandDarkGray)}>
         <Container maxW="container.xl">
           <Grid templateColumns={{ base: '1fr', lg: '1fr 1fr' }} gap={12} alignItems="center">
             <VStack spacing={6} align="start">
@@ -295,10 +303,10 @@ const About = () => {
             
             <Box position="relative">
               <Box
-                bgGradient="linear(to-br, blue.400, purple.500, pink.500)"
+                bgGradient={`linear(to-br, ${brandRed}, ${brandOrange})`}
                 borderRadius="xl"
                 p={8}
-                color="white"
+                color={brandWhite}
                 textAlign="center"
               >
                 <VStack spacing={6}>
@@ -337,19 +345,19 @@ const About = () => {
                   icon: FiHeadphones,
                   title: 'Sonido HD',
                   description: 'Transmisión en alta definición para la mejor experiencia auditiva',
-                  color: 'blue'
+                  color: brandRed
                 },
                 {
                   icon: FiGlobe,
                   title: 'Cobertura Regional',
                   description: 'Llegamos a toda Barquisimeto y municipios aledaños',
-                  color: 'green'
+                  color: brandOrange
                 },
                 {
                   icon: FiMusic,
                   title: 'Streaming Online',
                   description: 'Escúchanos desde cualquier parte del mundo',
-                  color: 'purple'
+                  color: brandRed
                 }
               ].map((tech, index) => (
                 <Card
@@ -369,8 +377,8 @@ const About = () => {
                     <Box
                       p={4}
                       borderRadius="full"
-                      bgGradient={`linear(to-r, ${tech.color}.400, ${tech.color}.500)`}
-                      color="white"
+                      bg={tech.color}
+                      color={brandWhite}
                     >
                       <Icon as={tech.icon} boxSize={8} />
                     </Box>
@@ -391,8 +399,8 @@ const About = () => {
       {/* Call to Action Section */}
       <Box
         py={20}
-        bgGradient="linear(to-r, blue.600, purple.600, pink.600)"
-        color="white"
+        bgGradient={`linear(to-r, ${brandRed}, ${brandOrange})`}
+        color={brandWhite}
       >
         <Container maxW="container.xl">
           <VStack spacing={8} textAlign="center">
@@ -409,8 +417,8 @@ const About = () => {
                 variant="outline"
                 leftIcon={<Icon as={FiRadio} />}
                 _hover={{
-                  bg: 'white',
-                  color: 'blue.600'
+                  bg: brandWhite,
+                  color: brandRed
                 }}
               >
                 Escuchar Ahora

@@ -22,7 +22,14 @@ import PageWithFooter from '../../components/layout/PageWithFooter'
 import { validateField } from '../../utils/validations'
 
 const Contact = () => {
-  const bgColor = useColorModeValue('gray.50', 'gray.900')
+  // Colores oficiales de OXÍGENO 88.1FM
+  const brandRed = '#E50000'      // Rojo Vibrante
+  const brandDarkGray = '#333333' // Gris Oscuro
+  const brandWhite = '#FFFFFF'    // Blanco Puro
+  const brandLightGray = '#CCCCCC' // Gris Claro
+  const brandOrange = '#FFA500'   // Naranja Vibrante
+
+  const bgColor = useColorModeValue(brandLightGray + '40', brandDarkGray)
   const toast = useToast()
 
   // Estados del formulario
@@ -167,7 +174,7 @@ const Contact = () => {
 
     return (
       <FormControl isInvalid={hasError} isRequired>
-        <FormLabel fontSize="sm" fontWeight="medium" color="gray.700">
+        <FormLabel fontSize="sm" fontWeight="medium" color={brandDarkGray}>
           {label}
         </FormLabel>
         <Input
@@ -175,22 +182,22 @@ const Contact = () => {
           value={formData[field]}
           onChange={(e) => handleChange(field, e.target.value)}
           placeholder={placeholder}
-          borderColor={isValid ? 'green.400' : hasError ? 'red.400' : 'gray.300'}
-          _hover={{ borderColor: isValid ? 'green.500' : hasError ? 'red.500' : 'gray.400' }}
+          borderColor={isValid ? brandOrange : hasError ? brandRed : brandLightGray}
+          _hover={{ borderColor: isValid ? brandOrange : hasError ? brandRed : brandDarkGray }}
           _focus={{
-            borderColor: isValid ? 'green.500' : hasError ? 'red.500' : 'blue.500',
-            boxShadow: isValid ? '0 0 0 1px #48BB78' : hasError ? '0 0 0 1px #F56565' : '0 0 0 1px #3182CE'
+            borderColor: isValid ? brandOrange : hasError ? brandRed : brandRed,
+            boxShadow: isValid ? `0 0 0 1px ${brandOrange}` : hasError ? `0 0 0 1px ${brandRed}` : `0 0 0 1px ${brandRed}`
           }}
-          bg="white"
+          bg={brandWhite}
           size="md"
         />
         {hasError && (
-          <FormHelperText color="red.500" fontSize="xs">
+          <FormHelperText color={brandRed} fontSize="xs">
             {errors[field]}
           </FormHelperText>
         )}
         {isValid && (
-          <FormHelperText color="green.500" fontSize="xs">
+          <FormHelperText color={brandOrange} fontSize="xs">
             ✓ Campo válido
           </FormHelperText>
         )}
@@ -205,7 +212,7 @@ const Contact = () => {
 
     return (
       <FormControl isInvalid={hasError} isRequired>
-        <FormLabel fontSize="sm" fontWeight="medium" color="gray.700">
+        <FormLabel fontSize="sm" fontWeight="medium" color={brandDarkGray}>
           {label}
         </FormLabel>
         <Textarea
@@ -214,22 +221,22 @@ const Contact = () => {
           placeholder={placeholder}
           rows={6}
           resize="vertical"
-          borderColor={isValid ? 'green.400' : hasError ? 'red.400' : 'gray.300'}
-          _hover={{ borderColor: isValid ? 'green.500' : hasError ? 'red.500' : 'gray.400' }}
+          borderColor={isValid ? brandOrange : hasError ? brandRed : brandLightGray}
+          _hover={{ borderColor: isValid ? brandOrange : hasError ? brandRed : brandDarkGray }}
           _focus={{
-            borderColor: isValid ? 'green.500' : hasError ? 'red.500' : 'blue.500',
-            boxShadow: isValid ? '0 0 0 1px #48BB78' : hasError ? '0 0 0 1px #F56565' : '0 0 0 1px #3182CE'
+            borderColor: isValid ? brandOrange : hasError ? brandRed : brandRed,
+            boxShadow: isValid ? `0 0 0 1px ${brandOrange}` : hasError ? `0 0 0 1px ${brandRed}` : `0 0 0 1px ${brandRed}`
           }}
-          bg="white"
+          bg={brandWhite}
           size="md"
         />
         {hasError && (
-          <FormHelperText color="red.500" fontSize="xs">
+          <FormHelperText color={brandRed} fontSize="xs">
             {errors[field]}
           </FormHelperText>
         )}
         {isValid && (
-          <FormHelperText color="green.500" fontSize="xs">
+          <FormHelperText color={brandOrange} fontSize="xs">
             ✓ Campo válido
           </FormHelperText>
         )}
@@ -245,7 +252,7 @@ const Contact = () => {
             <VStack spacing={8} align="center">
               {/* Header */}
               <VStack spacing={4} textAlign="center">
-                <Text fontSize="4xl" fontWeight="bold" color="blue.600">
+                <Text fontSize="4xl" fontWeight="bold" color={brandRed}>
                   OXÍ Radio
                 </Text>
                 <Text fontSize="lg" color="gray.600" maxW="md">
@@ -295,13 +302,14 @@ const Contact = () => {
                     {/* Botón de envío */}
                     <Button
                       type="submit"
-                      colorScheme="blue"
+                      bg={brandRed}
+                      color={brandWhite}
                       size="lg"
                       isLoading={isLoading}
                       loadingText="Enviando..."
                       spinner={<Spinner size="sm" />}
                       isDisabled={Object.values(errors).some(error => error !== '')}
-                      _hover={{ transform: 'translateY(-1px)', boxShadow: 'lg' }}
+                      _hover={{ transform: 'translateY(-1px)', boxShadow: 'lg', bg: '#C00000' }}
                       transition="all 0.2s"
                       leftIcon={<FiSend />}
                     >
