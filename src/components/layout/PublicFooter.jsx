@@ -84,15 +84,22 @@ const PublicFooter = ({
   showSocialMedia = true,
   showContactInfo = true,
   logo,
-  logoText = 'Radio FM',
+  logoText = 'OXÍ Radio 88.1 FM',
   ...props
 }) => {
-  const footerBg = useColorModeValue('gray.900', 'gray.800')
-  const textColor = useColorModeValue('gray.300', 'gray.400')
-  const headingColor = useColorModeValue('white', 'gray.100')
-  const linkColor = useColorModeValue('gray.300', 'gray.400')
-  const linkHoverColor = useColorModeValue('white', 'gray.100')
-  const dividerColor = useColorModeValue('gray.700', 'gray.600')
+  // Colores oficiales de OXÍGENO 88.1FM
+  const brandRed = '#E50000'      // Rojo Vibrante
+  const brandDarkGray = '#333333' // Gris Oscuro
+  const brandWhite = '#FFFFFF'    // Blanco Puro
+  const brandLightGray = '#CCCCCC' // Gris Claro
+  const brandOrange = '#FFA500'   // Naranja Vibrante
+
+  const footerBg = useColorModeValue(brandDarkGray, '#1a1a1a')
+  const textColor = useColorModeValue(brandLightGray, brandLightGray)
+  const headingColor = useColorModeValue(brandWhite, brandWhite)
+  const linkColor = useColorModeValue(brandLightGray, brandLightGray)
+  const linkHoverColor = useColorModeValue(brandOrange, brandOrange)
+  const dividerColor = useColorModeValue('#555555', '#444444')
 
   const currentYear = new Date().getFullYear()
 
@@ -119,23 +126,13 @@ const PublicFooter = ({
             <GridItem>
               <VStack align="start" spacing={4}>
                 <HStack spacing={3}>
-                  {logo ? (
-                    <Image 
-                      src={logo} 
-                      alt={companyInfo.name}
-                      boxSize="40px"
-                      objectFit="contain"
-                    />
-                  ) : (
-                    <Icon as={FiRadio} boxSize={8} color="blue.400" />
-                  )}
-                  <Text 
-                    fontSize="xl" 
-                    fontWeight="bold" 
-                    color={headingColor}
-                  >
-                    {logoText}
-                  </Text>
+                  <Image 
+                    src={logo || "/logo.png"} 
+                    alt={companyInfo.name || "OXÍGENO 88.1 FM TE MUEVE"}
+                    height="50px"
+                    objectFit="contain"
+                    loading="eager"
+                  />
                 </HStack>
                 
                 <Text fontSize="sm" lineHeight="1.6">
@@ -314,7 +311,7 @@ const PublicFooter = ({
                     <Text fontSize="sm">
                       Suscríbete para recibir las últimas noticias y programas
                     </Text>
-                    <Badge colorScheme="blue" variant="subtle">
+                    <Badge bg={brandRed} color={brandWhite} variant="solid">
                       Próximamente
                     </Badge>
                   </VStack>
@@ -369,7 +366,7 @@ const PublicFooter = ({
                   <Text fontSize="xs" color={textColor}>
                     Hecho con
                   </Text>
-                  <Icon as={FiHeart} color="red.400" boxSize={3} />
+                  <Icon as={FiHeart} color={brandRed} boxSize={3} />
                   <Text fontSize="xs" color={textColor}>
                     para la comunidad
                   </Text>

@@ -25,7 +25,8 @@ import {
   MenuDivider,
   Avatar,
   useBreakpointValue,
-  Spinner
+  Spinner,
+  Image
 } from '@chakra-ui/react'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import { 
@@ -80,11 +81,18 @@ const PublicMenu = () => {
   const [menuItems, setMenuItems] = useState([])
   const [loading, setLoading] = useState(true)
   
-  const bgColor = useColorModeValue('white', 'gray.800')
-  const borderColor = useColorModeValue('gray.200', 'gray.700')
-  const textColor = useColorModeValue('gray.700', 'gray.200')
-  const logoColor = useColorModeValue('blue.600', 'blue.300')
-  const hoverColor = useColorModeValue('blue.500', 'blue.300')
+  // Colores oficiales de OXÍGENO 88.1FM
+  const brandRed = '#E50000'      // Rojo Vibrante
+  const brandDarkGray = '#333333' // Gris Oscuro
+  const brandWhite = '#FFFFFF'    // Blanco Puro
+  const brandLightGray = '#CCCCCC' // Gris Claro
+  const brandOrange = '#FFA500'   // Naranja Vibrante
+
+  const bgColor = useColorModeValue(brandWhite, brandDarkGray)
+  const borderColor = useColorModeValue(brandLightGray, '#555555')
+  const textColor = useColorModeValue(brandDarkGray, brandLightGray)
+  const logoColor = brandRed
+  const hoverColor = brandRed
 
   const handleLogin = () => {
     navigate('/login')
@@ -164,51 +172,15 @@ const PublicMenu = () => {
         <Container maxW="container.xl" px={isTablet ? 4 : 6}>
           <HStack justify="space-between" py={isTablet ? 3 : 4}>
             {/* Logo */}
-            <ChakraLink as={RouterLink} to="/" _hover={{ textDecoration: 'none' }}>
+            <ChakraLink as={RouterLink} to="/" _hover={{ textDecoration: 'none', opacity: 0.8 }} transition="opacity 0.2s">
               <HStack spacing={isSmallMobile ? 2 : isTablet ? 2.5 : 3}>
-                <Box
-                  p={isSmallMobile ? 1.5 : isTablet ? 1.5 : 2}
-                  borderRadius="lg"
-                  bgGradient="linear(to-r, blue.500, purple.500)"
-                  color="white"
-                >
-                  <Icon as={FiRadio} boxSize={isSmallMobile ? 5 : isTablet ? 5 : 6} />
-                </Box>
-                {!isSmallMobile && (
-                <VStack align="start" spacing={0}>
-                  <Text
-                      fontSize={isTablet ? "lg" : "xl"}
-                    fontWeight="bold"
-                    color={logoColor}
-                    lineHeight="shorter"
-                  >
-                    OXÍ Radio
-                  </Text>
-                    <Text 
-                      fontSize="xs" 
-                      color={textColor} 
-                      fontWeight="medium"
-                      display={isTablet ? "none" : "block"}
-                    >
-                    88.1 FM Barquisimeto
-                  </Text>
-                </VStack>
-                )}
-                {isSmallMobile && (
-                  <VStack align="start" spacing={0}>
-                    <Text
-                      fontSize="lg"
-                      fontWeight="bold"
-                      color={logoColor}
-                      lineHeight="shorter"
-                    >
-                      OXÍ
-                    </Text>
-                    <Text fontSize="xs" color={textColor} fontWeight="medium">
-                      88.1 FM
-                    </Text>
-                  </VStack>
-                )}
+                <Image
+                  src="/logo.png"
+                  alt="OXÍGENO 88.1 FM TE MUEVE"
+                  height={isSmallMobile ? "40px" : isTablet ? "45px" : "50px"}
+                  objectFit="contain"
+                  loading="eager"
+                />
               </HStack>
             </ChakraLink>
 
@@ -227,7 +199,7 @@ const PublicMenu = () => {
                       fontWeight="medium"
                       fontSize={isTablet ? "sm" : "md"}
                       _hover={{ 
-                        color: hoverColor,
+                        color: brandRed,
                         textDecoration: 'none'
                       }}
                       transition="color 0.2s"
@@ -247,13 +219,14 @@ const PublicMenu = () => {
                   {/* Botón de Escuchar */}
                   <Button
                     size={isTablet ? "xs" : "sm"}
-                    colorScheme="blue"
                     variant="outline"
                     leftIcon={<Icon as={FiVolume2} />}
+                    borderColor={brandRed}
+                    color={brandRed}
                     _hover={{
-                      bg: 'blue.500',
-                      color: 'white',
-                      borderColor: 'blue.500'
+                      bg: brandRed,
+                      color: brandWhite,
+                      borderColor: brandRed
                     }}
                   >
                     {isTablet ? "Escuchar" : "Escuchar"}
@@ -268,8 +241,8 @@ const PublicMenu = () => {
                         leftIcon={<Icon as={FiLogIn} />}
                         onClick={handleLogin}
                         _hover={{
-                          bg: 'white',
-                          color: 'blue.500'
+                          bg: brandRed + '10',
+                          color: brandRed
                         }}
                         fontSize={isTablet ? "xs" : "sm"}
                       >
@@ -277,10 +250,16 @@ const PublicMenu = () => {
                       </Button>
                       <Button
                         size={isTablet ? "xs" : "sm"}
-                        colorScheme="blue"
+                        bg={brandRed}
+                        color={brandWhite}
                         leftIcon={<Icon as={FiUserPlus} />}
                         onClick={handleRegister}
                         fontSize={isTablet ? "xs" : "sm"}
+                        _hover={{
+                          bg: '#C00000',
+                          transform: 'translateY(-1px)',
+                          boxShadow: 'md'
+                        }}
                       >
                         {isTablet ? "Registro" : "Registrarse"}
                       </Button>
@@ -296,8 +275,8 @@ const PublicMenu = () => {
                         leftIcon={<Avatar size="xs" name={user.name} />}
                         size={isTablet ? "xs" : "sm"}
                         _hover={{
-                          bg: 'white',
-                          color: 'blue.500'
+                          bg: brandRed + '10',
+                          color: brandRed
                         }}
                         fontSize={isTablet ? "xs" : "sm"}
                       >
@@ -342,10 +321,12 @@ const PublicMenu = () => {
           <DrawerCloseButton />
           <DrawerHeader borderBottomWidth="1px">
             <HStack>
-              <Icon as={FiRadio} color={logoColor} />
-              <Text color={logoColor} fontWeight="bold">
-                OXÍ Radio
-              </Text>
+              <Image
+                src="/logo.png"
+                alt="OXÍGENO 88.1 FM TE MUEVE"
+                height="40px"
+                objectFit="contain"
+              />
             </HStack>
           </DrawerHeader>
           
@@ -353,14 +334,15 @@ const PublicMenu = () => {
             <VStack align="stretch" spacing={2} pt={4}>
               {/* Botón de Escuchar - Siempre visible en el menú móvil */}
               <Button
-                colorScheme="blue"
                 variant="outline"
                 leftIcon={<Icon as={FiVolume2} />}
                 onClick={onClose}
+                borderColor={brandRed}
+                color={brandRed}
                 _hover={{
-                  bg: 'blue.500',
-                  color: 'white',
-                  borderColor: 'blue.500'
+                  bg: brandRed,
+                  color: brandWhite,
+                  borderColor: brandRed
                 }}
               >
                 Escuchar Radio
@@ -443,9 +425,13 @@ const PublicMenu = () => {
                     </Button>
                     <Button
                       justifyContent="start"
-                      colorScheme="blue"
+                      bg={brandRed}
+                      color={brandWhite}
                       leftIcon={<Icon as={FiUserPlus} />}
                       onClick={handleRegister}
+                      _hover={{
+                        bg: '#C00000'
+                      }}
                     >
                       Registrarse
                     </Button>
