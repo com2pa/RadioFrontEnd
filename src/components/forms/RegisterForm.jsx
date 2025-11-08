@@ -17,6 +17,13 @@ import { validateField, validateForm } from '../../utils/validations'
 import { registerUser } from '../../services/authService'
 
 const RegisterForm = ({ onSuccess, onError }) => {
+  // Colores oficiales de OXÍGENO 88.1FM
+  const brandRed = '#E50000'
+  const brandDarkGray = '#333333'
+  const brandWhite = '#FFFFFF'
+  const brandLightGray = '#CCCCCC'
+  const brandOrange = '#FFA500'
+
   const [formData, setFormData] = useState({
     name: '',
     lastname: '',
@@ -164,11 +171,11 @@ const RegisterForm = ({ onSuccess, onError }) => {
           value={formData[field]}
           onChange={(e) => handleChange(field, e.target.value)}
           placeholder={placeholder}
-          borderColor={isValid ? 'green.400' : hasError ? 'red.400' : 'gray.300'}
-          _hover={{ borderColor: isValid ? 'green.500' : hasError ? 'red.500' : 'gray.400' }}
+          borderColor={isValid ? 'green.400' : hasError ? brandRed : brandLightGray}
+          _hover={{ borderColor: isValid ? 'green.500' : hasError ? brandRed : brandOrange }}
           _focus={{
-            borderColor: isValid ? 'green.500' : hasError ? 'red.500' : 'blue.500',
-            boxShadow: isValid ? '0 0 0 1px #48BB78' : hasError ? '0 0 0 1px #F56565' : '0 0 0 1px #3182CE'
+            borderColor: isValid ? 'green.500' : hasError ? brandRed : brandRed,
+            boxShadow: isValid ? '0 0 0 1px #48BB78' : hasError ? `0 0 0 1px ${brandRed}` : `0 0 0 1px ${brandRed}`
           }}
           bg="white"
           size="md"
@@ -233,13 +240,18 @@ const RegisterForm = ({ onSuccess, onError }) => {
           {/* Botón de envío */}
           <Button
             type="submit"
-            colorScheme="blue"
+            bg={brandRed}
+            color={brandWhite}
             size="lg"
             isLoading={isLoading}
             loadingText="Registrando..."
             spinner={<Spinner size="sm" />}
             isDisabled={Object.values(errors).some(error => error !== '')}
-            _hover={{ transform: 'translateY(-1px)', boxShadow: 'lg' }}
+            _hover={{ 
+              bg: brandOrange, 
+              transform: 'translateY(-1px)', 
+              boxShadow: 'lg' 
+            }}
             transition="all 0.2s"
           >
             Crear Cuenta

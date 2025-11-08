@@ -15,8 +15,15 @@ import PublicLayout from '../../components/layout/PublicLayout'
 import PageWithFooter from '../../components/layout/PageWithFooter'
 
 const Register = () => {
-  const bgColor = useColorModeValue('gray.50', 'gray.900')
-  const textColor = useColorModeValue('gray.600', 'gray.300')
+  // Colores oficiales de OXÍGENO 88.1FM
+  const brandRed = '#E50000'
+  const brandDarkGray = '#333333'
+  const brandWhite = '#FFFFFF'
+  const brandLightGray = '#CCCCCC'
+  const brandOrange = '#FFA500'
+
+  const bgColor = useColorModeValue(brandLightGray + '40', brandDarkGray)
+  const textColor = useColorModeValue(brandDarkGray, brandLightGray)
 
   const handleRegisterSuccess = (response) => {
     console.log('Registro exitoso:', response)
@@ -36,8 +43,8 @@ const Register = () => {
             <VStack spacing={8} align="center">
               {/* Header */}
               <VStack spacing={4} textAlign="center">
-                <Text fontSize="4xl" fontWeight="bold" color="blue.600">
-                  OXÍ Radio
+                <Text fontSize="4xl" fontWeight="bold" color={brandRed}>
+                  Radio Oxigeno
                 </Text>
                 <Text fontSize="lg" color={textColor} maxW="md">
                   Únete a nuestra comunidad y disfruta de la mejor programación radial
@@ -58,9 +65,9 @@ const Register = () => {
                   <Link 
                     as={RouterLink} 
                     to="/login" 
-                    color="blue.500" 
+                    color={brandRed} 
                     fontWeight="medium"
-                    _hover={{ textDecoration: 'underline' }}
+                    _hover={{ color: brandOrange, textDecoration: 'underline' }}
                   >
                     Inicia sesión aquí
                   </Link>

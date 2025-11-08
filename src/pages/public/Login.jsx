@@ -17,8 +17,14 @@ import PageWithFooter from '../../components/layout/PageWithFooter'
 
 const Login = () => {
   const { redirectToDashboard } = useAuthRedirect()
-  const bgColor = useColorModeValue('gray.50', 'gray.900')
-  const textColor = useColorModeValue('gray.600', 'gray.300')
+  // Colores oficiales de OXÍGENO 88.1FM
+  const brandRed = '#E50000'
+  const brandDarkGray = '#333333'
+  const brandLightGray = '#CCCCCC'
+  const brandOrange = '#FFA500'
+
+  const bgColor = useColorModeValue(brandLightGray + '40', brandDarkGray)
+  const textColor = useColorModeValue(brandDarkGray, brandLightGray)
 
   const handleLoginSuccess = () => {
     // Redirección automática basada en rol del usuario
@@ -37,8 +43,8 @@ const Login = () => {
             <VStack spacing={8} align="center">
               {/* Header */}
               <VStack spacing={4} textAlign="center">
-                <Text fontSize="4xl" fontWeight="bold" color="blue.600">
-                  OXÍ Radio
+                <Text fontSize="4xl" fontWeight="bold" color={brandRed}>
+                  Radio Oxigeno
                 </Text>
                 <Text fontSize="lg" color={textColor} maxW="md">
                   Inicia sesión para acceder a tu cuenta y disfrutar de la mejor programación radial
@@ -59,9 +65,9 @@ const Login = () => {
                   <Link 
                     as={RouterLink} 
                     to="/register" 
-                    color="blue.500" 
+                    color={brandRed} 
                     fontWeight="medium"
-                    _hover={{ textDecoration: 'underline' }}
+                    _hover={{ color: brandOrange, textDecoration: 'underline' }}
                   >
                     Regístrate aquí
                   </Link>
