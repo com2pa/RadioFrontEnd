@@ -39,19 +39,26 @@ import PageWithFooter from '../../components/layout/PageWithFooter'
 import PublicLayout from '../../components/layout/PublicLayout'
 
 const Teams = () => {
+  // Colores oficiales de OXÍGENO 88.1FM
+  const brandRed = '#E50000'      // Rojo Vibrante
+  const brandDarkGray = '#333333' // Gris Oscuro
+  const brandWhite = '#FFFFFF'    // Blanco Puro
+  const brandLightGray = '#CCCCCC' // Gris Claro
+  const brandOrange = '#FFA500'   // Naranja Vibrante
+
   const bgGradient = useColorModeValue(
-    'linear(to-br, indigo.50, purple.50, pink.50, cyan.50)',
-    'linear(to-br, indigo.900, purple.900, pink.900, cyan.900)'
+    `linear(to-br, ${brandWhite}, ${brandLightGray})`,
+    `linear(to-br, ${brandDarkGray}, #1a1a1a)`
   )
-  const cardBg = useColorModeValue('white', 'gray.800')
-  const textColor = useColorModeValue('gray.700', 'gray.200')
-  const headingColor = useColorModeValue('gray.800', 'white')
-  const borderColor = useColorModeValue('gray.200', 'gray.700')
-  const glassBg = useColorModeValue('rgba(255, 255, 255, 0.7)', 'rgba(26, 32, 44, 0.7)')
-  const statCardBg = useColorModeValue('whiteAlpha.800', 'blackAlpha.500')
-  const statCardBorder = useColorModeValue('indigo.200', 'indigo.600')
-  const memberBoxBg = useColorModeValue('gray.50', 'gray.700')
-  const memberBoxHoverBg = useColorModeValue('gray.100', 'gray.600')
+  const cardBg = useColorModeValue(brandWhite, brandDarkGray)
+  const textColor = useColorModeValue(brandDarkGray, brandLightGray)
+  const headingColor = useColorModeValue(brandDarkGray, brandWhite)
+  const borderColor = useColorModeValue(brandLightGray, '#555555')
+  const glassBg = useColorModeValue('rgba(255, 255, 255, 0.9)', 'rgba(51, 51, 51, 0.9)')
+  const statCardBg = useColorModeValue('rgba(255, 255, 255, 0.95)', 'rgba(51, 51, 51, 0.95)')
+  const statCardBorder = useColorModeValue(brandLightGray, brandOrange)
+  const memberBoxBg = useColorModeValue(brandLightGray + '40', brandDarkGray + '80')
+  const memberBoxHoverBg = useColorModeValue(brandLightGray + '60', brandDarkGray + 'A0')
 
   // Estructura organizativa de la estación
   const organizationalStructure = [
@@ -59,34 +66,34 @@ const Teams = () => {
       id: 1,
       department: 'Dirección General',
       icon: FiAward,
-      color: 'indigo',
-      gradient: 'linear(to-br, indigo.400, indigo.600, purple.600)',
+      color: 'red',
+      gradient: `linear(to-br, ${brandRed}, #C00000)`,
       description: 'Liderazgo estratégico y visión general de la estación',
       members: [
         {
           id: 1,
-          name: 'María González',
+          name: 'Sthefani Geraldi',
           role: 'Directora General',
-          experience: '15 años en medios',
+          experience: '5 años en medios',
           avatar: null,
-          email: 'maria.gonzalez@oxiradio.com'
+          email: 'Sthefani Geraldi@oxiradio.com'
         },
-        {
-          id: 2,
-          name: 'Carlos Rodríguez',
-          role: 'Subdirector',
-          experience: '12 años en radio',
-          avatar: null,
-          email: 'carlos.rodriguez@oxiradio.com'
-        }
+        // {
+        //   id: 2,
+        //   name: 'Carlos Rodríguez',
+        //   role: 'Subdirector',
+        //   experience: '12 años en radio',
+        //   avatar: null,
+        //   email: 'carlos.rodriguez@oxiradio.com'
+        // }
       ]
     },
     {
       id: 2,
       department: 'Programación',
       icon: FiRadio,
-      color: 'blue',
-      gradient: 'linear(to-br, blue.400, blue.600, cyan.600)',
+      color: 'orange',
+      gradient: `linear(to-br, ${brandOrange}, #FF8C00)`,
       description: 'Producción y coordinación de la programación diaria',
       members: [
         {
@@ -119,8 +126,8 @@ const Teams = () => {
       id: 3,
       department: 'Locución y Presentación',
       icon: FiMic,
-      color: 'pink',
-      gradient: 'linear(to-br, pink.400, pink.600, rose.600)',
+      color: 'red',
+      gradient: `linear(to-br, ${brandRed}, #CC0000)`,
       description: 'Nuestros locutores y presentadores que dan vida a la radio',
       members: [
         {
@@ -161,8 +168,8 @@ const Teams = () => {
       id: 4,
       department: 'Producción Técnica',
       icon: FiHeadphones,
-      color: 'green',
-      gradient: 'linear(to-br, green.400, green.600, emerald.600)',
+      color: 'gray',
+      gradient: `linear(to-br, ${brandDarkGray}, #222222)`,
       description: 'Equipo técnico que garantiza la calidad del sonido',
       members: [
         {
@@ -196,7 +203,7 @@ const Teams = () => {
       department: 'Musicalización',
       icon: FiMusic,
       color: 'orange',
-      gradient: 'linear(to-br, orange.400, orange.600, amber.600)',
+      gradient: `linear(to-br, ${brandOrange}, #FF8C00)`,
       description: 'Selección y gestión del contenido musical',
       members: [
         {
@@ -221,8 +228,8 @@ const Teams = () => {
       id: 6,
       department: 'Marketing y Comunicación',
       icon: FiTrendingUp,
-      color: 'teal',
-      gradient: 'linear(to-br, teal.400, teal.600, cyan.600)',
+      color: 'red',
+      gradient: `linear(to-br, ${brandRed}, #CC0000)`,
       description: 'Estrategia de marca y comunicación con la audiencia',
       members: [
         {
@@ -255,8 +262,8 @@ const Teams = () => {
       id: 7,
       department: 'Tecnología e IT',
       icon: FiSettings,
-      color: 'cyan',
-      gradient: 'linear(to-br, cyan.400, cyan.600, blue.600)',
+      color: 'gray',
+      gradient: `linear(to-br, ${brandDarkGray}, #222222)`,
       description: 'Infraestructura tecnológica y desarrollo digital',
       members: [
         {
@@ -281,8 +288,8 @@ const Teams = () => {
       id: 8,
       department: 'Comercial y Ventas',
       icon: FiBriefcase,
-      color: 'yellow',
-      gradient: 'linear(to-br, yellow.400, yellow.600, amber.600)',
+      color: 'orange',
+      gradient: `linear(to-br, ${brandOrange}, #FF8C00)`,
       description: 'Gestión comercial y relaciones con clientes',
       members: [
         {
@@ -331,8 +338,8 @@ const Teams = () => {
             width={{ base: '300px', md: '600px' }}
             height={{ base: '300px', md: '600px' }}
             borderRadius="full"
-            bgGradient="linear(to-br, indigo.400, purple.400)"
-            opacity={0.3}
+            bg={brandRed}
+            opacity={0.2}
             filter="blur(80px)"
             animation="float 20s ease-in-out infinite"
           />
@@ -343,8 +350,8 @@ const Teams = () => {
             width={{ base: '250px', md: '500px' }}
             height={{ base: '250px', md: '500px' }}
             borderRadius="full"
-            bgGradient="linear(to-br, pink.400, cyan.400)"
-            opacity={0.3}
+            bg={brandOrange}
+            opacity={0.2}
             filter="blur(80px)"
             animation="float 15s ease-in-out infinite reverse"
           />
@@ -365,7 +372,8 @@ const Teams = () => {
               >
                 <VStack spacing={8}>
                   <Badge
-                    colorScheme="indigo"
+                    bg={brandRed}
+                    color={brandWhite}
                     variant="solid"
                     px={5}
                     py={2}
@@ -380,8 +388,7 @@ const Teams = () => {
                   <Heading
                     as="h1"
                     size={{ base: '2xl', md: '4xl', lg: '5xl' }}
-                    bgGradient="linear(to-r, indigo.600, purple.600, pink.600, cyan.600)"
-                    bgClip="text"
+                    color={brandRed}
                     fontWeight="extrabold"
                     lineHeight="shorter"
                     letterSpacing="tight"
@@ -396,7 +403,7 @@ const Teams = () => {
                     lineHeight="tall"
                     fontWeight="medium"
                   >
-                    Conoce al talentoso equipo que hace posible que OXÍ Radio 88.1 FM 
+                    Conoce al talentoso equipo que hace posible que Oxígeno Radio 88.1 FM 
                     sea la voz de Barquisimeto. Profesionales apasionados trabajando 
                     juntos para brindarte la mejor experiencia radial.
                   </Text>
@@ -408,10 +415,10 @@ const Teams = () => {
                     pt={4}
                   >
                     {[
-                      { icon: FiUsers, label: 'Profesionales', value: '+25', color: 'indigo' },
-                      { icon: FiBriefcase, label: 'Departamentos', value: '8', color: 'purple' },
-                      { icon: FiStar, label: 'Años Experiencia', value: '150+', color: 'pink' },
-                      { icon: FiAward, label: 'Premios', value: '15+', color: 'cyan' }
+                      { icon: FiUsers, label: 'Profesionales', value: '+25', color: brandRed },
+                      { icon: FiBriefcase, label: 'Departamentos', value: '8', color: brandOrange },
+                      { icon: FiStar, label: 'Años Experiencia', value: '150+', color: brandRed },
+                      { icon: FiAward, label: 'Premios', value: '15+', color: brandOrange }
                     ].map((stat, idx) => (
                       <Box
                         key={idx}
@@ -420,19 +427,19 @@ const Teams = () => {
                         borderRadius="2xl"
                         bg={statCardBg}
                         backdropFilter="blur(10px)"
-                borderWidth="2px"
-                borderColor={stat.color === 'indigo' ? statCardBorder : `${stat.color}.200`}
-                transition="all 0.3s"
-                _hover={{
-                  transform: 'translateY(-8px) scale(1.05)',
-                  shadow: 'xl',
-                  borderColor: `${stat.color}.400`
-                }}
+                        borderWidth="2px"
+                        borderColor={statCardBorder}
+                        transition="all 0.3s"
+                        _hover={{
+                          transform: 'translateY(-8px) scale(1.05)',
+                          shadow: 'xl',
+                          borderColor: stat.color
+                        }}
                       >
                         <Icon 
                           as={stat.icon} 
                           boxSize={8} 
-                          color={`${stat.color}.500`} 
+                          color={stat.color} 
                           mb={3}
                         />
                         <Text fontSize="3xl" fontWeight="extrabold" color={headingColor} mb={1}>
@@ -451,7 +458,7 @@ const Teams = () => {
         </Box>
 
         {/* Estructura Organizativa Section - Modern Grid */}
-        <Box py={{ base: 12, md: 20 }} bg={useColorModeValue('gray.50', 'gray.900')}>
+        <Box py={{ base: 12, md: 20 }} bg={useColorModeValue(brandLightGray + '40', brandDarkGray)}>
           <Container maxW="container.xl">
             <VStack spacing={12}>
               <VStack spacing={4} textAlign="center">
@@ -482,7 +489,7 @@ const Teams = () => {
                     _hover={{
                       transform: 'translateY(-12px) rotate(1deg)',
                       shadow: '3xl',
-                      borderColor: `${dept.color}.400`
+                      borderColor: dept.color === 'red' ? brandRed : dept.color === 'orange' ? brandOrange : brandDarkGray
                     }}
                     group
                   >
@@ -539,7 +546,7 @@ const Teams = () => {
                               transition="all 0.2s"
                               _hover={{
                                 bg: memberBoxHoverBg,
-                                borderColor: `${dept.color}.300`,
+                                borderColor: dept.color === 'red' ? brandRed : dept.color === 'orange' ? brandOrange : brandDarkGray,
                                 transform: 'scale(1.05)'
                               }}
                             >
@@ -548,11 +555,11 @@ const Teams = () => {
                                   name={member.name}
                                   size="md"
                                   bgGradient={dept.gradient}
-                                  color="white"
+                                  color={brandWhite}
                                   fontWeight="bold"
                                   boxShadow="md"
                                   borderWidth="2px"
-                                  borderColor="white"
+                                  borderColor={brandWhite}
                                 />
                                 <VStack spacing={0} align="center">
                                   <Text
@@ -567,7 +574,7 @@ const Teams = () => {
                                   </Text>
                                   <Text
                                     fontSize="2xs"
-                                    color={`${dept.color}.500`}
+                                    color={dept.color === 'red' ? brandRed : dept.color === 'orange' ? brandOrange : brandDarkGray}
                                     fontWeight="medium"
                                     textAlign="center"
                                     noOfLines={1}
@@ -576,8 +583,9 @@ const Teams = () => {
                                   </Text>
                                   <Badge
                                     fontSize="2xs"
-                                    colorScheme={dept.color}
-                                    variant="subtle"
+                                    bg={dept.color === 'red' ? brandRed : dept.color === 'orange' ? brandOrange : brandDarkGray}
+                                    color={brandWhite}
+                                    variant="solid"
                                     mt={1}
                                     borderRadius="full"
                                   >
@@ -591,13 +599,14 @@ const Teams = () => {
 
                         <Button
                           size="sm"
-                          colorScheme={dept.color}
-                          variant="ghost"
+                          bg={dept.color === 'red' ? brandRed : dept.color === 'orange' ? brandOrange : brandDarkGray}
+                          color={brandWhite}
+                          variant="solid"
                           rightIcon={<Icon as={FiArrowRight} />}
                           w="full"
                           mt={2}
                           _hover={{
-                            bg: `${dept.color}.50`,
+                            bg: dept.color === 'red' ? '#CC0000' : dept.color === 'orange' ? '#FF8C00' : '#222222',
                             transform: 'translateX(4px)'
                           }}
                         >
@@ -613,7 +622,7 @@ const Teams = () => {
         </Box>
 
         {/* Valores del Equipo Section - Modern Cards */}
-        <Box py={{ base: 12, md: 20 }} bg={useColorModeValue('white', 'gray.800')}>
+        <Box py={{ base: 12, md: 20 }} bg={useColorModeValue(brandWhite, brandDarkGray)}>
           <Container maxW="container.xl">
             <VStack spacing={12}>
               <VStack spacing={4} textAlign="center">
@@ -631,29 +640,29 @@ const Teams = () => {
                     icon: FiStar,
                     title: 'Excelencia',
                     description: 'Buscamos la perfección en cada detalle',
-                    color: 'yellow',
-                    gradient: 'linear(to-br, yellow.400, orange.500)'
+                    color: brandOrange,
+                    gradient: `linear(to-br, ${brandOrange}, #FF8C00)`
                   },
                   {
                     icon: FiUsers,
                     title: 'Trabajo en Equipo',
                     description: 'Colaboración y sinergia constante',
-                    color: 'blue',
-                    gradient: 'linear(to-br, blue.400, cyan.500)'
+                    color: brandRed,
+                    gradient: `linear(to-br, ${brandRed}, #CC0000)`
                   },
                   {
                     icon: FiZap,
                     title: 'Innovación',
                     description: 'Siempre a la vanguardia tecnológica',
-                    color: 'purple',
-                    gradient: 'linear(to-br, purple.400, pink.500)'
+                    color: brandOrange,
+                    gradient: `linear(to-br, ${brandOrange}, #FF8C00)`
                   },
                   {
                     icon: FiHeart,
                     title: 'Pasión',
                     description: 'Amamos lo que hacemos cada día',
-                    color: 'red',
-                    gradient: 'linear(to-br, red.400, pink.500)'
+                    color: brandRed,
+                    gradient: `linear(to-br, ${brandRed}, #CC0000)`
                   }
                 ].map((value, index) => (
                   <Card
@@ -671,7 +680,7 @@ const Teams = () => {
                     _hover={{
                       transform: 'translateY(-12px) rotate(-2deg)',
                       shadow: '2xl',
-                      borderColor: `${value.color}.400`
+                      borderColor: value.color
                     }}
                     _before={{
                       content: '""',
@@ -688,7 +697,7 @@ const Teams = () => {
                         p={5}
                         borderRadius="2xl"
                         bgGradient={value.gradient}
-                        color="white"
+                        color={brandWhite}
                         boxShadow="xl"
                         transform="rotate(-5deg)"
                         transition="all 0.3s"
@@ -717,8 +726,8 @@ const Teams = () => {
           py={{ base: 12, md: 20 }}
           position="relative"
           overflow="hidden"
-          bgGradient="linear(to-r, indigo.600, purple.600, pink.600, cyan.600)"
-          color="white"
+          bgGradient={`linear(to-r, ${brandRed}, ${brandOrange})`}
+          color={brandWhite}
         >
           {/* Animated background elements */}
           <Box
@@ -764,8 +773,8 @@ const Teams = () => {
                       leftIcon={<Icon as={FiMail} />}
                       rightIcon={<Icon as={FiArrowRight} />}
                       _hover={{
-                        bg: 'white',
-                        color: 'indigo.600',
+                        bg: brandWhite,
+                        color: brandRed,
                         transform: 'translateX(4px)'
                       }}
                       transition="all 0.3s"
