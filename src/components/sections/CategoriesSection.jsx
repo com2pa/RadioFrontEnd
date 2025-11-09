@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import {
   Box,
   Container,
@@ -13,7 +13,6 @@ import {
   useColorModeValue,
   SimpleGrid,
   Badge,
-  useBreakpointValue
 } from '@chakra-ui/react'
 import { keyframes } from '@emotion/react'
 import { 
@@ -27,10 +26,10 @@ import {
 } from 'react-icons/fi'
 import { useToast } from '@chakra-ui/react'
 
-// Animaciones
+// Animaciones optimizadas
 const float = keyframes`
   0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-8px); }
+  50% { transform: translateY(-6px); }
 `
 
 const pulse = keyframes`
@@ -39,24 +38,27 @@ const pulse = keyframes`
 `
 
 const glow = keyframes`
-  0%, 100% { box-shadow: 0 0 20px rgba(229, 0, 0, 0.3); }
-  50% { box-shadow: 0 0 40px rgba(229, 0, 0, 0.6); }
+  0%, 100% { box-shadow: 0 0 20px rgba(229, 0, 0, 0.5); }
+  50% { box-shadow: 0 0 35px rgba(229, 0, 0, 0.8); }
+`
+
+const gradientShift = keyframes`
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 `
 
 const CategoriesSection = () => {
-  // Colores oficiales de OXÍGENO 88.1FM
-  const brandRed = '#E50000'      // Rojo Vibrante
-  const brandDarkGray = '#333333' // Gris Oscuro
-  const brandWhite = '#FFFFFF'    // Blanco Puro
-  const brandLightGray = '#CCCCCC' // Gris Claro
-  const brandOrange = '#FFA500'   // Naranja Vibrante
+  const brandRed = '#E50000'
+  const brandDarkGray = '#333333'
+  const brandWhite = '#FFFFFF'
+  const brandLightGray = '#CCCCCC'
+  const brandOrange = '#FFA500'
 
-  const cardBg = useColorModeValue(brandWhite, brandDarkGray)
   const textColor = useColorModeValue(brandDarkGray, brandLightGray)
-  const accentColor = brandRed
   const toast = useToast()
 
-  const categories = [
+  const categories = useMemo(() => [
     {
       id: 1,
       title: "Programas en Vivo",
@@ -66,9 +68,9 @@ const CategoriesSection = () => {
       gradient: `linear(135deg, ${brandRed}, #C00000)`,
       textGradient: `linear(to-r, ${brandRed}, #C00000)`,
       indicatorColor: brandOrange,
-      borderColor: brandRed + '80',
+      borderColor: brandRed + '70',
       hoverBorderColor: brandRed,
-      shadowColor: "rgba(229, 0, 0, 0.3)"
+      shadowColor: "rgba(229, 0, 0, 0.25)"
     },
     {
       id: 2,
@@ -79,9 +81,9 @@ const CategoriesSection = () => {
       gradient: `linear(135deg, ${brandOrange}, #FF8C00)`,
       textGradient: `linear(to-r, ${brandOrange}, #FF8C00)`,
       indicatorColor: brandRed,
-      borderColor: brandOrange + '80',
+      borderColor: brandOrange + '70',
       hoverBorderColor: brandOrange,
-      shadowColor: "rgba(255, 165, 0, 0.3)"
+      shadowColor: "rgba(255, 165, 0, 0.25)"
     },
     {
       id: 3,
@@ -92,11 +94,11 @@ const CategoriesSection = () => {
       gradient: `linear(135deg, ${brandRed}, #C00000)`,
       textGradient: `linear(to-r, ${brandRed}, #C00000)`,
       indicatorColor: brandOrange,
-      borderColor: brandRed + '80',
+      borderColor: brandRed + '70',
       hoverBorderColor: brandRed,
-      shadowColor: "rgba(229, 0, 0, 0.3)"
+      shadowColor: "rgba(229, 0, 0, 0.25)"
     }
-  ]
+  ], [])
 
   const handleCategoryClick = (categoryName) => {
     toast({
@@ -110,214 +112,253 @@ const CategoriesSection = () => {
 
   return (
     <Box 
-      py={{ base: 12, md: 16, lg: 20 }} 
+      py={{ base: 10, sm: 12, md: 14, lg: 16 }} 
       bgGradient={`linear(to-b, ${brandWhite}, ${brandLightGray}40)`}
       position="relative"
       overflow="hidden"
+      sx={{
+        scrollSnapAlign: 'start',
+        scrollMarginTop: '0px'
+      }}
     >
-      {/* Efectos de fondo animados */}
+      {/* Fondo con gradiente animado */}
       <Box
         position="absolute"
-        top="20%"
-        left="10%"
-        w="300px"
-        h="300px"
-        bgGradient={`radial(circle, rgba(229, 0, 0, 0.1), transparent)`}
-        borderRadius="full"
-        opacity={0.4}
-        animation={`${float} 10s ease-in-out infinite`}
-      />
-      <Box
-        position="absolute"
-        bottom="10%"
-        right="10%"
-        w="250px"
-        h="250px"
-        bgGradient={`radial(circle, rgba(255, 165, 0, 0.1), transparent)`}
-        borderRadius="full"
-        opacity={0.4}
-        animation={`${float} 12s ease-in-out infinite reverse`}
+        top={0}
+        left={0}
+        right={0}
+        bottom={0}
+        bgGradient={`linear(135deg, ${brandRed}08, ${brandOrange}08, ${brandRed}08)`}
+        backgroundSize="400% 400%"
+        sx={{
+          animation: `${gradientShift} 20s ease infinite`,
+          willChange: 'background-position'
+        }}
+        zIndex={0}
       />
 
-      <Container maxW="container.xl" position="relative" zIndex={1} px={{ base: 4, md: 6, lg: 8 }}>
-        <VStack spacing={{ base: 12, md: 14, lg: 16 }} align="stretch">
-          {/* Header mejorado */}
-          <VStack spacing={{ base: 4, md: 6 }} textAlign="center">
+      {/* Blobs grandes animados optimizados */}
+      <Box
+        position="absolute"
+        top="12%"
+        left="-4%"
+        w={{ base: "250px", md: "500px", lg: "700px" }}
+        h={{ base: "250px", md: "500px", lg: "700px" }}
+        bgGradient={`radial(circle, ${brandRed}50, ${brandOrange}25, transparent)`}
+        filter="blur(80px)"
+        opacity={0.4}
+        sx={{
+          animation: `${float} 22s ease-in-out infinite`,
+          willChange: 'transform'
+        }}
+        zIndex={1}
+      />
+      <Box
+        position="absolute"
+        bottom="4%"
+        right="-4%"
+        w={{ base: "220px", md: "450px", lg: "650px" }}
+        h={{ base: "220px", md: "450px", lg: "650px" }}
+        bgGradient={`radial(circle, ${brandOrange}50, ${brandRed}25, transparent)`}
+        filter="blur(90px)"
+        opacity={0.4}
+        sx={{
+          animation: `${float} 28s ease-in-out infinite reverse`,
+          willChange: 'transform'
+        }}
+        zIndex={1}
+      />
+
+      <Container maxW="container.xl" position="relative" zIndex={1} px={{ base: 2, sm: 3, md: 4, lg: 6, xl: 8 }}>
+        <VStack spacing={{ base: 6, sm: 8, md: 10, lg: 12 }} align="stretch">
+          {/* Header */}
+          <VStack spacing={{ base: 2, sm: 3, md: 4 }} textAlign="center">
             <Badge 
-              colorScheme="blue" 
-              fontSize={{ base: "xs", md: "sm" }}
-              px={{ base: 3, md: 4 }}
-              py={{ base: 1, md: 2 }}
+              fontSize={{ base: "2xs", sm: "xs", md: "sm", lg: "md" }}
+              px={{ base: 2, sm: 2.5, md: 3, lg: 4, xl: 5 }}
+              py={{ base: 0.5, sm: 1, md: 1.5, lg: 2 }}
               borderRadius="full"
-              bg={brandRed}
+              bgGradient={`linear(135deg, ${brandRed}, ${brandOrange})`}
               color={brandWhite}
-              fontWeight="bold"
+              fontWeight="black"
+              textTransform="uppercase"
+              letterSpacing={{ base: "tight", sm: "wide" }}
+              sx={{
+                animation: `${glow} 2s ease-in-out infinite, ${pulse} 3s ease-in-out infinite`,
+                willChange: 'transform, box-shadow'
+              }}
+              boxShadow={`0 0 25px ${brandRed}60`}
+              border={{ base: "1px solid", md: "2px solid" }}
+              borderColor="rgba(255, 255, 255, 0.3)"
+              backdropFilter="blur(10px)"
             >
               ✨ CATEGORÍAS
             </Badge>
             <Heading 
-              size={{ base: "xl", md: "2xl", lg: "3xl" }}
+              size={{ base: "lg", sm: "xl", md: "2xl", lg: "3xl", xl: "4xl" }}
               fontWeight="black"
-              bgGradient={`linear(to-r, ${brandRed}, ${brandOrange})`}
+              bgGradient={`linear(to-r, ${brandRed}, ${brandOrange}, ${brandRed})`}
               bgClip="text"
+              backgroundSize="200% auto"
+              sx={{
+                animation: `${gradientShift} 3s ease infinite`,
+                willChange: 'background-position'
+              }}
               lineHeight="shorter"
+              px={{ base: 2, sm: 0 }}
             >
               Explora Nuestras Categorías
             </Heading>
             <Text 
-              fontSize={{ base: "md", md: "lg", lg: "xl" }} 
+              fontSize={{ base: "xs", sm: "sm", md: "md", lg: "lg", xl: "xl" }} 
               color={textColor} 
-              maxW={{ base: "90%", md: "80%", lg: "700px" }} 
+              maxW={{ base: "98%", sm: "95%", md: "90%", lg: "85%", xl: "700px" }} 
               fontWeight="medium"
               lineHeight="tall"
+              px={{ base: 2, sm: 0 }}
             >
               Descubre una variedad de contenido, desde programas en vivo hasta las últimas noticias y podcasts exclusivos
             </Text>
           </VStack>
 
-          <SimpleGrid columns={{ base: 1, sm: 2, lg: 3 }} spacing={{ base: 4, md: 6, lg: 8 }}>
+          <SimpleGrid columns={{ base: 1, sm: 2, lg: 3 }} spacing={{ base: 4, sm: 5, md: 6, lg: 7 }}>
             {categories.map((category, index) => (
               <Box
                 key={category.id}
                 position="relative"
-                _hover={{ 
-                  transform: 'translateY(-15px) scale(1.03)', 
-                  transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)'
+                sx={{
+                  animation: `${float} ${4 + index}s ease-in-out infinite`,
+                  willChange: 'transform'
                 }}
-                animation={`${float} ${4 + index}s ease-in-out infinite`}
               >
-                {/* Efectos de fondo */}
-                <Box
-                  position="absolute"
-                  top={0}
-                  left={0}
-                  right={0}
-                  bottom={0}
-                  bgGradient={category.gradient}
-                  borderRadius="3xl"
-                  opacity={0.1}
-                  _hover={{ opacity: 0.2 }}
-                  transition="opacity 0.4s"
-                />
-                
                 <Card 
-                  bg={cardBg} 
-                  boxShadow="0 25px 50px rgba(0,0,0,0.15)"
-                  borderRadius="3xl"
+                  bg="rgba(255, 255, 255, 0.12)"
+                  backdropFilter="blur(20px)"
+                  border={{ base: "1px solid", md: "2px solid" }}
+                  borderColor="rgba(255, 255, 255, 0.25)"
+                  boxShadow="0 12px 28px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15)"
+                  borderRadius={{ base: "lg", sm: "xl", md: "2xl" }}
                   overflow="hidden"
-                  border="2px solid"
-                  borderColor={category.borderColor}
-                  _hover={{ 
-                    boxShadow: `0 40px 80px ${category.shadowColor}`,
-                    borderColor: category.hoverBorderColor
+                  sx={{
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    willChange: 'transform',
+                    '&:hover': {
+                      boxShadow: `0 28px 56px ${category.shadowColor}, 0 0 75px ${category.colorScheme}30`,
+                      borderColor: category.hoverBorderColor,
+                      transform: 'translateY(-10px) scale(1.02)'
+                    }
                   }}
                   position="relative"
-                  backdropFilter="blur(15px)"
-                  minH={{ base: "400px", md: "420px", lg: "450px" }}
+                  minH={{ base: "350px", sm: "380px", md: "400px", lg: "420px" }}
                   display="flex"
                   flexDirection="column"
                 >
                   {/* Efectos decorativos */}
                   <Box
                     position="absolute"
-                    top={-60}
-                    right={-60}
-                    w="120px"
-                    h="120px"
-                    bgGradient={`radial(circle, ${category.colorScheme}60, transparent)`}
+                    top={-50}
+                    right={-50}
+                    w="100px"
+                    h="100px"
+                    bgGradient={`radial(circle, ${category.colorScheme}50, transparent)`}
                     borderRadius="full"
-                    opacity={0.2}
-                    animation={`${pulse} 3s ease-in-out infinite`}
+                    opacity={0.15}
+                    sx={{
+                      animation: `${pulse} 3s ease-in-out infinite`,
+                      willChange: 'transform'
+                    }}
                   />
                   <Box
                     position="absolute"
-                    bottom={-40}
-                    left={-40}
-                    w="80px"
-                    h="80px"
+                    bottom={-30}
+                    left={-30}
+                    w="70px"
+                    h="70px"
                     bgGradient={`radial(circle, ${category.colorScheme}40, transparent)`}
                     borderRadius="full"
-                    opacity={0.3}
-                    animation={`${float} 6s ease-in-out infinite`}
+                    opacity={0.2}
+                    sx={{
+                      animation: `${float} 6s ease-in-out infinite`,
+                      willChange: 'transform'
+                    }}
                   />
 
-                  <CardBody p={{ base: 4, md: 6, lg: 8 }} position="relative" flex="1" display="flex" flexDirection="column" justifyContent="space-between">
-                    <VStack spacing={{ base: 4, md: 5, lg: 6 }} align="center" flex="1">
+                  <CardBody p={{ base: 3, sm: 4, md: 5, lg: 6 }} position="relative" flex="1" display="flex" flexDirection="column" justifyContent="space-between">
+                    <VStack spacing={{ base: 3, sm: 4, md: 5 }} align="center" flex="1">
                       {/* Icono principal con efectos */}
                       <Box
                         position="relative"
-                        _hover={{ transform: 'scale(1.15) rotate(10deg)' }}
-                        transition="transform 0.4s ease"
+                        sx={{
+                          transition: 'transform 0.3s ease',
+                          willChange: 'transform',
+                          '&:hover': {
+                            transform: 'scale(1.1) rotate(8deg)'
+                          }
+                        }}
                       >
                         <Box
-                          p={{ base: 4, md: 5, lg: 6 }}
-                          borderRadius={{ base: "xl", md: "2xl" }}
+                          p={{ base: 3, sm: 4, md: 5, lg: 6 }}
+                          borderRadius={{ base: "lg", sm: "xl", md: "2xl" }}
                           bgGradient={category.gradient}
                           color="white"
-                          boxShadow={`0 15px 40px ${category.shadowColor}`}
-                          _hover={{
-                            boxShadow: `0 25px 60px ${category.shadowColor}`
+                          boxShadow={`0 12px 32px ${category.shadowColor}, 0 0 50px ${category.colorScheme}50`}
+                          sx={{
+                            animation: `${pulse} 2s ease-in-out infinite`,
+                            willChange: 'transform',
+                            transition: 'box-shadow 0.3s ease',
+                            '&:hover': {
+                              boxShadow: `0 20px 50px ${category.shadowColor}, 0 0 80px ${category.colorScheme}70`
+                            }
                           }}
-                          animation={`${pulse} 2s ease-in-out infinite`}
+                          border={{ base: "2px solid", md: "3px solid" }}
+                          borderColor="rgba(255, 255, 255, 0.3)"
                         >
-                          <Icon as={category.icon} boxSize={{ base: 8, md: 9, lg: 10 }} />
+                          <Icon as={category.icon} boxSize={{ base: 7, sm: 8, md: 9, lg: 10 }} />
                         </Box>
                         
                         {/* Indicador de estado */}
                         <Box
                           position="absolute"
-                          top={-3}
-                          right={-3}
-                          w="6"
-                          h="6"
+                          top={-2}
+                          right={-2}
+                          w="5"
+                          h="5"
                           bg={category.indicatorColor}
                           borderRadius="full"
                           border="3px solid white"
-                          animation={`${glow} 2s ease-in-out infinite`}
-                        />
-                        
-                        {/* Efectos de partículas */}
-                        <Box
-                          position="absolute"
-                          top="50%"
-                          left="50%"
-                          transform="translate(-50%, -50%)"
-                          w="100px"
-                          h="100px"
-                          borderRadius="full"
-                          border="2px solid"
-                          borderColor={`${category.colorScheme}60`}
-                          opacity={0.3}
-                          animation={`${pulse} 3s ease-in-out infinite`}
+                          sx={{
+                            animation: `${glow} 2s ease-in-out infinite`,
+                            willChange: 'box-shadow'
+                          }}
                         />
                       </Box>
 
                       {/* Contenido */}
-                      <VStack spacing={{ base: 3, md: 4 }} textAlign="center" flex="1" justifyContent="center">
-                        <Heading size={{ base: "lg", md: "xl" }} bgGradient={category.textGradient} bgClip="text" fontWeight="black">
+                      <VStack spacing={{ base: 2.5, sm: 3 }} textAlign="center" flex="1" justifyContent="center">
+                        <Heading size={{ base: "md", sm: "lg", md: "xl" }} bgGradient={category.textGradient} bgClip="text" fontWeight="black">
                           {category.title}
                         </Heading>
-                        <Text color={textColor} fontSize={{ base: "sm", md: "md" }} lineHeight="1.7" fontWeight="medium">
+                        <Text color={textColor} fontSize={{ base: "xs", sm: "sm", md: "md" }} lineHeight="1.6" fontWeight="medium">
                           {category.description}
                         </Text>
                         
                         {/* Estadísticas */}
-                        <HStack spacing={{ base: 3, md: 4, lg: 6 }} mt={2} flexWrap="wrap" justify="center">
-                          <VStack spacing={1}>
-                            <Icon as={FiStar} boxSize={{ base: 3, md: 4 }} color={brandOrange} />
-                            <Text fontSize={{ base: "xs", md: "sm" }} fontWeight="bold" color="gray.700">
+                        <HStack spacing={{ base: 2.5, sm: 3, md: 4 }} mt={2} flexWrap="wrap" justify="center">
+                          <VStack spacing={0.5}>
+                            <Icon as={FiStar} boxSize={{ base: 3, sm: 3.5, md: 4 }} color={brandOrange} />
+                            <Text fontSize={{ base: "2xs", sm: "xs" }} fontWeight="bold" color="gray.700">
                               4.8
                             </Text>
                           </VStack>
-                          <VStack spacing={1}>
-                            <Icon as={FiTrendingUp} boxSize={{ base: 3, md: 4 }} color={brandRed} />
-                            <Text fontSize={{ base: "xs", md: "sm" }} fontWeight="bold" color="gray.700">
+                          <VStack spacing={0.5}>
+                            <Icon as={FiTrendingUp} boxSize={{ base: 3, sm: 3.5, md: 4 }} color={brandRed} />
+                            <Text fontSize={{ base: "2xs", sm: "xs" }} fontWeight="bold" color="gray.700">
                               Trending
                             </Text>
                           </VStack>
-                          <VStack spacing={1}>
-                            <Icon as={FiZap} boxSize={{ base: 3, md: 4 }} color={brandOrange} />
-                            <Text fontSize={{ base: "xs", md: "sm" }} fontWeight="bold" color="gray.700">
+                          <VStack spacing={0.5}>
+                            <Icon as={FiZap} boxSize={{ base: 3, sm: 3.5, md: 4 }} color={brandOrange} />
+                            <Text fontSize={{ base: "2xs", sm: "xs" }} fontWeight="bold" color="gray.700">
                               Live
                             </Text>
                           </VStack>
@@ -325,28 +366,32 @@ const CategoriesSection = () => {
                       </VStack>
                     </VStack>
 
-                    {/* Botón de acción mejorado */}
+                    {/* Botón de acción */}
                     <Button 
-                      size={{ base: "md", md: "lg" }}
+                      size={{ base: "sm", sm: "md", md: "lg" }}
                       bgGradient={category.gradient}
                       color="white"
-                      _hover={{
-                        bgGradient: category.gradient,
-                        transform: 'translateY(-3px)',
-                        boxShadow: `0 15px 35px ${category.shadowColor}`
+                      sx={{
+                        transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+                        willChange: 'transform',
+                        '&:hover': {
+                          bgGradient: category.gradient,
+                          transform: 'translateY(-2px)',
+                          boxShadow: `0 12px 28px ${category.shadowColor}`
+                        }
                       }}
                       _active={{
-                        transform: 'translateY(-1px)'
+                        transform: 'translateY(0px)'
                       }}
                       rightIcon={<Icon as={FiArrowRight} />}
                       onClick={() => handleCategoryClick(category.title)}
-                      borderRadius={{ base: "xl", md: "2xl" }}
+                      borderRadius={{ base: "lg", md: "xl" }}
                       fontWeight="bold"
-                      px={{ base: 6, md: 8 }}
-                      py={{ base: 4, md: 6 }}
-                      mt={{ base: 4, md: 6 }}
-                      fontSize={{ base: "sm", md: "lg" }}
-                      boxShadow={`0 10px 25px ${category.shadowColor}`}
+                      px={{ base: 5, sm: 6, md: 8 }}
+                      py={{ base: 3, sm: 4, md: 5 }}
+                      mt={{ base: 3, sm: 4 }}
+                      fontSize={{ base: "xs", sm: "sm", md: "md" }}
+                      boxShadow={`0 8px 20px ${category.shadowColor}`}
                       w="full"
                     >
                       {category.title.includes('Programas') ? 'Ver Programas' : 
