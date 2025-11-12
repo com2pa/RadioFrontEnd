@@ -54,6 +54,13 @@ export const adminMenuItems = [
     description: 'Administrar noticias existentes'
   },
   {
+    id: 'programs',
+    label: 'Crear Programa',
+    href: '/dashboard/admin/programs',
+    icon: 'FiRadio',
+    description: 'Crear y programar programas de radio'
+  },
+  {
     id: 'menu-management',
     label: 'Crear Menú',
     href: '/dashboard/admin/menu-management',

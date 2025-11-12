@@ -37,7 +37,8 @@ const AdminLayout = ({ children, title, subtitle }) => {
     { label: 'Crear subcategoría de noticias', href: '/dashboard/admin/news-subcategory' },
     { label: 'Crear Menú', href: '/dashboard/admin/menu-management' },
     { label: 'Gestionar Suscriptores', href: '/dashboard/admin/subscribers' },
-    { label: 'Gestionar Roles', href: '/dashboard/admin/user-roles' }
+    { label: 'Gestionar Roles', href: '/dashboard/admin/user-roles' },
+    { label: 'Crear Programa', href: '/dashboard/admin/programs' }	
   ]
 
   return (

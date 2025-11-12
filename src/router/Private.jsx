@@ -15,6 +15,7 @@ import NewsCategory from '../pages/private/NewsCategory'
 import NewsSubcategory from '../pages/private/NewsSubcategory'
 import NewsCreate from '../pages/private/NewsCreate'
 import NewsManagement from '../pages/private/NewsManagement'
+import Programs from '../pages/private/Programs'
 import MenuManagement from '../pages/private/MenuManagement'
 import SubscribersManagement from '../pages/private/SubscribersManagement'
 import UserRolesManagement from '../pages/private/UserRolesManagement'
@@ -60,6 +61,7 @@ const Private = () => {
       <Route path="admin/news-subcategory" element={<NewsSubcategory />} />
       <Route path="admin/news-create" element={<NewsCreate />} />
       <Route path="admin/news-management" element={<NewsManagement />} />
+      <Route path="admin/programs" element={<Programs />} />
       <Route path="admin/menu-management" element={<MenuManagement />} />
       <Route path="admin/subscribers" element={<SubscribersManagement />} />
       <Route path="admin/user-roles" element={<UserRolesManagement />} />

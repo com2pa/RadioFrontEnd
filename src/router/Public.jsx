@@ -67,6 +67,7 @@ const Public = () => {
         <Route path='/verify/:id/:token' element={<EmailVerification />} />
         <Route path='/contact' element={<Contact />} />
         <Route path='/teams' element={<Teams />} />
+        <Route path='/programs' element={<Programs />} />
         
         {/* Rutas dinámicas generadas desde el backend - solo para rutas no públicas */}
         {!isPublicRoute && routes.map((route) => {
