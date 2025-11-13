@@ -40,9 +40,11 @@ import {
   Icon,
   Flex,
   Tooltip,
-  Progress
+  Progress,
+  Image,
+  Avatar
 } from '@chakra-ui/react'
-import { FiSave, FiMenu, FiHome, FiLogOut, FiArrowLeft, FiRadio, FiClock, FiUsers, FiCalendar, FiPlus, FiX, FiFilter, FiGrid, FiList, FiCalendar as FiCalendarIcon } from 'react-icons/fi'
+import { FiSave, FiMenu, FiHome, FiLogOut, FiArrowLeft, FiRadio, FiClock, FiUsers, FiCalendar, FiPlus, FiX, FiFilter, FiGrid, FiList, FiCalendar as FiCalendarIcon, FiEdit2 } from 'react-icons/fi'
 import { useAuth } from '../../hooks/useAuth'
 import { Link as RouterLink } from 'react-router-dom'
 import AdminMenu from '../../components/layout/AdminMenu'
@@ -69,6 +71,7 @@ const Programs = () => {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0])
   const [selectedTimeSlot, setSelectedTimeSlot] = useState(null)
   const [filterType, setFilterType] = useState('all') // 'all', 'tiktok_live', 'instagram_live', 'podcast'
+  const [editingProgramId, setEditingProgramId] = useState(null)
 
   const [formData, setFormData] = useState({
     program_title: '',
@@ -80,7 +83,8 @@ const Programs = () => {
     scheduled_date: '',
     scheduled_time: '',
     duration_minutes: 60,
-    program_users: []
+    program_users: [],
+    program_image: null
   })
 
   // Verificar permisos
@@ -150,7 +154,7 @@ const Programs = () => {
     }
   }, [])
 
-  // Cargar usuarios disponibles
+  // Cargar usuarios disponibles (solo locutores)
   const fetchUsers = useCallback(async () => {
     setLoadingUsers(true)
     try {
@@ -162,7 +166,15 @@ const Programs = () => {
       })
       
       const usersData = response.data?.data || response.data || []
-      setUsers(Array.isArray(usersData) ? usersData : [])
+      // Filtrar solo usuarios con rol de locutor
+      const locutorUsers = Array.isArray(usersData) 
+        ? usersData.filter(user => {
+            // Verificar si el usuario tiene rol de locutor
+            const userRole = user.user_role || user.role_name || user.role || ''
+            return userRole.toLowerCase() === 'locutor'
+          })
+        : []
+      setUsers(locutorUsers)
     } catch (error) {
       console.error('Error fetching users:', error)
       toast({
@@ -295,6 +307,16 @@ const Programs = () => {
     }))
   }
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      setFormData(prev => ({
+        ...prev,
+        program_image: file
+      }))
+    }
+  }
+
   const handleUserSelection = (userId) => {
     setFormData(prev => {
       const currentUsers = prev.program_users || []
@@ -312,6 +334,81 @@ const Programs = () => {
         }
       }
     })
+  }
+
+  // Función para cargar datos del programa a editar
+  const loadProgramForEdit = async (programId) => {
+    try {
+      const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken')
+      const response = await axios.get(`/api/programs/${programId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+
+      if (response.data.success && response.data.data) {
+        const program = response.data.data
+        
+        // Formatear fecha y hora
+        const scheduledDate = new Date(program.scheduled_date)
+        const dateStr = scheduledDate.toISOString().split('T')[0]
+        const timeStr = scheduledDate.toTimeString().split(' ')[0].slice(0, 5)
+        
+        // Obtener IDs de usuarios del programa
+        const programUserIds = program.program_users 
+          ? program.program_users.map(pu => pu.user_id || pu.userId)
+          : []
+
+        setFormData({
+          program_title: program.program_title || '',
+          program_description: program.program_description || '',
+          program_type: program.program_type || '',
+          tiktok_live_url: program.tiktok_live_url || '',
+          instagram_live_url: program.instagram_live_url || '',
+          podcast_id: program.podcast_id || '',
+          scheduled_date: dateStr,
+          scheduled_time: timeStr,
+          duration_minutes: program.duration_minutes || 60,
+          program_users: programUserIds,
+          program_image: program.program_image ? { name: program.program_image, isExisting: true } : null
+        })
+
+        setEditingProgramId(programId)
+        setSelectedTimeSlot(null) // Limpiar slot seleccionado en modo edición
+        onModalOpen()
+      } else {
+        throw new Error('No se pudo cargar el programa')
+      }
+    } catch (error) {
+      console.error('Error loading program:', error)
+      toast({
+        title: 'Error',
+        description: error.response?.data?.message || error.message || 'No se pudo cargar el programa',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      })
+    }
+  }
+
+  // Función para limpiar el formulario y cerrar modal
+  const handleCloseModal = () => {
+    setFormData({
+      program_title: '',
+      program_description: '',
+      program_type: '',
+      tiktok_live_url: '',
+      instagram_live_url: '',
+      podcast_id: '',
+      scheduled_date: selectedDate,
+      scheduled_time: '',
+      duration_minutes: 60,
+      program_users: [],
+      program_image: null
+    })
+    setEditingProgramId(null)
+    setSelectedTimeSlot(null)
+    onModalClose()
   }
 
   const handleSubmit = async (e) => {
@@ -411,62 +508,144 @@ const Programs = () => {
     try {
       const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken')
       
-      const scheduledDateTime = new Date(`${formData.scheduled_date}T${formData.scheduled_time}`).toISOString()
+      // Validar que fecha y hora estén presentes
+      if (!formData.scheduled_date || !formData.scheduled_time) {
+        toast({
+          title: 'Error',
+          description: 'La fecha y hora programada son requeridas',
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        })
+        setSubmitting(false)
+        return
+      }
+
+      // Crear fecha combinando fecha y hora
+      const dateTimeString = `${formData.scheduled_date}T${formData.scheduled_time}`
+      const scheduledDate = new Date(dateTimeString)
       
-      const programData = {
-        program_title: formData.program_title.trim(),
-        program_description: formData.program_description.trim() || null,
-        program_type: formData.program_type,
-        scheduled_date: scheduledDateTime,
-        duration_minutes: formData.duration_minutes,
-        program_users: formData.program_users.map(userId => ({
+      // Validar que la fecha sea válida
+      if (isNaN(scheduledDate.getTime())) {
+        toast({
+          title: 'Error',
+          description: 'La fecha y hora seleccionadas no son válidas',
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        })
+        setSubmitting(false)
+        return
+      }
+      
+      const scheduledDateTime = scheduledDate.toISOString()
+      
+      // Si hay imagen nueva (File), usar FormData, sino JSON
+      // Si program_image es un objeto con isExisting, no es un archivo nuevo, usar JSON
+      const hasImage = formData.program_image && formData.program_image instanceof File
+      
+      let requestData
+      let headers
+      
+      if (hasImage) {
+        // Usar FormData para enviar con imagen
+        const formDataToSend = new FormData()
+        formDataToSend.append('program_title', formData.program_title.trim())
+        formDataToSend.append('program_description', formData.program_description.trim() || '')
+        formDataToSend.append('program_type', formData.program_type)
+        formDataToSend.append('scheduled_date', scheduledDateTime)
+        formDataToSend.append('duration_minutes', formData.duration_minutes)
+        formDataToSend.append('program_users', JSON.stringify(formData.program_users.map(userId => ({
           user_id: userId,
           user_role: 'locutor'
-        }))
-      }
+        }))))
+        formDataToSend.append('program_image', formData.program_image)
 
-      if (formData.program_type === 'tiktok_live') {
-        programData.tiktok_live_url = formData.tiktok_live_url.trim()
-      } else if (formData.program_type === 'instagram_live') {
-        programData.instagram_live_url = formData.instagram_live_url.trim()
-      } else if (formData.program_type === 'podcast') {
-        programData.podcast_id = parseInt(formData.podcast_id)
-      }
+        // Agregar URLs según el tipo de programa
+        if (formData.program_type === 'tiktok_live') {
+          formDataToSend.append('tiktok_live_url', formData.tiktok_live_url.trim() || '')
+          // No enviar otros tipos de URLs cuando es tiktok_live
+        } else if (formData.program_type === 'instagram_live') {
+          formDataToSend.append('instagram_live_url', formData.instagram_live_url.trim() || '')
+          // No enviar otros tipos de URLs cuando es instagram_live
+        } else if (formData.program_type === 'podcast') {
+          formDataToSend.append('podcast_id', parseInt(formData.podcast_id) || '')
+          // No enviar otros tipos de URLs cuando es podcast
+        }
 
-      const response = await axios.post('/api/programs/create', programData, {
-        headers: {
+        requestData = formDataToSend
+        headers = {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${token}`
+        }
+      } else {
+        // Usar JSON sin imagen
+        const programData = {
+          program_title: formData.program_title.trim(),
+          program_description: formData.program_description.trim() || null,
+          program_type: formData.program_type,
+          scheduled_date: scheduledDateTime,
+          duration_minutes: formData.duration_minutes,
+          program_users: formData.program_users.map(userId => ({
+            user_id: userId,
+            user_role: 'locutor'
+          }))
+        }
+
+        // Si hay imagen existente pero no se seleccionó una nueva, mantener la existente
+        if (formData.program_image && formData.program_image.isExisting && !(formData.program_image instanceof File)) {
+          programData.program_image = formData.program_image.name
+        }
+
+        // Agregar URLs según el tipo de programa
+        if (formData.program_type === 'tiktok_live') {
+          programData.tiktok_live_url = formData.tiktok_live_url.trim() || null
+          programData.instagram_live_url = null // Limpiar si cambió de tipo
+          programData.podcast_id = null // Limpiar si cambió de tipo
+        } else if (formData.program_type === 'instagram_live') {
+          programData.instagram_live_url = formData.instagram_live_url.trim() || null
+          programData.tiktok_live_url = null // Limpiar si cambió de tipo
+          programData.podcast_id = null // Limpiar si cambió de tipo
+        } else if (formData.program_type === 'podcast') {
+          programData.podcast_id = parseInt(formData.podcast_id) || null
+          programData.tiktok_live_url = null // Limpiar si cambió de tipo
+          programData.instagram_live_url = null // Limpiar si cambió de tipo
+        }
+
+        requestData = programData
+        headers = {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         }
+      }
+
+      // Determinar si es creación o actualización
+      const isEditing = editingProgramId !== null
+      const url = isEditing 
+        ? `/api/programs/${editingProgramId}`
+        : '/api/programs/create'
+      const method = isEditing ? 'put' : 'post'
+      
+      const response = await axios[method](url, requestData, {
+        headers: headers
       })
       
       if (response.data.success) {
         toast({
-          title: 'Programa creado',
-          description: 'El programa ha sido creado exitosamente',
+          title: isEditing ? 'Programa actualizado' : 'Programa creado',
+          description: isEditing 
+            ? 'El programa ha sido actualizado exitosamente'
+            : 'El programa ha sido creado exitosamente',
           status: 'success',
           duration: 3000,
           isClosable: true,
         })
         
         // Limpiar formulario y cerrar modal
-        setFormData({
-          program_title: '',
-          program_description: '',
-          program_type: '',
-          tiktok_live_url: '',
-          instagram_live_url: '',
-          podcast_id: '',
-          scheduled_date: selectedDate,
-          scheduled_time: '',
-          duration_minutes: 60,
-          program_users: []
-        })
-        setSelectedTimeSlot(null)
-        onModalClose()
+        handleCloseModal()
         fetchPrograms()
       } else {
-        throw new Error(response.data.message || 'Error al crear el programa')
+        throw new Error(response.data.message || (isEditing ? 'Error al actualizar el programa' : 'Error al crear el programa'))
       }
     } catch (error) {
       console.error('Error creating program:', error)
@@ -562,9 +741,14 @@ const Programs = () => {
                       colorScheme="blue"
                       size="md"
                       onClick={() => {
+                        // Establecer fecha actual si no hay fecha seleccionada
+                        const dateToUse = selectedDate || new Date().toISOString().split('T')[0]
+                        // Establecer hora por defecto (primer slot disponible: 5:00 AM)
+                        const defaultTime = '05:00'
                         setFormData(prev => ({
                           ...prev,
-                          scheduled_date: selectedDate
+                          scheduled_date: dateToUse,
+                          scheduled_time: defaultTime
                         }))
                         onModalOpen()
                       }}
@@ -713,20 +897,31 @@ const Programs = () => {
                                     transform: "translateY(-2px)"
                                   }}
                                   transition="all 0.2s"
-                                  onClick={() => {
-                                    // Puedes agregar funcionalidad para editar aquí
-                                  }}
+                                  onClick={() => loadProgramForEdit(program.program_id)}
                                 >
                                   <VStack align="start" spacing={1} h="100%">
-                                    <HStack spacing={1}>
-                                      <Text fontSize="lg">{getTypeIcon(program.program_type)}</Text>
-                                      <Badge
-                                        colorScheme={getTypeColor(program.program_type)}
-                                        fontSize="xs"
-                                        borderRadius="full"
-                                      >
-                                        {(program.duration_minutes || 60) / 60}h
-                                      </Badge>
+                                    <HStack spacing={1} w="100%" justify="space-between">
+                                      <HStack spacing={1}>
+                                        <Text fontSize="lg">{getTypeIcon(program.program_type)}</Text>
+                                        <Badge
+                                          colorScheme={getTypeColor(program.program_type)}
+                                          fontSize="xs"
+                                          borderRadius="full"
+                                        >
+                                          {(program.duration_minutes || 60) / 60}h
+                                        </Badge>
+                                      </HStack>
+                                      <IconButton
+                                        aria-label="Editar programa"
+                                        icon={<FiEdit2 />}
+                                        size="xs"
+                                        colorScheme="blue"
+                                        variant="ghost"
+                                        onClick={(e) => {
+                                          e.stopPropagation()
+                                          loadProgramForEdit(program.program_id)
+                                        }}
+                                      />
                                     </HStack>
                                     <Text
                                       fontSize="xs"
@@ -825,14 +1020,14 @@ const Programs = () => {
         </VStack>
       </Container>
 
-      {/* Modal para crear programa */}
-      <Modal isOpen={isModalOpen} onClose={onModalClose} size="xl" scrollBehavior="inside" isCentered>
+      {/* Modal para crear/editar programa */}
+      <Modal isOpen={isModalOpen} onClose={handleCloseModal} size="xl" scrollBehavior="inside" isCentered>
         <ModalOverlay />
         <ModalContent maxH="90vh">
           <ModalHeader bg="red.500" color="white" position="sticky" top={0} zIndex={1}>
             <HStack spacing={2}>
-              <Icon as={FiPlus} />
-              <Text>Crear Nuevo Programa</Text>
+              <Icon as={editingProgramId ? FiEdit2 : FiPlus} />
+              <Text>{editingProgramId ? 'Editar Programa' : 'Crear Nuevo Programa'}</Text>
             </HStack>
           </ModalHeader>
           <ModalCloseButton color="white" />
@@ -840,16 +1035,66 @@ const Programs = () => {
             <ModalBody overflowY="auto" maxH="calc(90vh - 140px)">
               <VStack spacing={4} align="stretch" pt={4}>
                 {/* Información del horario seleccionado */}
-                {selectedTimeSlot && (
+                {(selectedTimeSlot || formData.scheduled_date) && (
                   <Alert status="info" borderRadius="md">
                     <AlertIcon />
                     <Box>
-                      <AlertTitle fontSize="sm">Horario Seleccionado</AlertTitle>
+                      <AlertTitle fontSize="sm">Horario Programado</AlertTitle>
                       <AlertDescription fontSize="sm">
-                        {new Date(selectedDate).toLocaleDateString('es-ES')} a las {selectedTimeSlot.time}
+                        {formData.scheduled_date 
+                          ? new Date(formData.scheduled_date).toLocaleDateString('es-ES', { 
+                              weekday: 'long', 
+                              year: 'numeric', 
+                              month: 'long', 
+                              day: 'numeric' 
+                            })
+                          : 'Fecha no seleccionada'
+                        } 
+                        {formData.scheduled_time && ` a las ${formData.scheduled_time}`}
                       </AlertDescription>
                     </Box>
                   </Alert>
+                )}
+
+                {/* Campos de fecha y hora si no se seleccionó desde el calendario */}
+                {!selectedTimeSlot && (
+                  <Grid templateColumns={{ base: '1fr', md: '1fr 1fr' }} gap={4}>
+                    <FormControl isRequired>
+                      <FormLabel>
+                        <HStack spacing={2}>
+                          <Icon as={FiCalendar} />
+                          <Text>Fecha Programada</Text>
+                        </HStack>
+                      </FormLabel>
+                      <Input
+                        name="scheduled_date"
+                        value={formData.scheduled_date}
+                        onChange={handleInputChange}
+                        type="date"
+                        min={new Date().toISOString().split('T')[0]}
+                        focusBorderColor="red.500"
+                      />
+                    </FormControl>
+
+                    <FormControl isRequired>
+                      <FormLabel>
+                        <HStack spacing={2}>
+                          <Icon as={FiClock} />
+                          <Text>Hora Programada</Text>
+                        </HStack>
+                      </FormLabel>
+                      <Input
+                        name="scheduled_time"
+                        value={formData.scheduled_time}
+                        onChange={handleInputChange}
+                        type="time"
+                        focusBorderColor="red.500"
+                      />
+                      <FormHelperText fontSize="xs">
+                        Horario permitido: 5:00 AM - 8:00 PM
+                      </FormHelperText>
+                    </FormControl>
+                  </Grid>
                 )}
 
                 {/* Título */}
@@ -960,49 +1205,159 @@ const Programs = () => {
                   <FormHelperText>Entre 60 y 120 minutos</FormHelperText>
                 </FormControl>
 
-                {/* Usuarios */}
+                {/* Imagen del Programa */}
+                <FormControl>
+                  <FormLabel>Imagen del Programa</FormLabel>
+                  <Input
+                    type="file"
+                    accept="image/jpeg,image/png,image/jpg,image/webp"
+                    onChange={handleImageChange}
+                    p={1}
+                    focusBorderColor="red.500"
+                  />
+                  <FormHelperText>
+                    Selecciona una imagen para el programa (JPG, PNG, WEBP)
+                  </FormHelperText>
+                  {formData.program_image && (
+                    <Box mt={2}>
+                      <HStack spacing={2}>
+                        <Badge colorScheme="green" fontSize="xs">
+                          {formData.program_image.isExisting ? '✓ Imagen actual' : '✓ Imagen seleccionada'}
+                        </Badge>
+                        <Text fontSize="xs" color="gray.500">
+                          {formData.program_image.name}
+                        </Text>
+                      </HStack>
+                      {formData.program_image instanceof File && (
+                        <Box mt={2}>
+                          <Image
+                            src={URL.createObjectURL(formData.program_image)}
+                            alt="Vista previa"
+                            maxH="100px"
+                            borderRadius="md"
+                            border="1px solid"
+                            borderColor="gray.200"
+                          />
+                        </Box>
+                      )}
+                      {formData.program_image.isExisting && !(formData.program_image instanceof File) && (
+                        <Box mt={2}>
+                          <Text fontSize="xs" color="gray.500" fontStyle="italic">
+                            La imagen actual se mantendrá. Selecciona una nueva imagen para reemplazarla.
+                          </Text>
+                        </Box>
+                      )}
+                    </Box>
+                  )}
+                </FormControl>
+
+                {/* Usuarios - Locutores */}
                 <FormControl isRequired>
-                  <FormLabel>Usuarios del Programa</FormLabel>
+                  <FormLabel>
+                    <HStack spacing={2}>
+                      <Icon as={FiUsers} />
+                      <Text>Locutores del Programa</Text>
+                    </HStack>
+                  </FormLabel>
                   <Box
-                    border="1px solid"
+                    border="2px solid"
                     borderColor="gray.200"
-                    borderRadius="md"
-                    p={3}
-                    maxH="200px"
+                    borderRadius="lg"
+                    p={4}
+                    maxH="250px"
                     overflowY="auto"
+                    bg="gray.50"
+                    _dark={{ bg: "gray.700" }}
                   >
                     {loadingUsers ? (
-                      <Spinner size="sm" />
+                      <Flex justify="center" py={4}>
+                        <Spinner size="md" color="red.500" />
+                      </Flex>
+                    ) : users.length === 0 ? (
+                      <Box textAlign="center" py={4}>
+                        <Text color="orange.500" fontSize="sm">
+                          No hay usuarios con rol de locutor disponibles
+                        </Text>
+                      </Box>
                     ) : (
-                      <CheckboxGroup>
-                        <SimpleGrid columns={2} spacing={2}>
-                          {users.map((user) => (
-                            <Checkbox
+                      <VStack spacing={3} align="stretch">
+                        {users.map((user) => {
+                          const isSelected = formData.program_users?.includes(user.user_id)
+                          return (
+                            <Box
                               key={user.user_id}
-                              isChecked={formData.program_users?.includes(user.user_id)}
-                              onChange={() => handleUserSelection(user.user_id)}
-                              value={user.user_id}
-                              colorScheme="red"
+                              p={3}
+                              borderRadius="md"
+                              border="2px solid"
+                              borderColor={isSelected ? "red.400" : "gray.300"}
+                              bg={isSelected ? "red.50" : "white"}
+                              cursor="pointer"
+                              _hover={{
+                                borderColor: isSelected ? "red.500" : "red.300",
+                                bg: isSelected ? "red.100" : "gray.100",
+                                transform: "translateY(-1px)",
+                                boxShadow: "sm"
+                              }}
+                              transition="all 0.2s"
+                              onClick={() => handleUserSelection(user.user_id)}
+                              _dark={{
+                                bg: isSelected ? "red.900" : "gray.800",
+                                borderColor: isSelected ? "red.400" : "gray.600"
+                              }}
                             >
-                              <Text fontSize="sm">
-                                {user.user_name || user.name} {user.user_lastname || user.lastname}
-                              </Text>
-                            </Checkbox>
-                          ))}
-                        </SimpleGrid>
-                      </CheckboxGroup>
+                              <HStack spacing={3}>
+                                <Checkbox
+                                  isChecked={isSelected}
+                                  onChange={() => handleUserSelection(user.user_id)}
+                                  value={user.user_id}
+                                  colorScheme="red"
+                                  size="lg"
+                                />
+                                <Avatar
+                                  size="md"
+                                  name={`${user.user_name || user.name} ${user.user_lastname || user.lastname}`}
+                                  bg="red.500"
+                                />
+                                <VStack align="start" spacing={0} flex={1}>
+                                  <HStack spacing={2}>
+                                    <Text fontSize="sm" fontWeight="bold" noOfLines={1}>
+                                      {user.user_name || user.name} {user.user_lastname || user.lastname}
+                                    </Text>
+                                    {isSelected && (
+                                      <Badge colorScheme="red" fontSize="xs" borderRadius="full">
+                                        Seleccionado
+                                      </Badge>
+                                    )}
+                                  </HStack>
+                                  <Text fontSize="xs" color="gray.500" noOfLines={1}>
+                                    {user.user_email || user.email}
+                                  </Text>
+                                  <Badge colorScheme="blue" variant="subtle" fontSize="xs" mt={1}>
+                                    🎙️ Locutor
+                                  </Badge>
+                                </VStack>
+                              </HStack>
+                            </Box>
+                          )
+                        })}
+                      </VStack>
                     )}
                   </Box>
                   {formData.program_users.length > 0 && (
-                    <FormHelperText>
-                      {formData.program_users.length} usuario(s) seleccionado(s)
-                    </FormHelperText>
+                    <HStack mt={2} spacing={2}>
+                      <Badge colorScheme="green" fontSize="sm" px={2} py={1} borderRadius="full">
+                        ✓ {formData.program_users.length} locutor(es) seleccionado(s)
+                      </Badge>
+                    </HStack>
                   )}
+                  <FormHelperText>
+                    Selecciona al menos un locutor para el programa. Mínimo 1 usuario con rol "locutor"
+                  </FormHelperText>
                 </FormControl>
               </VStack>
             </ModalBody>
             <ModalFooter>
-              <Button variant="ghost" mr={3} onClick={onModalClose}>
+              <Button variant="ghost" mr={3} onClick={handleCloseModal}>
                 Cancelar
               </Button>
               <Button
@@ -1010,9 +1365,9 @@ const Programs = () => {
                 colorScheme="red"
                 leftIcon={<FiSave />}
                 isLoading={submitting}
-                loadingText="Creando..."
+                loadingText={editingProgramId ? "Actualizando..." : "Creando..."}
               >
-                Crear Programa
+                {editingProgramId ? 'Actualizar Programa' : 'Crear Programa'}
               </Button>
             </ModalFooter>
           </form>
