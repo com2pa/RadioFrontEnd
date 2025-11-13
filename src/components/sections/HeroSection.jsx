@@ -18,6 +18,7 @@ import {
   Flex,
   useToast,
 } from '@chakra-ui/react'
+import axios from 'axios'
 import { keyframes } from '@emotion/react'
 import { 
   FiPlay, 
@@ -124,29 +125,44 @@ const HeroSection = () => {
   const carouselRef = useRef(null)
   const intervalRef = useRef(null)
   
-  const carouselSlides = [
-    {
-      id: 1,
-      title: "🎵 Música en Vivo 24/7",
-      subtitle: "Los mejores hits del momento",
-      bgImage: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1920&h=1080&fit=crop&q=80",
-      color: brandRed
-    },
-    {
-      id: 2,
-      title: "📻 Noticias Locales",
-      subtitle: "Información actualizada de Barquisimeto",
-      bgImage: "https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=1920&h=1080&fit=crop&q=80",
-      color: brandOrange
-    },
-    {
-      id: 3,
-      title: "🎤 Programas Especiales",
-      subtitle: "Entrevistas y eventos exclusivos",
-      bgImage: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=1920&h=1080&fit=crop&q=80",
-      color: brandRed
+  // Slides del carousel - solo programas con imágenes
+  const [carouselSlides, setCarouselSlides] = useState([])
+  
+  // Función para obtener todos los programas con imágenes
+  const fetchProgramsWithImages = useCallback(async () => {
+    try {
+      // Obtener todos los programas
+      const response = await axios.get('/api/programs/all')
+      
+      if (response.data.success && response.data.data && response.data.data.length > 0) {
+        // Filtrar solo programas con imagen y ordenar por fecha
+        const programsWithImages = response.data.data
+          .filter(p => p.program_image) // Solo programas con imagen
+          .sort((a, b) => {
+            return new Date(a.scheduled_date) - new Date(b.scheduled_date)
+          })
+          .map((program, index) => ({
+            id: program.program_id || index + 1,
+            title: program.program_title || '',
+            subtitle: program.program_description || '',
+            bgImage: `http://localhost:3000/uploads/programs/${program.program_image}`,
+            color: brandRed
+          }))
+        
+        // Solo establecer slides si hay programas con imágenes
+        if (programsWithImages.length > 0) {
+          setCarouselSlides(programsWithImages)
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching programs:', error)
     }
-  ]
+  }, [])
+  
+  // Cargar los programas con imágenes inmediatamente al montar el componente
+  useEffect(() => {
+    fetchProgramsWithImages()
+  }, [fetchProgramsWithImages])
   
   const toast = useToast()
 
@@ -162,34 +178,47 @@ const HeroSection = () => {
   }
 
   const nextSlide = useCallback(() => {
+    const slidesWithImages = carouselSlides.filter(slide => slide.bgImage)
+    if (slidesWithImages.length === 0) return
     setCurrentSlide((prev) => {
-      const next = (prev + 1) % carouselSlides.length
+      const next = (prev + 1) % slidesWithImages.length
       return next
     })
-  }, [carouselSlides.length])
+  }, [carouselSlides])
 
   const prevSlide = useCallback(() => {
+    const slidesWithImages = carouselSlides.filter(slide => slide.bgImage)
+    if (slidesWithImages.length === 0) return
     setCurrentSlide((prev) => {
-      const next = (prev - 1 + carouselSlides.length) % carouselSlides.length
+      const next = (prev - 1 + slidesWithImages.length) % slidesWithImages.length
       return next
     })
-  }, [carouselSlides.length])
+  }, [carouselSlides])
 
   const goToSlide = useCallback((index) => {
-    if (index >= 0 && index < carouselSlides.length) {
+    const slidesWithImages = carouselSlides.filter(slide => slide.bgImage)
+    if (index >= 0 && index < slidesWithImages.length) {
       setCurrentSlide(index)
     }
-  }, [carouselSlides.length])
+  }, [carouselSlides])
 
   const toggleAutoPlay = () => {
     setIsAutoPlaying(!isAutoPlaying)
   }
 
   useEffect(() => {
-    if (isAutoPlaying) {
+    const slidesWithImages = carouselSlides.filter(slide => slide.bgImage)
+    if (slidesWithImages.length === 0) return
+    
+    // Resetear currentSlide si es mayor que el número de slides disponibles
+    if (currentSlide >= slidesWithImages.length) {
+      setCurrentSlide(0)
+    }
+    
+    if (isAutoPlaying && slidesWithImages.length > 1) {
       intervalRef.current = setInterval(() => {
         setCurrentSlide((prev) => {
-          const next = (prev + 1) % carouselSlides.length
+          const next = (prev + 1) % slidesWithImages.length
           return next
         })
       }, 6000) // Aumentado a 6 segundos para dar tiempo a ver el contenido
@@ -206,7 +235,7 @@ const HeroSection = () => {
         intervalRef.current = null
       }
     }
-  }, [isAutoPlaying, carouselSlides.length])
+  }, [isAutoPlaying, carouselSlides, currentSlide])
 
   return (
     <Box
@@ -293,25 +322,26 @@ const HeroSection = () => {
         />
       ))}
 
-      {/* Carousel con slides - Optimizado */}
-      <Box
-        ref={carouselRef}
-        position="absolute"
-        top={0}
-        left={0}
-        w="full"
-        h="full"
-        display="flex"
-        sx={{
-          transform: `translateX(-${currentSlide * 100}%)`,
-          transition: 'transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-          willChange: 'transform',
-          backfaceVisibility: 'hidden',
-          perspective: '1000px'
-        }}
-        zIndex={3}
-      >
-        {carouselSlides.map((slide) => (
+      {/* Carousel con slides - Solo programas con imágenes */}
+      {carouselSlides.filter(slide => slide.bgImage).length > 0 && (
+        <Box
+          ref={carouselRef}
+          position="absolute"
+          top={0}
+          left={0}
+          w="full"
+          h="full"
+          display="flex"
+          sx={{
+            transform: `translateX(-${currentSlide * 100}%)`,
+            transition: 'transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+            willChange: 'transform',
+            backfaceVisibility: 'hidden',
+            perspective: '1000px'
+          }}
+          zIndex={3}
+        >
+          {carouselSlides.filter(slide => slide.bgImage).map((slide) => (
           <Box
             key={slide.id}
             position="relative"
@@ -319,7 +349,8 @@ const HeroSection = () => {
             h="100%"
             minW="100%"
             flexShrink={0}
-            bgImage={`url(${slide.bgImage})`}
+            bgImage={slide.bgImage ? `url(${slide.bgImage})` : undefined}
+            bg={slide.bgImage ? undefined : `linear-gradient(135deg, ${slide.color}, ${slide.color === brandRed ? brandOrange : brandRed})`}
             bgSize="cover"
             bgPosition="center"
             display="flex"
@@ -333,38 +364,44 @@ const HeroSection = () => {
               left: 0,
               right: 0,
               bottom: 0,
-              bg: `linear-gradient(135deg, ${slide.color}90, ${slide.color === brandRed ? brandOrange : brandRed}90)`,
+              bg: slide.bgImage 
+                ? undefined
+                : `linear-gradient(135deg, ${slide.color}90, ${slide.color === brandRed ? brandOrange : brandRed}90)`,
               zIndex: 1
             }}
           >
-            {/* Overlay con efecto glassmorphism */}
-            <Box
-              position="absolute"
-              top={0}
-              left={0}
-              right={0}
-              bottom={0}
-              bg="rgba(255, 255, 255, 0.05)"
-              backdropFilter="blur(20px)"
-              zIndex={2}
-            />
+            {/* Overlay con efecto glassmorphism - solo si no hay imagen */}
+            {!slide.bgImage && (
+              <Box
+                position="absolute"
+                top={0}
+                left={0}
+                right={0}
+                bottom={0}
+                bg="rgba(255, 255, 255, 0.05)"
+                backdropFilter="blur(20px)"
+                zIndex={2}
+              />
+            )}
 
-            <Container 
-              maxW="container.xl" 
-              position="relative" 
-              zIndex={4} 
-              px={{ base: 2, sm: 3, md: 4, lg: 6, xl: 8 }}
-              py={{ base: 2, sm: 3, md: 4, lg: 5, xl: 6 }}
-              h="full"
-              display="flex"
-              alignItems="center"
-            >
-              <VStack 
-                spacing={{ base: 1.5, sm: 2, md: 3, lg: 4, xl: 5 }} 
-                textAlign="center"
-                w="full"
-                justify="center"
+            {/* Contenido solo si no hay imagen del programa */}
+            {!slide.bgImage && (
+              <Container 
+                maxW="container.xl" 
+                position="relative" 
+                zIndex={4} 
+                px={{ base: 2, sm: 3, md: 4, lg: 6, xl: 8 }}
+                py={{ base: 2, sm: 3, md: 4, lg: 5, xl: 6 }}
+                h="full"
+                display="flex"
+                alignItems="center"
               >
+                <VStack 
+                  spacing={{ base: 1.5, sm: 2, md: 3, lg: 4, xl: 5 }} 
+                  textAlign="center"
+                  w="full"
+                  justify="center"
+                >
                 {/* Badge con efecto GLOW extremo */}
                 <Badge 
                   bgGradient={`linear(135deg, ${brandRed}, ${brandOrange})`}
@@ -691,12 +728,15 @@ const HeroSection = () => {
                 </HStack>
               </VStack>
             </Container>
+            )}
           </Box>
         ))}
-      </Box>
+        </Box>
+      )}
 
-      {/* Controles del carousel */}
-      <HStack
+      {/* Controles del carousel - Solo si hay slides con imágenes */}
+      {carouselSlides.filter(slide => slide.bgImage).length > 0 && (
+        <HStack
         position="absolute"
         bottom={{ base: 4, sm: 6, md: 8 }}
         left="50%"
@@ -704,7 +744,7 @@ const HeroSection = () => {
         spacing={{ base: 2, sm: 2.5, md: 3 }}
         zIndex={10}
       >
-        {carouselSlides.map((_, index) => (
+        {carouselSlides.filter(slide => slide.bgImage).map((_, index) => (
           <Box
             key={index}
             w={index === currentSlide ? { base: "8px", sm: "9px", md: "10px" } : { base: "2px", sm: "2.5px", md: "3px" }}
@@ -718,10 +758,13 @@ const HeroSection = () => {
             boxShadow={index === currentSlide ? `0 0 20px ${brandOrange}80` : 'none'}
           />
         ))}
-      </HStack>
+        </HStack>
+      )}
 
-      {/* Botones de navegación */}
-      <IconButton
+      {/* Botones de navegación - Solo si hay más de un slide */}
+      {carouselSlides.filter(slide => slide.bgImage).length > 1 && (
+        <>
+        <IconButton
         aria-label="Slide anterior"
         icon={<Icon as={FiPlay} transform="rotate(180deg)" />}
         position="absolute"
@@ -767,6 +810,8 @@ const HeroSection = () => {
         borderRadius="full"
         display={{ base: "none", sm: "flex" }}
       />
+        </>
+      )}
 
       {/* Botón de auto-play */}
       <IconButton
