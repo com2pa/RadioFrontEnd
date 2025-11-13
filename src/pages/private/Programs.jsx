@@ -42,9 +42,15 @@ import {
   Tooltip,
   Progress,
   Image,
-  Avatar
+  Avatar,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay
 } from '@chakra-ui/react'
-import { FiSave, FiMenu, FiHome, FiLogOut, FiArrowLeft, FiRadio, FiClock, FiUsers, FiCalendar, FiPlus, FiX, FiFilter, FiGrid, FiList, FiCalendar as FiCalendarIcon, FiEdit2 } from 'react-icons/fi'
+import { FiSave, FiMenu, FiHome, FiLogOut, FiArrowLeft, FiRadio, FiClock, FiUsers, FiCalendar, FiPlus, FiX, FiFilter, FiGrid, FiList, FiCalendar as FiCalendarIcon, FiEdit2, FiTrash2 } from 'react-icons/fi'
 import { useAuth } from '../../hooks/useAuth'
 import { Link as RouterLink } from 'react-router-dom'
 import AdminMenu from '../../components/layout/AdminMenu'
@@ -59,6 +65,10 @@ const Programs = () => {
   const { auth, logout } = useAuth()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { isOpen: isModalOpen, onOpen: onModalOpen, onClose: onModalClose } = useDisclosure()
+  const { isOpen: isDeleteDialogOpen, onOpen: onDeleteDialogOpen, onClose: onDeleteDialogClose } = useDisclosure()
+  const [programToDelete, setProgramToDelete] = useState(null)
+  const [deleting, setDeleting] = useState(false)
+  const cancelRef = React.useRef()
 
   // Estados
   const [submitting, setSubmitting] = useState(false)
@@ -409,6 +419,58 @@ const Programs = () => {
     setEditingProgramId(null)
     setSelectedTimeSlot(null)
     onModalClose()
+  }
+
+  // Función para abrir el diálogo de confirmación de eliminación
+  const handleDeleteClick = (program, e) => {
+    e.stopPropagation()
+    setProgramToDelete(program)
+    onDeleteDialogOpen()
+  }
+
+  // Función para eliminar un programa
+  const handleDeleteProgram = async () => {
+    if (!programToDelete) return
+
+    setDeleting(true)
+    try {
+      const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken')
+      const response = await axios.delete(`/api/programs/${programToDelete.program_id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+
+      if (response.data.success) {
+        toast({
+          title: 'Programa eliminado',
+          description: `El programa "${programToDelete.program_title}" ha sido eliminado exitosamente`,
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        })
+        
+        // Cerrar diálogo y limpiar
+        onDeleteDialogClose()
+        setProgramToDelete(null)
+        
+        // Actualizar la lista de programas
+        fetchPrograms()
+      } else {
+        throw new Error(response.data.message || 'Error al eliminar el programa')
+      }
+    } catch (error) {
+      console.error('Error deleting program:', error)
+      toast({
+        title: 'Error',
+        description: error.response?.data?.message || error.message || 'No se pudo eliminar el programa',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      })
+    } finally {
+      setDeleting(false)
+    }
   }
 
   const handleSubmit = async (e) => {
@@ -911,17 +973,27 @@ const Programs = () => {
                                           {(program.duration_minutes || 60) / 60}h
                                         </Badge>
                                       </HStack>
-                                      <IconButton
-                                        aria-label="Editar programa"
-                                        icon={<FiEdit2 />}
-                                        size="xs"
-                                        colorScheme="blue"
-                                        variant="ghost"
-                                        onClick={(e) => {
-                                          e.stopPropagation()
-                                          loadProgramForEdit(program.program_id)
-                                        }}
-                                      />
+                                      <HStack spacing={1}>
+                                        <IconButton
+                                          aria-label="Editar programa"
+                                          icon={<FiEdit2 />}
+                                          size="xs"
+                                          colorScheme="blue"
+                                          variant="ghost"
+                                          onClick={(e) => {
+                                            e.stopPropagation()
+                                            loadProgramForEdit(program.program_id)
+                                          }}
+                                        />
+                                        <IconButton
+                                          aria-label="Eliminar programa"
+                                          icon={<FiTrash2 />}
+                                          size="xs"
+                                          colorScheme="red"
+                                          variant="ghost"
+                                          onClick={(e) => handleDeleteClick(program, e)}
+                                        />
+                                      </HStack>
                                     </HStack>
                                     <Text
                                       fontSize="xs"
@@ -1373,6 +1445,48 @@ const Programs = () => {
           </form>
         </ModalContent>
       </Modal>
+
+      {/* Diálogo de confirmación para eliminar programa */}
+      <AlertDialog
+        isOpen={isDeleteDialogOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={onDeleteDialogClose}
+        isCentered
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold" color="red.500">
+              Eliminar Programa
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              ¿Estás seguro de que deseas eliminar el programa{' '}
+              <Text as="span" fontWeight="bold">
+                "{programToDelete?.program_title}"
+              </Text>
+              ?
+              <br />
+              <br />
+              Esta acción no se puede deshacer.
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={onDeleteDialogClose} isDisabled={deleting}>
+                Cancelar
+              </Button>
+              <Button
+                colorScheme="red"
+                onClick={handleDeleteProgram}
+                ml={3}
+                isLoading={deleting}
+                loadingText="Eliminando..."
+              >
+                Eliminar
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </Box>
   )
 }
