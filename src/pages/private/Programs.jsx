@@ -155,7 +155,46 @@ const Programs = () => {
       })
       
       const programsData = response.data?.data || response.data || []
-      setPrograms(Array.isArray(programsData) ? programsData : [])
+      
+      // Formatear las fechas recibidas para evitar problemas de zona horaria
+      const formattedPrograms = Array.isArray(programsData) 
+        ? programsData.map(program => {
+            if (program.scheduled_date) {
+              // Si viene con Z (UTC), parsearlo y reconstruirlo en hora local
+              let date;
+              if (typeof program.scheduled_date === 'string' && program.scheduled_date.includes('Z')) {
+                // Parsear como UTC y convertir a hora local
+                date = new Date(program.scheduled_date);
+              } else if (typeof program.scheduled_date === 'string' && program.scheduled_date.includes('T')) {
+                // Ya viene sin Z, parsearlo como hora local
+                const [datePart, timePart] = program.scheduled_date.split('T');
+                const [year, month, day] = datePart.split('-').map(Number);
+                const [hours, minutes, seconds = 0] = timePart.split(':').map(Number);
+                date = new Date(year, month - 1, day, hours, minutes, seconds || 0);
+              } else {
+                date = new Date(program.scheduled_date);
+              }
+              
+              // Reconstruir en formato YYYY-MM-DDTHH:mm:ss sin zona horaria
+              const year = date.getFullYear();
+              const month = String(date.getMonth() + 1).padStart(2, '0');
+              const day = String(date.getDate()).padStart(2, '0');
+              const hours = String(date.getHours()).padStart(2, '0');
+              const minutes = String(date.getMinutes()).padStart(2, '0');
+              const seconds = String(date.getSeconds()).padStart(2, '0');
+              program.scheduled_date = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+            }
+            return program;
+          })
+        : []
+      
+      console.log('📥 Programas recibidos del backend:', formattedPrograms.map(p => ({
+        id: p.program_id,
+        title: p.program_title,
+        scheduled_date: p.scheduled_date
+      })))
+      
+      setPrograms(formattedPrograms)
     } catch (error) {
       console.error('Error fetching programs:', error)
       setPrograms([])
@@ -234,7 +273,10 @@ const Programs = () => {
   // Obtener programas para un día específico
   const getProgramsForDay = (date) => {
     return programs.filter(program => {
-      const programDate = new Date(program.scheduled_date).toISOString().split('T')[0]
+      if (!program.scheduled_date) return false
+      // Convertir la fecha del programa a fecha local para comparar
+      const programDateObj = new Date(program.scheduled_date)
+      const programDate = `${programDateObj.getFullYear()}-${String(programDateObj.getMonth() + 1).padStart(2, '0')}-${String(programDateObj.getDate()).padStart(2, '0')}`
       return programDate === date && (filterType === 'all' || program.program_type === filterType)
     }).sort((a, b) => {
       const timeA = new Date(a.scheduled_date)
@@ -246,7 +288,10 @@ const Programs = () => {
   // Verificar si un slot está ocupado para un día específico
   const isSlotOccupied = (slot, date) => {
     return programs.some(program => {
-      const programDate = new Date(program.scheduled_date).toISOString().split('T')[0]
+      if (!program.scheduled_date) return false
+      // Convertir la fecha del programa a fecha local para comparar
+      const programDateObj = new Date(program.scheduled_date)
+      const programDate = `${programDateObj.getFullYear()}-${String(programDateObj.getMonth() + 1).padStart(2, '0')}-${String(programDateObj.getDate()).padStart(2, '0')}`
       if (programDate !== date) return false
       if (filterType !== 'all' && program.program_type !== filterType) return false
       
@@ -264,7 +309,10 @@ const Programs = () => {
   // Obtener programa en un slot para un día específico
   const getProgramAtSlot = (slot, date) => {
     return programs.find(program => {
-      const programDate = new Date(program.scheduled_date).toISOString().split('T')[0]
+      if (!program.scheduled_date) return false
+      // Convertir la fecha del programa a fecha local para comparar
+      const programDateObj = new Date(program.scheduled_date)
+      const programDate = `${programDateObj.getFullYear()}-${String(programDateObj.getMonth() + 1).padStart(2, '0')}-${String(programDateObj.getDate()).padStart(2, '0')}`
       if (programDate !== date) return false
       if (filterType !== 'all' && program.program_type !== filterType) return false
       
@@ -583,12 +631,17 @@ const Programs = () => {
         return
       }
 
-      // Crear fecha combinando fecha y hora
-      const dateTimeString = `${formData.scheduled_date}T${formData.scheduled_time}`
-      const scheduledDate = new Date(dateTimeString)
+      // Crear fecha combinando fecha y hora EXACTAMENTE como se ingresó en el modal
+      // Formato: YYYY-MM-DDTHH:mm:ss (sin zona horaria)
+      // El backend interpretará esto como hora local
+      const scheduledDateTime = `${formData.scheduled_date}T${formData.scheduled_time}:00`
       
-      // Validar que la fecha sea válida
-      if (isNaN(scheduledDate.getTime())) {
+      // Validar que la fecha sea válida creando un objeto Date para verificación
+      const [year, month, day] = formData.scheduled_date.split('-').map(Number)
+      const [hours, minutes] = formData.scheduled_time.split(':').map(Number)
+      const validationDate = new Date(year, month - 1, day, hours, minutes, 0)
+      
+      if (isNaN(validationDate.getTime())) {
         toast({
           title: 'Error',
           description: 'La fecha y hora seleccionadas no son válidas',
@@ -600,7 +653,37 @@ const Programs = () => {
         return
       }
       
-      const scheduledDateTime = scheduledDate.toISOString()
+      // Log para debugging - mostrar exactamente lo que se envía desde el modal
+      console.log('📋 ========== DATOS DEL MODAL QUE SE ENVIARÁN ==========')
+      console.log('📅 Fecha y hora:', {
+        'formData.scheduled_date': formData.scheduled_date,
+        'formData.scheduled_time': formData.scheduled_time,
+        'Fecha y hora combinada': scheduledDateTime,
+        'Fecha validación (local)': validationDate.toLocaleString('es-ES'),
+        'Año': validationDate.getFullYear(),
+        'Mes': validationDate.getMonth() + 1,
+        'Día': validationDate.getDate(),
+        'Hora': validationDate.getHours(),
+        'Minuto': validationDate.getMinutes(),
+        'Segundo': validationDate.getSeconds()
+      })
+      console.log('📝 Todos los datos del formulario:', {
+        'program_title': formData.program_title,
+        'program_description': formData.program_description,
+        'program_type': formData.program_type,
+        'scheduled_date': formData.scheduled_date,
+        'scheduled_time': formData.scheduled_time,
+        'scheduledDateTime (combinado)': scheduledDateTime,
+        'duration_minutes': formData.duration_minutes,
+        'program_users': formData.program_users,
+        'program_image': formData.program_image,
+        'tiktok_live_url': formData.tiktok_live_url,
+        'instagram_live_url': formData.instagram_live_url,
+        'podcast_id': formData.podcast_id,
+        'selectedTimeSlot': selectedTimeSlot,
+        'editingProgramId': editingProgramId
+      })
+      console.log('📋 ===================================================')
       
       // Si hay imagen nueva (File), usar FormData, sino JSON
       // Si program_image es un objeto con isExisting, no es un archivo nuevo, usar JSON
@@ -653,6 +736,11 @@ const Programs = () => {
             user_role: 'locutor'
           }))
         }
+        
+        // Log de JSON antes de enviar
+        console.log('📤 Enviando con JSON (sin imagen):')
+        console.log('  - scheduled_date:', scheduledDateTime)
+        console.log('  - programData completo:', JSON.stringify(programData, null, 2))
 
         // Si hay imagen existente pero no se seleccionó una nueva, mantener la existente
         if (formData.program_image && formData.program_image.isExisting && !(formData.program_image instanceof File)) {
@@ -688,8 +776,40 @@ const Programs = () => {
         : '/api/programs/create'
       const method = isEditing ? 'put' : 'post'
       
+      // Log final antes de enviar
+      console.log('🚀 ========== ENVIANDO PETICIÓN AL BACKEND ==========')
+      console.log('📡 Detalles de la petición:', {
+        'Método HTTP': method.toUpperCase(),
+        'URL': url,
+        'Es edición': isEditing,
+        'Tipo de datos': hasImage ? 'FormData (con imagen)' : 'JSON (sin imagen)',
+        'scheduled_date que se envía': scheduledDateTime,
+        'Fecha original del modal': formData.scheduled_date,
+        'Hora original del modal': formData.scheduled_time
+      })
+      
+      if (hasImage) {
+        console.log('📎 FormData - Valores que se envían:')
+        if (requestData instanceof FormData) {
+          for (let pair of requestData.entries()) {
+            console.log(`  ${pair[0]}:`, pair[1])
+          }
+        }
+      } else {
+        console.log('📦 JSON - Objeto completo que se envía:')
+        console.log(JSON.stringify(requestData, null, 2))
+      }
+      console.log('🚀 ==================================================')
+      
       const response = await axios[method](url, requestData, {
         headers: headers
+      })
+      
+      console.log('✅ Respuesta del servidor recibida:', {
+        'success': response.data.success,
+        'message': response.data.message,
+        'program_id': response.data.data?.program_id,
+        'scheduled_date guardado': response.data.data?.scheduled_date
       })
       
       if (response.data.success) {
@@ -705,7 +825,8 @@ const Programs = () => {
         
         // Limpiar formulario y cerrar modal
         handleCloseModal()
-        fetchPrograms()
+        // Recargar programas para actualizar el calendario
+        await fetchPrograms()
       } else {
         throw new Error(response.data.message || (isEditing ? 'Error al actualizar el programa' : 'Error al crear el programa'))
       }
@@ -1053,10 +1174,20 @@ const Programs = () => {
                                     transition="all 0.2s"
                                     onClick={() => {
                                       setSelectedTimeSlot(slot)
+                                      setEditingProgramId(null) // Asegurar que no esté en modo edición
                                       setFormData(prev => ({
                                         ...prev,
                                         scheduled_date: day.date,
-                                        scheduled_time: slot.time
+                                        scheduled_time: slot.time,
+                                        program_title: '',
+                                        program_description: '',
+                                        program_type: '',
+                                        tiktok_live_url: '',
+                                        instagram_live_url: '',
+                                        podcast_id: '',
+                                        duration_minutes: 60,
+                                        program_users: [],
+                                        program_image: null
                                       }))
                                       onModalOpen()
                                     }}
