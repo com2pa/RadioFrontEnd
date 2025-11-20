@@ -20,6 +20,7 @@ import MenuManagement from '../pages/private/MenuManagement'
 import SubscribersManagement from '../pages/private/SubscribersManagement'
 import UserRolesManagement from '../pages/private/UserRolesManagement'
 import ContactNotifications from '../pages/private/ContactNotifications'
+import Auditoria from '../pages/private/Auditoria'
 
 const LoadingFallback = () => (
   <Box display="flex" justifyContent="center" alignItems="center" minH="100vh">
@@ -66,6 +67,7 @@ const Private = () => {
       <Route path="admin/subscribers" element={<SubscribersManagement />} />
       <Route path="admin/user-roles" element={<UserRolesManagement />} />
       <Route path="admin/contact-notifications" element={<ContactNotifications />} />
+      <Route path="admin/auditoria" element={<Auditoria />} />
       
       {/* Redirección automática */}
       <Route path="/" element={<Navigate to={getDashboardRoute(auth)} replace />} />
