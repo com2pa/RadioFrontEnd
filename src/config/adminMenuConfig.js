@@ -87,6 +87,13 @@ export const adminMenuItems = [
     href: '/dashboard/admin/contact-notifications',
     icon: 'FiMail',
     description: 'Gestionar mensajes del formulario de contacto'
+  },
+  {
+    id: 'auditoria',
+    label: 'Auditoría',
+    href: '/dashboard/admin/auditoria',
+    icon: 'FiFileText',
+    description: 'Ver logs de auditoría del sistema'
   }
 ]
 
