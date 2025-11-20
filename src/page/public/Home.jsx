@@ -20,9 +20,9 @@ const Home = () => {
     <PublicLayout>
       <Box bg={bgColor} minH="100vh" pb="120px"> {/* Padding bottom para el reproductor sticky */}
         <HeroSection />
-        <LivePrograms />
-        <TopSongs />
-        <StatsSection />
+        {/* <LivePrograms /> */}
+        {/* <TopSongs /> */}
+        {/* <StatsSection /> */}
         <CategoriesSection />
       </Box>
       <PublicFooter />

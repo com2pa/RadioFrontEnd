@@ -21,7 +21,7 @@ export const radioConfig = {
   streamUrl: 'https://stream.zeno.fm/hwwthayn6biuv',
   
   // Información de la estación
-  stationName: 'OXÍ Radio 88.1 FM',
+  stationName: 'Radio Oxigeno 88.1 FM',
   stationDescription: 'La mejor música y noticias en vivo',
   
   // Configuración del reproductor

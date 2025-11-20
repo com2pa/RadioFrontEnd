@@ -13,6 +13,7 @@ import {
   useColorModeValue,
   SimpleGrid,
   Badge,
+  Flex,
 } from '@chakra-ui/react'
 import { keyframes } from '@emotion/react'
 import { 
@@ -26,77 +27,61 @@ import {
 } from 'react-icons/fi'
 import { useToast } from '@chakra-ui/react'
 
-// Animaciones optimizadas
-const float = keyframes`
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-6px); }
+// Animaciones optimizadas y sutiles
+const shimmer = keyframes`
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
 `
 
-const pulse = keyframes`
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-`
-
-const glow = keyframes`
-  0%, 100% { box-shadow: 0 0 20px rgba(229, 0, 0, 0.5); }
-  50% { box-shadow: 0 0 35px rgba(229, 0, 0, 0.8); }
-`
-
-const gradientShift = keyframes`
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+const scaleIn = keyframes`
+  0% { 
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  100% { 
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 `
 
 const CategoriesSection = () => {
   const brandRed = '#E50000'
-  const brandDarkGray = '#333333'
   const brandWhite = '#FFFFFF'
+  const brandDarkGray = '#333333'
   const brandLightGray = '#CCCCCC'
-  const brandOrange = '#FFA500'
 
   const textColor = useColorModeValue(brandDarkGray, brandLightGray)
+  const cardBg = useColorModeValue('white', '#2d2d2d')
+  const borderColorValue = useColorModeValue('gray.200', 'gray.700')
   const toast = useToast()
 
   const categories = useMemo(() => [
-    {
-      id: 1,
-      title: "Programas en Vivo",
-      description: "Sintoniza tus programas favoritos con nuestros locutores en directo. Música, noticias y entretenimiento 24/7.",
-      icon: FiMic,
-      colorScheme: brandRed,
-      gradient: `linear(135deg, ${brandRed}, #C00000)`,
-      textGradient: `linear(to-r, ${brandRed}, #C00000)`,
-      indicatorColor: brandOrange,
-      borderColor: brandRed + '70',
-      hoverBorderColor: brandRed,
-      shadowColor: "rgba(229, 0, 0, 0.25)"
-    },
+    // {
+    //   id: 1,
+    //   title: "Programas en Vivo",
+    //   description: "Sintoniza tus programas favoritos con nuestros locutores en directo",
+    //   icon: FiMic,
+    //   color: brandRed,
+    //   count: "24/7",
+    //   badge: "EN VIVO"
+    // },
     {
       id: 2,
       title: "Últimas Noticias",
-      description: "Mantente informado con los titulares más relevantes del día. Noticias locales, nacionales e internacionales.",
+      description: "Mantente informado con los titulares más relevantes del día",
       icon: FiRss,
-      colorScheme: brandOrange,
-      gradient: `linear(135deg, ${brandOrange}, #FF8C00)`,
-      textGradient: `linear(to-r, ${brandOrange}, #FF8C00)`,
-      indicatorColor: brandRed,
-      borderColor: brandOrange + '70',
-      hoverBorderColor: brandOrange,
-      shadowColor: "rgba(255, 165, 0, 0.25)"
+      color: brandRed,
+      count: "50+",
+      badge: "ACTUALIZADO"
     },
     {
       id: 3,
       title: "Nuestros Podcasts",
-      description: "Explora nuestra biblioteca de podcasts exclusivos y a la carta. Contenido especializado para todos los gustos.",
+      description: "Explora nuestra biblioteca de podcasts exclusivos y a la carta",
       icon: FiHeadphones,
-      colorScheme: brandRed,
-      gradient: `linear(135deg, ${brandRed}, #C00000)`,
-      textGradient: `linear(to-r, ${brandRed}, #C00000)`,
-      indicatorColor: brandOrange,
-      borderColor: brandRed + '70',
-      hoverBorderColor: brandRed,
-      shadowColor: "rgba(229, 0, 0, 0.25)"
+      color: brandRed,
+      count: "100+",
+      badge: "DISPONIBLE"
     }
   ], [])
 
@@ -112,295 +97,212 @@ const CategoriesSection = () => {
 
   return (
     <Box 
-      py={{ base: 10, sm: 12, md: 14, lg: 16 }} 
-      bgGradient={`linear(to-b, ${brandWhite}, ${brandLightGray}40)`}
+      py={{ base: 12, sm: 16, md: 20, lg: 24 }} 
+      bg={brandLightGray}
       position="relative"
       overflow="hidden"
-      sx={{
-        scrollSnapAlign: 'start',
-        scrollMarginTop: '0px'
-      }}
     >
-      {/* Fondo con gradiente animado */}
-      <Box
-        position="absolute"
-        top={0}
-        left={0}
-        right={0}
-        bottom={0}
-        bgGradient={`linear(135deg, ${brandRed}08, ${brandOrange}08, ${brandRed}08)`}
-        backgroundSize="400% 400%"
-        sx={{
-          animation: `${gradientShift} 20s ease infinite`,
-          willChange: 'background-position'
-        }}
-        zIndex={0}
-      />
 
-      {/* Blobs grandes animados optimizados */}
-      <Box
-        position="absolute"
-        top="12%"
-        left="-4%"
-        w={{ base: "250px", md: "500px", lg: "700px" }}
-        h={{ base: "250px", md: "500px", lg: "700px" }}
-        bgGradient={`radial(circle, ${brandRed}50, ${brandOrange}25, transparent)`}
-        filter="blur(80px)"
-        opacity={0.4}
-        sx={{
-          animation: `${float} 22s ease-in-out infinite`,
-          willChange: 'transform'
-        }}
-        zIndex={1}
-      />
-      <Box
-        position="absolute"
-        bottom="4%"
-        right="-4%"
-        w={{ base: "220px", md: "450px", lg: "650px" }}
-        h={{ base: "220px", md: "450px", lg: "650px" }}
-        bgGradient={`radial(circle, ${brandOrange}50, ${brandRed}25, transparent)`}
-        filter="blur(90px)"
-        opacity={0.4}
-        sx={{
-          animation: `${float} 28s ease-in-out infinite reverse`,
-          willChange: 'transform'
-        }}
-        zIndex={1}
-      />
-
-      <Container maxW="container.xl" position="relative" zIndex={1} px={{ base: 2, sm: 3, md: 4, lg: 6, xl: 8 }}>
-        <VStack spacing={{ base: 6, sm: 8, md: 10, lg: 12 }} align="stretch">
-          {/* Header */}
-          <VStack spacing={{ base: 2, sm: 3, md: 4 }} textAlign="center">
+      <Container maxW="container.xl" position="relative" zIndex={2} px={{ base: 4, sm: 6, md: 8 }}>
+        <VStack spacing={{ base: 8, sm: 10, md: 12 }} align="stretch">
+          {/* Header compacto y elegante */}
+          <VStack spacing={{ base: 3, sm: 4 }} textAlign="center" maxW="800px" mx="auto">
             <Badge 
-              fontSize={{ base: "2xs", sm: "xs", md: "sm", lg: "md" }}
-              px={{ base: 2, sm: 2.5, md: 3, lg: 4, xl: 5 }}
-              py={{ base: 0.5, sm: 1, md: 1.5, lg: 2 }}
+              fontSize={{ base: "xs", sm: "sm" }}
+              px={4}
+              py={1.5}
               borderRadius="full"
-              bgGradient={`linear(135deg, ${brandRed}, ${brandOrange})`}
+              bg={brandRed}
               color={brandWhite}
-              fontWeight="black"
+              fontWeight="bold"
               textTransform="uppercase"
-              letterSpacing={{ base: "tight", sm: "wide" }}
-              sx={{
-                animation: `${glow} 2s ease-in-out infinite, ${pulse} 3s ease-in-out infinite`,
-                willChange: 'transform, box-shadow'
-              }}
-              boxShadow={`0 0 25px ${brandRed}60`}
-              border={{ base: "1px solid", md: "2px solid" }}
-              borderColor="rgba(255, 255, 255, 0.3)"
-              backdropFilter="blur(10px)"
+              letterSpacing="wide"
             >
-              ✨ CATEGORÍAS
+              Categorías
             </Badge>
             <Heading 
-              size={{ base: "lg", sm: "xl", md: "2xl", lg: "3xl", xl: "4xl" }}
-              fontWeight="black"
-              bgGradient={`linear(to-r, ${brandRed}, ${brandOrange}, ${brandRed})`}
-              bgClip="text"
-              backgroundSize="200% auto"
-              sx={{
-                animation: `${gradientShift} 3s ease infinite`,
-                willChange: 'background-position'
-              }}
+              size={{ base: "lg", sm: "xl", md: "2xl" }}
+              fontWeight="bold"
+              color={textColor}
               lineHeight="shorter"
-              px={{ base: 2, sm: 0 }}
             >
-              Explora Nuestras Categorías
+              Explora Nuestro Contenido
             </Heading>
             <Text 
-              fontSize={{ base: "xs", sm: "sm", md: "md", lg: "lg", xl: "xl" }} 
+              fontSize={{ base: "sm", sm: "md", md: "lg" }} 
               color={textColor} 
-              maxW={{ base: "98%", sm: "95%", md: "90%", lg: "85%", xl: "700px" }} 
+              opacity={0.8}
+              maxW="600px"
               fontWeight="medium"
-              lineHeight="tall"
-              px={{ base: 2, sm: 0 }}
             >
-              Descubre una variedad de contenido, desde programas en vivo hasta las últimas noticias y podcasts exclusivos
+              Descubre programas en vivo, noticias actualizadas y podcasts exclusivos
             </Text>
           </VStack>
 
-          <SimpleGrid columns={{ base: 1, sm: 2, lg: 3 }} spacing={{ base: 4, sm: 5, md: 6, lg: 7 }}>
+          {/* Grid de categorías - Diseño compacto */}
+          <SimpleGrid 
+            columns={{ base: 1, md: 2, lg: 3 }} 
+            spacing={{ base: 6, sm: 8, md: 6 }}
+            maxW="1200px"
+            mx="auto"
+            w="full"
+          >
             {categories.map((category, index) => (
-              <Box
+              <Card
                 key={category.id}
+                bg={cardBg}
+                borderRadius={{ base: "xl", md: "2xl" }}
+                overflow="hidden"
                 position="relative"
+                border="1px solid"
+                borderColor={borderColorValue}
+                boxShadow="0 4px 20px rgba(0, 0, 0, 0.08)"
                 sx={{
-                  animation: `${float} ${4 + index}s ease-in-out infinite`,
-                  willChange: 'transform'
+                  animation: `${scaleIn} 0.5s ease-out ${index * 0.1}s both`,
+                  transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                  '&:hover': {
+                    transform: 'translateY(-8px)',
+                    boxShadow: `0 12px 40px ${category.color}20, 0 0 0 1px ${category.color}30`,
+                    borderColor: category.color,
+                  }
                 }}
+                cursor="pointer"
+                onClick={() => handleCategoryClick(category.title)}
               >
-                <Card 
-                  bg="rgba(255, 255, 255, 0.12)"
-                  backdropFilter="blur(20px)"
-                  border={{ base: "1px solid", md: "2px solid" }}
-                  borderColor="rgba(255, 255, 255, 0.25)"
-                  boxShadow="0 12px 28px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15)"
-                  borderRadius={{ base: "lg", sm: "xl", md: "2xl" }}
-                  overflow="hidden"
-                  sx={{
-                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                    willChange: 'transform',
-                    '&:hover': {
-                      boxShadow: `0 28px 56px ${category.shadowColor}, 0 0 75px ${category.colorScheme}30`,
-                      borderColor: category.hoverBorderColor,
-                      transform: 'translateY(-10px) scale(1.02)'
-                    }
-                  }}
+                {/* Barra superior con color */}
+                <Box
+                  h="4px"
+                  bg={category.color}
                   position="relative"
-                  minH={{ base: "350px", sm: "380px", md: "400px", lg: "420px" }}
-                  display="flex"
-                  flexDirection="column"
-                >
-                  {/* Efectos decorativos */}
-                  <Box
-                    position="absolute"
-                    top={-50}
-                    right={-50}
-                    w="100px"
-                    h="100px"
-                    bgGradient={`radial(circle, ${category.colorScheme}50, transparent)`}
-                    borderRadius="full"
-                    opacity={0.15}
-                    sx={{
-                      animation: `${pulse} 3s ease-in-out infinite`,
-                      willChange: 'transform'
-                    }}
-                  />
-                  <Box
-                    position="absolute"
-                    bottom={-30}
-                    left={-30}
-                    w="70px"
-                    h="70px"
-                    bgGradient={`radial(circle, ${category.colorScheme}40, transparent)`}
-                    borderRadius="full"
-                    opacity={0.2}
-                    sx={{
-                      animation: `${float} 6s ease-in-out infinite`,
-                      willChange: 'transform'
-                    }}
-                  />
+                  overflow="hidden"
+                  _before={{
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: '-100%',
+                    width: '100%',
+                    height: '100%',
+                    bg: `${brandWhite}40`,
+                    animation: `${shimmer} 3s infinite`,
+                  }}
+                />
 
-                  <CardBody p={{ base: 3, sm: 4, md: 5, lg: 6 }} position="relative" flex="1" display="flex" flexDirection="column" justifyContent="space-between">
-                    <VStack spacing={{ base: 3, sm: 4, md: 5 }} align="center" flex="1">
-                      {/* Icono principal con efectos */}
+                <CardBody p={{ base: 5, sm: 6, md: 6 }}>
+                  <VStack spacing={4} align="stretch">
+                    {/* Header del card con icono y badge */}
+                    <Flex justify="space-between" align="flex-start">
                       <Box
-                        position="relative"
+                        p={3}
+                        borderRadius="xl"
+                        bg={category.color}
+                        color={brandWhite}
+                        boxShadow={`0 4px 16px ${category.color}30`}
                         sx={{
-                          transition: 'transform 0.3s ease',
-                          willChange: 'transform',
+                          transition: 'all 0.3s ease',
                           '&:hover': {
-                            transform: 'scale(1.1) rotate(8deg)'
+                            transform: 'scale(1.1) rotate(5deg)',
+                            boxShadow: `0 8px 24px ${category.color}50`,
                           }
                         }}
                       >
-                        <Box
-                          p={{ base: 3, sm: 4, md: 5, lg: 6 }}
-                          borderRadius={{ base: "lg", sm: "xl", md: "2xl" }}
-                          bgGradient={category.gradient}
-                          color="white"
-                          boxShadow={`0 12px 32px ${category.shadowColor}, 0 0 50px ${category.colorScheme}50`}
-                          sx={{
-                            animation: `${pulse} 2s ease-in-out infinite`,
-                            willChange: 'transform',
-                            transition: 'box-shadow 0.3s ease',
-                            '&:hover': {
-                              boxShadow: `0 20px 50px ${category.shadowColor}, 0 0 80px ${category.colorScheme}70`
-                            }
-                          }}
-                          border={{ base: "2px solid", md: "3px solid" }}
-                          borderColor="rgba(255, 255, 255, 0.3)"
-                        >
-                          <Icon as={category.icon} boxSize={{ base: 7, sm: 8, md: 9, lg: 10 }} />
-                        </Box>
-                        
-                        {/* Indicador de estado */}
-                        <Box
-                          position="absolute"
-                          top={-2}
-                          right={-2}
-                          w="5"
-                          h="5"
-                          bg={category.indicatorColor}
-                          borderRadius="full"
-                          border="3px solid white"
-                          sx={{
-                            animation: `${glow} 2s ease-in-out infinite`,
-                            willChange: 'box-shadow'
-                          }}
-                        />
+                        <Icon as={category.icon} boxSize={{ base: 5, sm: 6 }} />
                       </Box>
+                      <Badge
+                        fontSize="2xs"
+                        px={2.5}
+                        py={1}
+                        borderRadius="full"
+                        bg={`${category.color}15`}
+                        color={category.color}
+                        fontWeight="bold"
+                        textTransform="uppercase"
+                        letterSpacing="wide"
+                      >
+                        {category.badge}
+                      </Badge>
+                    </Flex>
 
-                      {/* Contenido */}
-                      <VStack spacing={{ base: 2.5, sm: 3 }} textAlign="center" flex="1" justifyContent="center">
-                        <Heading size={{ base: "md", sm: "lg", md: "xl" }} bgGradient={category.textGradient} bgClip="text" fontWeight="black">
-                          {category.title}
-                        </Heading>
-                        <Text color={textColor} fontSize={{ base: "xs", sm: "sm", md: "md" }} lineHeight="1.6" fontWeight="medium">
-                          {category.description}
-                        </Text>
-                        
-                        {/* Estadísticas */}
-                        <HStack spacing={{ base: 2.5, sm: 3, md: 4 }} mt={2} flexWrap="wrap" justify="center">
-                          <VStack spacing={0.5}>
-                            <Icon as={FiStar} boxSize={{ base: 3, sm: 3.5, md: 4 }} color={brandOrange} />
-                            <Text fontSize={{ base: "2xs", sm: "xs" }} fontWeight="bold" color="gray.700">
-                              4.8
-                            </Text>
-                          </VStack>
-                          <VStack spacing={0.5}>
-                            <Icon as={FiTrendingUp} boxSize={{ base: 3, sm: 3.5, md: 4 }} color={brandRed} />
-                            <Text fontSize={{ base: "2xs", sm: "xs" }} fontWeight="bold" color="gray.700">
-                              Trending
-                            </Text>
-                          </VStack>
-                          <VStack spacing={0.5}>
-                            <Icon as={FiZap} boxSize={{ base: 3, sm: 3.5, md: 4 }} color={brandOrange} />
-                            <Text fontSize={{ base: "2xs", sm: "xs" }} fontWeight="bold" color="gray.700">
-                              Live
-                            </Text>
-                          </VStack>
-                        </HStack>
-                      </VStack>
+                    {/* Contenido */}
+                    <VStack spacing={2} align="stretch" flex={1}>
+                      <Heading 
+                        size={{ base: "md", sm: "lg" }}
+                        color={textColor}
+                        fontWeight="bold"
+                        lineHeight="shorter"
+                      >
+                        {category.title}
+                      </Heading>
+                      <Text 
+                        fontSize={{ base: "sm", sm: "md" }}
+                        color={textColor}
+                        opacity={0.7}
+                        lineHeight="tall"
+                        noOfLines={2}
+                      >
+                        {category.description}
+                      </Text>
                     </VStack>
 
-                    {/* Botón de acción */}
-                    <Button 
-                      size={{ base: "sm", sm: "md", md: "lg" }}
-                      bgGradient={category.gradient}
-                      color="white"
-                      sx={{
-                        transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
-                        willChange: 'transform',
-                        '&:hover': {
-                          bgGradient: category.gradient,
-                          transform: 'translateY(-2px)',
-                          boxShadow: `0 12px 28px ${category.shadowColor}`
-                        }
-                      }}
-                      _active={{
-                        transform: 'translateY(0px)'
-                      }}
-                      rightIcon={<Icon as={FiArrowRight} />}
-                      onClick={() => handleCategoryClick(category.title)}
-                      borderRadius={{ base: "lg", md: "xl" }}
-                      fontWeight="bold"
-                      px={{ base: 5, sm: 6, md: 8 }}
-                      py={{ base: 3, sm: 4, md: 5 }}
-                      mt={{ base: 3, sm: 4 }}
-                      fontSize={{ base: "xs", sm: "sm", md: "md" }}
-                      boxShadow={`0 8px 20px ${category.shadowColor}`}
-                      w="full"
-                    >
-                      {category.title.includes('Programas') ? 'Ver Programas' : 
-                       category.title.includes('Noticias') ? 'Leer Noticias' : 
-                       'Escuchar Podcasts'}
-                    </Button>
-                  </CardBody>
-                </Card>
-              </Box>
+                    {/* Footer con estadísticas y botón */}
+                    <VStack spacing={3} align="stretch" pt={2}>
+                        {/* Estadísticas compactas */}
+                        <HStack spacing={4} justify="space-between">
+                          <HStack spacing={1.5}>
+                            <Icon as={FiStar} boxSize={4} color={category.color} />
+                            <Text fontSize="xs" fontWeight="bold" color={textColor} opacity={0.8}>
+                              4.8
+                            </Text>
+                          </HStack>
+                          <HStack spacing={1.5}>
+                            <Icon as={FiTrendingUp} boxSize={4} color={category.color} />
+                            <Text fontSize="xs" fontWeight="bold" color={textColor} opacity={0.8}>
+                              Trending
+                            </Text>
+                          </HStack>
+                          <HStack spacing={1.5}>
+                            <Icon as={FiZap} boxSize={4} color={category.color} />
+                            <Text fontSize="xs" fontWeight="bold" color={textColor} opacity={0.8}>
+                              {category.count}
+                            </Text>
+                          </HStack>
+                        </HStack>
+
+                      {/* Botón de acción */}
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        colorScheme="gray"
+                        rightIcon={<Icon as={FiArrowRight} />}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleCategoryClick(category.title)
+                        }}
+                        color={category.color}
+                        fontWeight="semibold"
+                        _hover={{
+                          bg: category.color,
+                          color: brandWhite,
+                          fontWeight: 'bold',
+                          transform: 'translateX(4px) scale(1.02)',
+                          boxShadow: `0 4px 12px ${category.color}40`,
+                          '& svg': {
+                            transform: 'translateX(4px)',
+                          }
+                        }}
+                        transition="all 0.15s ease"
+                        justifyContent="space-between"
+                        px={0}
+                        h="auto"
+                        py={2}
+                      >
+                        {category.title.includes('Programas') ? 'Ver Programas' : 
+                         category.title.includes('Noticias') ? 'Leer Noticias' : 
+                         'Escuchar Podcasts'}
+                      </Button>
+                    </VStack>
+                  </VStack>
+                </CardBody>
+              </Card>
             ))}
           </SimpleGrid>
         </VStack>
