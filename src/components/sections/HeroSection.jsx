@@ -17,6 +17,7 @@ import {
   Image,
   Flex,
   useToast,
+  Tooltip,
 } from '@chakra-ui/react'
 import axios from 'axios'
 import { keyframes } from '@emotion/react'
@@ -31,7 +32,8 @@ import {
   FiDownload,
   FiStar,
   FiTrendingUp,
-  FiZap
+  FiZap,
+  FiEye
 } from 'react-icons/fi'
 
 // Animaciones EXTREMAS para máximo impacto
@@ -240,13 +242,14 @@ const HeroSection = () => {
   return (
     <Box
       position="relative"
-      h={{ base: "100vh", sm: "95vh", md: "90vh", lg: "100vh" }}
-      minH={{ base: "500px", sm: "600px", md: "650px", lg: "700px" }}
-      maxH={{ base: "100vh", sm: "95vh" }}
+      h={{ base: "calc(100vh - 150px)", sm: "calc(100vh - 170px)", md: "calc(100vh - 180px)" }}
+      minH={{ base: "350px", sm: "450px", md: "500px" }}
+      maxH={{ base: "calc(100vh - 150px)", sm: "calc(100vh - 170px)", md: "calc(100vh - 180px)" }}
       overflow="hidden"
       display="flex"
       alignItems="center"
       justifyContent="center"
+      pb={{ base: "150px", sm: "170px", md: "180px" }}
     >
       {/* Fondo con gradiente animado EXTREMO */}
       <Box
@@ -383,6 +386,80 @@ const HeroSection = () => {
                 zIndex={2}
               />
             )}
+
+            {/* Botones de acción en cada slide - Posicionados en la parte inferior derecha */}
+            <HStack
+              position="absolute"
+              bottom={{ base: 4, sm: 6, md: 8 }}
+              right={{ base: 4, sm: 6, md: 8 }}
+              spacing={{ base: 2, sm: 3 }}
+              zIndex={5}
+            >
+              <Tooltip
+                label="Reproducir"
+                placement="top"
+                hasArrow
+                bg={brandRed}
+                color={brandWhite}
+                fontSize="sm"
+                fontWeight="bold"
+                px={3}
+                py={2}
+                borderRadius="md"
+              >
+                <IconButton
+                  aria-label="Reproducir"
+                  icon={<Icon as={FiPlay} />}
+                  size={{ base: "sm", sm: "md" }}
+                  borderRadius="full"
+                  bg="rgba(0, 0, 0, 0.5)"
+                  backdropFilter="blur(10px)"
+                  color={brandWhite}
+                  border="2px solid"
+                  borderColor="rgba(255, 255, 255, 0.3)"
+                  _hover={{
+                    bg: brandRed,
+                    color: brandWhite,
+                    borderColor: brandRed,
+                    transform: "scale(1.1)",
+                    boxShadow: `0 0 20px ${brandRed}80, 0 0 40px ${brandRed}60`
+                  }}
+                  transition="all 0.3s ease"
+                />
+              </Tooltip>
+              <Tooltip
+                label="Ver en vivo"
+                placement="top"
+                hasArrow
+                bg={brandOrange}
+                color={brandWhite}
+                fontSize="sm"
+                fontWeight="bold"
+                px={3}
+                py={2}
+                borderRadius="md"
+              >
+                <IconButton
+                  aria-label="Ver en vivo"
+                  icon={<Icon as={FiEye} />}
+                  size={{ base: "sm", sm: "md" }}
+                  borderRadius="full"
+                  bg="rgba(0, 0, 0, 0.5)"
+                  backdropFilter="blur(10px)"
+                  color={brandWhite}
+                  border="2px solid"
+                  borderColor="rgba(255, 255, 255, 0.3)"
+                  _hover={{
+                    bg: brandOrange,
+                    color: brandWhite,
+                    borderColor: brandOrange,
+                    transform: "scale(1.1)",
+                    boxShadow: `0 0 20px ${brandOrange}80, 0 0 40px ${brandOrange}60`
+                  }}
+                  transition="all 0.3s ease"
+                />
+              </Tooltip>
+            </HStack>
 
             {/* Contenido solo si no hay imagen del programa */}
             {!slide.bgImage && (
