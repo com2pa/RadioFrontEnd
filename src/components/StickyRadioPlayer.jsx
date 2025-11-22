@@ -49,10 +49,11 @@ const StickyRadioPlayer = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
   const [reconnectAttempts, setReconnectAttempts] = useState(0)
-  
+  const [errorToastShown, setErrorToastShown] = useState(false)
+
   const toast = useToast()
   const audioRef = useRef(null)
-  
+
   // Colores responsivos
   const bgColor = useColorModeValue('white', 'gray.800')
   const borderColor = useColorModeValue('gray.200', 'gray.700')
@@ -75,13 +76,17 @@ const StickyRadioPlayer = () => {
   const handleReconnect = useCallback(() => {
     if (reconnectAttempts >= radioConfig.reconnectAttempts) {
       console.error('❌ [Reconnect] Máximo de intentos alcanzado')
-      toast({
-        title: 'Error de conexión',
-        description: 'No se pudo conectar a la radio después de varios intentos',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      })
+      // Solo mostrar toast si no se ha mostrado ya
+      if (!errorToastShown) {
+        setErrorToastShown(true)
+        toast({
+          title: 'Error de conexión',
+          description: 'No se pudo conectar a la radio después de varios intentos',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        })
+      }
       return
     }
 
@@ -99,7 +104,7 @@ const StickyRadioPlayer = () => {
         }
       }
     }, delay)
-  }, [reconnectAttempts, isPlaying, toast])
+  }, [reconnectAttempts, isPlaying, toast, errorToastShown])
 
   // Validar URL del stream al montar
   useEffect(() => {
@@ -151,6 +156,7 @@ const StickyRadioPlayer = () => {
       setIsLoading(false)
       setError(null)
       setReconnectAttempts(0)
+      // No resetear errorToastShown aquí para evitar múltiples toasts durante reconexiones
     }
 
     const handleLoadStart = () => {
@@ -163,6 +169,13 @@ const StickyRadioPlayer = () => {
       setIsPlaying(true)
       setIsLoading(false)
       setError(null)
+      // Resetear el flag de toast solo cuando la reproducción es estable
+      // Esperar 3 segundos para asegurar que no hay errores inmediatos
+      setTimeout(() => {
+        if (audioRef.current && !audioRef.current.paused && !audioRef.current.error) {
+          setErrorToastShown(false)
+        }
+      }, 3000)
     }
 
     const handlePause = () => {
@@ -193,6 +206,8 @@ const StickyRadioPlayer = () => {
       setIsLoading(false)
       
       let errorMessage = 'Error al reproducir la radio'
+      let shouldReconnect = false
+      
       if (audio.error) {
         switch (audio.error.code) {
           case 1: // MEDIA_ERR_ABORTED
@@ -200,14 +215,14 @@ const StickyRadioPlayer = () => {
             break
           case 2: // MEDIA_ERR_NETWORK
             errorMessage = 'Error de red. Verifica tu conexión'
-            // Intentar reconectar
-            handleReconnect()
+            shouldReconnect = true
             break
           case 3: // MEDIA_ERR_DECODE
             errorMessage = 'Error al decodificar el stream'
             break
           case 4: // MEDIA_ERR_SRC_NOT_SUPPORTED
-            errorMessage = 'Formato de stream no soportado'
+            errorMessage = 'Formato de stream no soportado o servidor no disponible'
+            shouldReconnect = true
             break
           default:
             errorMessage = 'Error desconocido al reproducir'
@@ -215,13 +230,26 @@ const StickyRadioPlayer = () => {
       }
       
       setError(errorMessage)
-      toast({
-        title: 'Error de reproducción',
-        description: errorMessage,
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
+      
+      // Mostrar toast solo una vez por error
+      setErrorToastShown(prev => {
+        if (!prev) {
+          toast({
+            title: 'Error de reproducción',
+            description: errorMessage,
+            status: 'error',
+            duration: 5000,
+            isClosable: true,
+          })
+          return true
+        }
+        return prev
       })
+      
+      // Intentar reconectar si es necesario (sin mostrar toast adicional)
+      if (shouldReconnect) {
+        handleReconnect()
+      }
     }
 
     const handleStalled = () => {
@@ -280,20 +308,20 @@ const StickyRadioPlayer = () => {
 
     if (!isValidStreamUrl(streamUrl)) {
       console.error('❌ [handlePlayPause] URL inválida:', streamUrl)
-      toast({
+        toast({
         title: 'Error',
         description: 'URL de stream no configurada correctamente',
         status: 'error',
         duration: 3000,
-        isClosable: true,
-      })
+          isClosable: true,
+        })
       return
     }
 
     try {
       if (isPlaying) {
         console.log('⏸️ [handlePlayPause] Pausando...')
-        audio.pause()
+          audio.pause()
         setIsPlaying(false)
       } else {
         console.log('▶️ [handlePlayPause] Iniciando reproducción...')
@@ -310,12 +338,12 @@ const StickyRadioPlayer = () => {
         }
         
         // Intentar reproducir
-        await audio.play()
+          await audio.play()
         console.log('✅ [handlePlayPause] Reproducción iniciada exitosamente')
         setIsPlaying(true)
         setIsLoading(false)
-      }
-    } catch (error) {
+        }
+      } catch (error) {
       console.error('❌ [handlePlayPause] Error completo:', {
         name: error.name,
         message: error.message,
@@ -326,7 +354,7 @@ const StickyRadioPlayer = () => {
         audioError: audio.error
       })
       
-      setIsPlaying(false)
+          setIsPlaying(false)
       setIsLoading(false)
       
       let errorMessage = 'No se pudo reproducir la radio'
@@ -336,10 +364,10 @@ const StickyRadioPlayer = () => {
         errorMessage = 'Tu navegador no soporta este formato de audio'
       } else if (audio.error) {
         errorMessage = `Error de audio: ${audio.error.message || 'Error desconocido'}`
-      } else {
+    } else {
         errorMessage = `Error: ${error.message || error.name || 'Error desconocido'}`
       }
-      
+
       setError(errorMessage)
       toast({
         title: 'Error de reproducción',
@@ -367,7 +395,7 @@ const StickyRadioPlayer = () => {
     try {
       if (navigator.share) {
         await navigator.share(shareData)
-      } else {
+    } else {
         // Fallback: copiar al portapapeles
         await navigator.clipboard.writeText(window.location.href)
         toast({
@@ -396,84 +424,84 @@ const StickyRadioPlayer = () => {
       />
 
       {/* Reproductor principal */}
-      <Box
-        position="fixed"
-        bottom={0}
-        left={0}
-        right={0}
-        zIndex={1000}
-        bg={bgColor}
-        borderTop="1px solid"
-        borderColor={borderColor}
-        boxShadow="0 -4px 20px rgba(0,0,0,0.1)"
-        backdropFilter="blur(10px)"
-        transition="all 0.3s ease"
-      >
-        {/* Contenido principal del reproductor */}
-        <Box p={{ base: 3, md: 4 }}>
-          <HStack spacing={{ base: 3, md: 4 }} align="center">
+    <Box
+      position="fixed"
+      bottom={0}
+      left={0}
+      right={0}
+      zIndex={1000}
+      bg={bgColor}
+      borderTop="1px solid"
+      borderColor={borderColor}
+      boxShadow="0 -4px 20px rgba(0,0,0,0.1)"
+      backdropFilter="blur(10px)"
+      transition="all 0.3s ease"
+    >
+      {/* Contenido principal del reproductor */}
+      <Box p={{ base: 3, md: 4 }}>
+        <HStack spacing={{ base: 3, md: 4 }} align="center">
             {/* Información de la radio */}
-            <HStack spacing={3} minW={0} flex={1}>
-              <Box
-                position="relative"
-                w={{ base: "50px", md: "60px" }}
-                h={{ base: "50px", md: "60px" }}
-                borderRadius="md"
-                overflow="hidden"
-                flexShrink={0}
+          <HStack spacing={3} minW={0} flex={1}>
+            <Box
+              position="relative"
+              w={{ base: "50px", md: "60px" }}
+              h={{ base: "50px", md: "60px" }}
+              borderRadius="md"
+              overflow="hidden"
+              flexShrink={0}
                 bgGradient="linear(135deg, blue.500, purple.500)"
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-              >
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                >
                 <Icon as={FiRadio} color="white" boxSize={6} />
-                {isPlaying && (
-                  <Box
-                    position="absolute"
-                    top={0}
-                    left={0}
-                    right={0}
-                    bottom={0}
-                    bg="rgba(0,0,0,0.3)"
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                    animation={`${pulse} 1s ease-in-out infinite`}
-                  >
-                    <Icon as={FiRadio} color="white" boxSize={4} />
-                  </Box>
-                )}
-              </Box>
+              {isPlaying && (
+                <Box
+                  position="absolute"
+                  top={0}
+                  left={0}
+                  right={0}
+                  bottom={0}
+                  bg="rgba(0,0,0,0.3)"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  animation={`${pulse} 1s ease-in-out infinite`}
+                >
+                  <Icon as={FiRadio} color="white" boxSize={4} />
+                </Box>
+              )}
+            </Box>
 
-              <VStack align="start" spacing={0} minW={0} flex={1}>
-                <Text
-                  fontSize={{ base: "sm", md: "md" }}
-                  fontWeight="bold"
-                  color={textColor}
-                  noOfLines={1}
-                  w="full"
-                >
+            <VStack align="start" spacing={0} minW={0} flex={1}>
+              <Text
+                fontSize={{ base: "sm", md: "md" }}
+                fontWeight="bold"
+                color={textColor}
+                noOfLines={1}
+                w="full"
+              >
                   {radioConfig.stationName}
-                </Text>
-                <Text
-                  fontSize={{ base: "xs", md: "sm" }}
-                  color={mutedTextColor}
-                  noOfLines={1}
-                  w="full"
-                >
+              </Text>
+              <Text
+                fontSize={{ base: "xs", md: "sm" }}
+                color={mutedTextColor}
+                noOfLines={1}
+                w="full"
+              >
                   {radioConfig.stationDescription}
-                </Text>
-                <HStack spacing={2} mt={1}>
-                  {isPlaying && (
-                    <Badge
-                      size="sm"
-                      colorScheme="green"
-                      variant="subtle"
-                      fontSize="xs"
-                    >
+              </Text>
+              <HStack spacing={2} mt={1}>
+                {isPlaying && (
+                  <Badge
+                    size="sm"
+                    colorScheme="green"
+                    variant="subtle"
+                    fontSize="xs"
+                  >
                       🔴 EN VIVO
-                    </Badge>
-                  )}
+                  </Badge>
+                )}
                   {isLoading && (
                     <Badge
                       size="sm"
@@ -493,67 +521,67 @@ const StickyRadioPlayer = () => {
                     >
                       Error
                     </Badge>
-                  )}
-                </HStack>
-              </VStack>
-            </HStack>
+                )}
+              </HStack>
+            </VStack>
+          </HStack>
 
-            {/* Controles principales */}
-            <HStack spacing={{ base: 2, md: 3 }} align="center">
-              {/* Botón play/pause principal */}
-              <IconButton
-                aria-label={isPlaying ? 'Pausar' : 'Reproducir'}
-                icon={<Icon as={isPlaying ? FiPause : FiPlay} />}
-                size="lg"
-                colorScheme="blue"
-                onClick={handlePlayPause}
-                borderRadius="full"
-                bgGradient="linear(135deg, blue.500, purple.500)"
-                color="white"
+          {/* Controles principales */}
+          <HStack spacing={{ base: 2, md: 3 }} align="center">
+            {/* Botón play/pause principal */}
+            <IconButton
+              aria-label={isPlaying ? 'Pausar' : 'Reproducir'}
+              icon={<Icon as={isPlaying ? FiPause : FiPlay} />}
+              size="lg"
+              colorScheme="blue"
+              onClick={handlePlayPause}
+              borderRadius="full"
+              bgGradient="linear(135deg, blue.500, purple.500)"
+              color="white"
                 isLoading={isLoading}
                 isDisabled={!isValidStreamUrl(streamUrl) || !!error}
-                _hover={{
-                  bgGradient: 'linear(135deg, blue.600, purple.600)',
-                  transform: 'scale(1.05)',
-                  boxShadow: '0 4px 20px rgba(59, 130, 246, 0.4)'
-                }}
-                animation={isPlaying ? `${pulse} 1.5s ease-in-out infinite` : 'none'}
-                boxShadow={isPlaying ? '0 0 20px rgba(59, 130, 246, 0.3)' : 'none'}
-              />
-            </HStack>
+              _hover={{
+                bgGradient: 'linear(135deg, blue.600, purple.600)',
+                transform: 'scale(1.05)',
+                boxShadow: '0 4px 20px rgba(59, 130, 246, 0.4)'
+              }}
+              animation={isPlaying ? `${pulse} 1.5s ease-in-out infinite` : 'none'}
+              boxShadow={isPlaying ? '0 0 20px rgba(59, 130, 246, 0.3)' : 'none'}
+            />
+          </HStack>
 
-            {/* Controles adicionales */}
-            <HStack spacing={2} align="center">
-              {/* Controles de volumen */}
-              <HStack spacing={1} align="center">
-                <Tooltip label={isMuted ? "Activar sonido" : "Silenciar"} placement="top">
-                  <IconButton
-                    aria-label={isMuted ? "Activar sonido" : "Silenciar"}
-                    icon={<Icon as={isMuted ? FiVolumeX : FiVolume2} />}
-                    size="sm"
-                    variant="ghost"
-                    color={mutedTextColor}
-                    onClick={() => setIsMuted(!isMuted)}
-                    _hover={{ color: textColor }}
-                  />
-                </Tooltip>
-                
-                <Box w="60px">
-                  <Slider
-                    value={isMuted ? 0 : volume}
-                    min={0}
-                    max={100}
-                    onChange={handleVolumeChange}
-                    colorScheme="blue"
-                    size="sm"
-                  >
-                    <SliderTrack bg="gray.200">
-                      <SliderFilledTrack bg="blue.400" />
-                    </SliderTrack>
-                    <SliderThumb boxSize={3} />
-                  </Slider>
-                </Box>
-              </HStack>
+          {/* Controles adicionales */}
+          <HStack spacing={2} align="center">
+            {/* Controles de volumen */}
+            <HStack spacing={1} align="center">
+              <Tooltip label={isMuted ? "Activar sonido" : "Silenciar"} placement="top">
+                <IconButton
+                  aria-label={isMuted ? "Activar sonido" : "Silenciar"}
+                  icon={<Icon as={isMuted ? FiVolumeX : FiVolume2} />}
+                  size="sm"
+                  variant="ghost"
+                  color={mutedTextColor}
+                  onClick={() => setIsMuted(!isMuted)}
+                  _hover={{ color: textColor }}
+                />
+              </Tooltip>
+              
+              <Box w="60px">
+                <Slider
+                  value={isMuted ? 0 : volume}
+                  min={0}
+                  max={100}
+                  onChange={handleVolumeChange}
+                  colorScheme="blue"
+                  size="sm"
+                >
+                  <SliderTrack bg="gray.200">
+                    <SliderFilledTrack bg="blue.400" />
+                  </SliderTrack>
+                  <SliderThumb boxSize={3} />
+                </Slider>
+              </Box>
+            </HStack>
 
               {/* Menú de opciones */}
               <Menu>
@@ -583,10 +611,10 @@ const StickyRadioPlayer = () => {
                   </MenuItem>
                 </MenuList>
               </Menu>
-            </HStack>
           </HStack>
-        </Box>
+        </HStack>
       </Box>
+    </Box>
     </>
   )
 }

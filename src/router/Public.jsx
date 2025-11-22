@@ -14,6 +14,7 @@ import Legal from '../pages/public/Legal'
 import EmailVerification from '../pages/public/EmailVerification'
 import Contact from '../pages/public/Contact'
 import Teams from '../pages/public/Teams'
+import ProgramView from '../pages/public/ProgramView'
 // Componente de carga
 const LoadingFallback = () => (
   <Box display="flex" justifyContent="center" alignItems="center" minH="50vh">
@@ -39,8 +40,8 @@ const Public = () => {
   const { routes, loading, error } = useDynamicRoutes()
   
   // Rutas públicas que no necesitan cargar rutas dinámicas
-  const publicRoutes = ['/', '/login', '/register', '/about', '/objective', '/terms', '/privacy', '/cookies', '/legal', '/contact', '/teams']
-  const isPublicRoute = publicRoutes.includes(location.pathname) || location.pathname.startsWith('/verify/')
+  const publicRoutes = ['/', '/login', '/register', '/about', '/objective', '/terms', '/privacy', '/cookies', '/legal', '/contact', '/teams', '/program']
+  const isPublicRoute = publicRoutes.includes(location.pathname) || location.pathname.startsWith('/verify/') || location.pathname.startsWith('/program/')
   
   // Solo mostrar loading para rutas que no son públicas
   if (!isPublicRoute && loading) {
@@ -67,6 +68,7 @@ const Public = () => {
         <Route path='/verify/:id/:token' element={<EmailVerification />} />
         <Route path='/contact' element={<Contact />} />
         <Route path='/teams' element={<Teams />} />
+        <Route path='/program/:id?' element={<ProgramView />} />
         
         {/* Rutas dinámicas generadas desde el backend - solo para rutas no públicas */}
         {!isPublicRoute && routes.map((route) => {

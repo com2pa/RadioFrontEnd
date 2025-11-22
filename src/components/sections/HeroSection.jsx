@@ -19,6 +19,7 @@ import {
   useToast,
   Tooltip,
 } from '@chakra-ui/react'
+import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { keyframes } from '@emotion/react'
 import { 
@@ -130,6 +131,9 @@ const HeroSection = () => {
   // Slides del carousel - solo programas con imágenes
   const [carouselSlides, setCarouselSlides] = useState([])
   
+  // Navegación
+  const navigate = useNavigate()
+  
   // Función para obtener todos los programas con imágenes
   const fetchProgramsWithImages = useCallback(async () => {
     try {
@@ -145,6 +149,7 @@ const HeroSection = () => {
           })
           .map((program, index) => ({
             id: program.program_id || index + 1,
+            programId: program.program_id, // Guardar el ID real del programa
             title: program.program_title || '',
             subtitle: program.program_description || '',
             bgImage: `http://localhost:3000/uploads/programs/${program.program_image}`,
@@ -428,7 +433,7 @@ const HeroSection = () => {
                 />
               </Tooltip>
               <Tooltip
-                label="Ver en vivo"
+                label="Ver transmisión"
                 placement="top"
                 hasArrow
                 bg={brandOrange}
@@ -440,7 +445,7 @@ const HeroSection = () => {
                 borderRadius="md"
               >
                 <IconButton
-                  aria-label="Ver en vivo"
+                  aria-label="Ver transmisión"
                   icon={<Icon as={FiEye} />}
                   size={{ base: "sm", sm: "md" }}
                   borderRadius="full"
@@ -449,6 +454,10 @@ const HeroSection = () => {
                   color={brandWhite}
                   border="2px solid"
                   borderColor="rgba(255, 255, 255, 0.3)"
+                  onClick={() => {
+                    const programId = slide.programId || slide.id
+                    navigate(`/program/${programId}`)
+                  }}
                   _hover={{
                     bg: brandOrange,
                     color: brandWhite,

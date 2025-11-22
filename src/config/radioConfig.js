@@ -17,8 +17,16 @@
 
 export const radioConfig = {
   // URL del stream de radio en vivo
-  // URL obtenida de: https://zeno.fm/player/oxigeno-88-1fm/
+  // IMPORTANTE: Usar la URL base sin token temporal (los tokens expiran)
+  // El sistema probará automáticamente las URLs alternativas si la principal falla
   streamUrl: 'https://stream.zeno.fm/hwwthayn6biuv',
+  
+  // URLs alternativas para probar automáticamente si la principal falla
+  alternativeUrls: [
+    'https://stream-177.zeno.fm/hwwthayn6biuv',
+    'https://stream-178.zeno.fm/hwwthayn6biuv',
+    'https://zeno.fm/stream/hwwthayn6biuv',
+  ],
   
   // Información de la estación
   stationName: 'Radio Oxigeno 88.1 FM',
