@@ -84,10 +84,10 @@ const NewsManagement = () => {
       const data = response.data?.data || response.data || []
       const newsArray = Array.isArray(data) ? data : []
       
-      console.log('📰 Noticias cargadas:', newsArray.length)
+      // console.log('📰 Noticias cargadas:', newsArray.length)
       setNews(newsArray)
     } catch (error) {
-      console.error('Error fetching news:', error)
+      // console.error('Error fetching news:', error)
       toast({
         title: 'Error',
         description: error.response?.data?.message || 'No se pudieron cargar las noticias',
@@ -121,10 +121,10 @@ const NewsManagement = () => {
       const data = response.data?.data || response.data || []
       const newsArray = Array.isArray(data) ? data : []
       
-      console.log('🔍 Resultados de búsqueda:', newsArray.length, 'para término:', term)
+      // console.log('🔍 Resultados de búsqueda:', newsArray.length, 'para término:', term)
       setNews(newsArray)
     } catch (error) {
-      console.error('Error searching news:', error)
+      // console.error('Error searching news:', error)
       toast({
         title: 'Error',
         description: error.response?.data?.message || 'No se pudo realizar la búsqueda',
@@ -163,7 +163,7 @@ const NewsManagement = () => {
         fetchNews() // Recargar la lista
       }
     } catch (error) {
-      console.error('Error changing news status:', error)
+      // console.error('Error changing news status:', error)
       toast({
         title: 'Error',
         description: error.response?.data?.message || 'No se pudo cambiar el estado de la noticia',
@@ -200,7 +200,7 @@ const NewsManagement = () => {
         fetchNews()
       }
     } catch (error) {
-      console.error('Error deleting news:', error)
+      // console.error('Error deleting news:', error)
       toast({
         title: 'Error',
         description: error.response?.data?.message || 'No se pudo eliminar la noticia',
@@ -226,7 +226,7 @@ const NewsManagement = () => {
       })
       return response.data?.data || response.data
     } catch (error) {
-      console.error('Error fetching user stats:', error)
+      // console.error('Error fetching user stats:', error)
       return null
     }
   }
@@ -251,7 +251,7 @@ const NewsManagement = () => {
         setUserStats(stats)
       }
     } catch (error) {
-      console.error('Error fetching news details:', error)
+      // console.error('Error fetching news details:', error)
       toast({
         title: 'Error',
         description: error.response?.data?.message || 'No se pudo cargar la noticia',

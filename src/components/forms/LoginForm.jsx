@@ -59,13 +59,13 @@ const handleSubmit = async (e) => {
   e.preventDefault()
   setIsLoading(true)
 
-  console.log('🔐 [1] LoginForm - Starting login process...')
-  console.log('🔐 [2] LoginForm - Form data:', formData)
+  // console.log('🔐 [1] LoginForm - Starting login process...')
+  // console.log('🔐 [2] LoginForm - Form data:', formData)
 
   try {
     // Validar que los campos no estén vacíos
     if (!formData.email || !formData.password) {
-      console.log('❌ [3] LoginForm - Empty fields detected')
+      // console.log('❌ [3] LoginForm - Empty fields detected')
       toast({
         title: 'Datos incompletos',
         description: 'Por favor completa todos los campos',
@@ -76,18 +76,18 @@ const handleSubmit = async (e) => {
       return
     }
 
-    console.log('📤 [4] LoginForm - Calling loginUser API...')
+    // console.log('📤 [4] LoginForm - Calling loginUser API...')
     
     // Enviar datos al backend
     const response = await loginUser(formData)
     
-    console.log('✅ [5] LoginForm - API Response received:', response)
+    // console.log('✅ [5] LoginForm - API Response received:', response)
     
     // Verificar estructura de la respuesta
     if (response.success && response.user && response.accesstoken) {
-      console.log('🎯 [6] LoginForm - Login successful!')
-      console.log('🎯 [7] LoginForm - User data:', response.user)
-      console.log('🎯 [8] LoginForm - Access token:', response.accesstoken ? 'PRESENT' : 'MISSING')
+      // console.log('🎯 [6] LoginForm - Login successful!')
+      // console.log('🎯 [7] LoginForm - User data:', response.user)
+      // console.log('🎯 [8] LoginForm - Access token:', response.accesstoken ? 'PRESENT' : 'MISSING')
       
       // Mapear los datos CORRECTAMENTE según lo que devuelve tu backend
       const authData = {
@@ -100,7 +100,7 @@ const handleSubmit = async (e) => {
         online: response.user.online
       }
       
-      console.log('🔐 [9] LoginForm - Auth data to set:', authData)
+      // console.log('🔐 [9] LoginForm - Auth data to set:', authData)
       
       // ACTUALIZAR EL ESTADO DE AUTENTICACIÓN
       setAuth(authData);
@@ -112,9 +112,9 @@ const handleSubmit = async (e) => {
       })
       setErrors({})
       
-      console.log('🔐 [10] LoginForm - Auth state updated, checking localStorage...')
-      console.log('🔐 [11] LoginForm - localStorage token:', localStorage.getItem('authToken'))
-      console.log('🔐 [12] LoginForm - localStorage user:', localStorage.getItem('user'))
+      // console.log('🔐 [10] LoginForm - Auth state updated, checking localStorage...')
+      // console.log('🔐 [11] LoginForm - localStorage token:', localStorage.getItem('authToken'))
+      // console.log('🔐 [12] LoginForm - localStorage user:', localStorage.getItem('user'))
       
       toast({
         title: 'Inicio de sesión exitoso',
@@ -124,11 +124,11 @@ const handleSubmit = async (e) => {
         isClosable: true,
       })
 
-      console.log('🔄 [13] LoginForm - Calling onSuccess callback...')
+      // console.log('🔄 [13] LoginForm - Calling onSuccess callback...')
       if (onSuccess) onSuccess(response)
       
     } else {
-      console.error('❌ [6] LoginForm - Login failed - Response structure:', {
+      // console.error('❌ [6] LoginForm - Login failed - Response structure:', {
         success: response.success,
         hasUser: !!response.user,
         hasToken: !!response.accesstoken,
@@ -138,8 +138,8 @@ const handleSubmit = async (e) => {
     }
     
   } catch (error) {
-    console.error('❌ [ERROR] LoginForm - Catch block:', error)
-    console.error('❌ [ERROR] LoginForm - Error details:', {
+    // console.error('❌ [ERROR] LoginForm - Catch block:', error)
+    // console.error('❌ [ERROR] LoginForm - Error details:', {
       message: error.message,
       response: error.response?.data,
       status: error.response?.status
@@ -157,14 +157,14 @@ const handleSubmit = async (e) => {
 
     if (onError) onError(error)
   } finally {
-    console.log('🏁 [FINALLY] LoginForm - Process completed')
+    // console.log('🏁 [FINALLY] LoginForm - Process completed')
     setIsLoading(false)
   }
 }
 
 // Función auxiliar para convertir role_id a nombre de rol
 const getRoleName = (roleId) => {
-  console.log('🎭 Converting role ID:', roleId)
+  // console.log('🎭 Converting role ID:', roleId)
   const roleMap = {
     7: 'superAdmin',
     6: 'admin', 
@@ -173,7 +173,7 @@ const getRoleName = (roleId) => {
     3: 'user'
   }
   const roleName = roleMap[roleId] || 'user'
-  console.log('🎭 Role conversion:', roleId, '→', roleName)
+  // console.log('🎭 Role conversion:', roleId, '→', roleName)
   return roleName
 }
 

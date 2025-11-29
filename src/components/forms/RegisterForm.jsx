@@ -133,13 +133,13 @@ const RegisterForm = ({ onSuccess, onError }) => {
         errorMessage = error.response.statusText
       }
       
-      console.error('📋 [RegisterForm] Error completo:', {
-        message: error.message,
-        code: error.code,
-        response: error.response?.data,
-        status: error.response?.status,
-        isTimeout
-      })
+      // console.error('📋 [RegisterForm] Error completo:', {
+      //   message: error.message,
+      //   code: error.code,
+      //   response: error.response?.data,
+      //   status: error.response?.status,
+      //   isTimeout
+      // })
       
       // Si es timeout, mostrar como warning (puede que el usuario se haya creado)
       toast({

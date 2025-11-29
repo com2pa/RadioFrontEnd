@@ -21,6 +21,7 @@ import SubscribersManagement from '../pages/private/SubscribersManagement'
 import UserRolesManagement from '../pages/private/UserRolesManagement'
 import ContactNotifications from '../pages/private/ContactNotifications'
 import Auditoria from '../pages/private/Auditoria'
+import ProfileUser from '../pages/private/ProfileUser'
 
 const LoadingFallback = () => (
   <Box display="flex" justifyContent="center" alignItems="center" minH="100vh">
@@ -34,21 +35,22 @@ const LoadingFallback = () => (
 const Private = () => {
   const { auth } = useAuth()
   
-  console.log('🔐 [Private] - Auth state:', auth)
-  console.log('🔐 [Private] - Current path:', window.location.pathname)
+  // console.log('🔐 [Private] - Auth state:', auth)
+  // console.log('🔐 [Private] - Current path:', window.location.pathname)
 
   if (!auth) {
-    console.log('❌ [Private] - No auth, showing loading')
+    // console.log('❌ [Private] - No auth, showing loading')
     return <LoadingFallback />
   }
 
-  console.log('✅ [Private] - User authenticated, rendering routes')
+  // console.log('✅ [Private] - User authenticated, rendering routes')
   
   return (
     <Routes>
       {/* Rutas para usuarios suscriptores - DEBEN IR ANTES de la ruta genérica "user" */}
       <Route path="user/podcasts" element={<PodcastsView />} />
       <Route path="user/noticias" element={<NewsView />} />
+      <Route path="user/profile" element={<ProfileUser />} />
       
       {/* Rutas del dashboard */}
       <Route path="user" element={<DashboardUser />} />
@@ -68,6 +70,7 @@ const Private = () => {
       <Route path="admin/user-roles" element={<UserRolesManagement />} />
       <Route path="admin/contact-notifications" element={<ContactNotifications />} />
       <Route path="admin/auditoria" element={<Auditoria />} />
+      <Route path="admin/profile" element={<ProfileUser />} />
       
       {/* Redirección automática */}
       <Route path="/" element={<Navigate to={getDashboardRoute(auth)} replace />} />

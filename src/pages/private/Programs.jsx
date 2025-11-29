@@ -188,15 +188,15 @@ const Programs = () => {
           })
         : []
       
-      console.log('📥 Programas recibidos del backend:', formattedPrograms.map(p => ({
-        id: p.program_id,
-        title: p.program_title,
-        scheduled_date: p.scheduled_date
-      })))
+      // console.log('📥 Programas recibidos del backend:', formattedPrograms.map(p => ({
+      //   id: p.program_id,
+      //   title: p.program_title,
+      //   scheduled_date: p.scheduled_date
+      // })))
       
       setPrograms(formattedPrograms)
     } catch (error) {
-      console.error('Error fetching programs:', error)
+      // console.error('Error fetching programs:', error)
       setPrograms([])
     } finally {
       setLoadingPrograms(false)
@@ -225,7 +225,7 @@ const Programs = () => {
         : []
       setUsers(locutorUsers)
     } catch (error) {
-      console.error('Error fetching users:', error)
+      // console.error('Error fetching users:', error)
       toast({
         title: 'Error',
         description: 'No se pudieron cargar los usuarios',
@@ -247,7 +247,7 @@ const Programs = () => {
       const podcastsData = response.data?.data || response.data || []
       setPodcasts(Array.isArray(podcastsData) ? podcastsData : [])
     } catch (error) {
-      console.error('Error fetching podcasts:', error)
+      // console.error('Error fetching podcasts:', error)
       toast({
         title: 'Error',
         description: 'No se pudieron cargar los podcasts',
@@ -438,7 +438,7 @@ const Programs = () => {
         throw new Error('No se pudo cargar el programa')
       }
     } catch (error) {
-      console.error('Error loading program:', error)
+      // console.error('Error loading program:', error)
       toast({
         title: 'Error',
         description: error.response?.data?.message || error.message || 'No se pudo cargar el programa',
@@ -508,7 +508,7 @@ const Programs = () => {
         throw new Error(response.data.message || 'Error al eliminar el programa')
       }
     } catch (error) {
-      console.error('Error deleting program:', error)
+      // console.error('Error deleting program:', error)
       toast({
         title: 'Error',
         description: error.response?.data?.message || error.message || 'No se pudo eliminar el programa',
@@ -654,36 +654,36 @@ const Programs = () => {
       }
       
       // Log para debugging - mostrar exactamente lo que se envía desde el modal
-      console.log('📋 ========== DATOS DEL MODAL QUE SE ENVIARÁN ==========')
-      console.log('📅 Fecha y hora:', {
-        'formData.scheduled_date': formData.scheduled_date,
-        'formData.scheduled_time': formData.scheduled_time,
-        'Fecha y hora combinada': scheduledDateTime,
-        'Fecha validación (local)': validationDate.toLocaleString('es-ES'),
-        'Año': validationDate.getFullYear(),
-        'Mes': validationDate.getMonth() + 1,
-        'Día': validationDate.getDate(),
-        'Hora': validationDate.getHours(),
-        'Minuto': validationDate.getMinutes(),
-        'Segundo': validationDate.getSeconds()
-      })
-      console.log('📝 Todos los datos del formulario:', {
-        'program_title': formData.program_title,
-        'program_description': formData.program_description,
-        'program_type': formData.program_type,
-        'scheduled_date': formData.scheduled_date,
-        'scheduled_time': formData.scheduled_time,
-        'scheduledDateTime (combinado)': scheduledDateTime,
-        'duration_minutes': formData.duration_minutes,
-        'program_users': formData.program_users,
-        'program_image': formData.program_image,
-        'tiktok_live_url': formData.tiktok_live_url,
-        'instagram_live_url': formData.instagram_live_url,
-        'podcast_id': formData.podcast_id,
-        'selectedTimeSlot': selectedTimeSlot,
-        'editingProgramId': editingProgramId
-      })
-      console.log('📋 ===================================================')
+      // console.log('📋 ========== DATOS DEL MODAL QUE SE ENVIARÁN ==========')
+      // console.log('📅 Fecha y hora:', {
+      //   'formData.scheduled_date': formData.scheduled_date,
+      //   'formData.scheduled_time': formData.scheduled_time,
+      //   'Fecha y hora combinada': scheduledDateTime,
+      //   'Fecha validación (local)': validationDate.toLocaleString('es-ES'),
+      //   'Año': validationDate.getFullYear(),
+      //   'Mes': validationDate.getMonth() + 1,
+      //   'Día': validationDate.getDate(),
+      //   'Hora': validationDate.getHours(),
+      //   'Minuto': validationDate.getMinutes(),
+      //   'Segundo': validationDate.getSeconds()
+      // })
+      // console.log('📝 Todos los datos del formulario:', {
+      //   'program_title': formData.program_title,
+      //   'program_description': formData.program_description,
+      //   'program_type': formData.program_type,
+      //   'scheduled_date': formData.scheduled_date,
+      //   'scheduled_time': formData.scheduled_time,
+      //   'scheduledDateTime (combinado)': scheduledDateTime,
+      //   'duration_minutes': formData.duration_minutes,
+      //   'program_users': formData.program_users,
+      //   'program_image': formData.program_image,
+      //   'tiktok_live_url': formData.tiktok_live_url,
+      //   'instagram_live_url': formData.instagram_live_url,
+      //   'podcast_id': formData.podcast_id,
+      //   'selectedTimeSlot': selectedTimeSlot,
+      //   'editingProgramId': editingProgramId
+      // })
+      // console.log('📋 ===================================================')
       
       // Si hay imagen nueva (File), usar FormData, sino JSON
       // Si program_image es un objeto con isExisting, no es un archivo nuevo, usar JSON
@@ -738,9 +738,9 @@ const Programs = () => {
         }
         
         // Log de JSON antes de enviar
-        console.log('📤 Enviando con JSON (sin imagen):')
-        console.log('  - scheduled_date:', scheduledDateTime)
-        console.log('  - programData completo:', JSON.stringify(programData, null, 2))
+        // console.log('📤 Enviando con JSON (sin imagen):')
+        // console.log('  - scheduled_date:', scheduledDateTime)
+        // console.log('  - programData completo:', JSON.stringify(programData, null, 2))
 
         // Si hay imagen existente pero no se seleccionó una nueva, mantener la existente
         if (formData.program_image && formData.program_image.isExisting && !(formData.program_image instanceof File)) {
@@ -777,40 +777,40 @@ const Programs = () => {
       const method = isEditing ? 'put' : 'post'
       
       // Log final antes de enviar
-      console.log('🚀 ========== ENVIANDO PETICIÓN AL BACKEND ==========')
-      console.log('📡 Detalles de la petición:', {
-        'Método HTTP': method.toUpperCase(),
-        'URL': url,
-        'Es edición': isEditing,
-        'Tipo de datos': hasImage ? 'FormData (con imagen)' : 'JSON (sin imagen)',
-        'scheduled_date que se envía': scheduledDateTime,
-        'Fecha original del modal': formData.scheduled_date,
-        'Hora original del modal': formData.scheduled_time
-      })
+      // console.log('🚀 ========== ENVIANDO PETICIÓN AL BACKEND ==========')
+      // console.log('📡 Detalles de la petición:', {
+      //   'Método HTTP': method.toUpperCase(),
+      //   'URL': url,
+      //   'Es edición': isEditing,
+      //   'Tipo de datos': hasImage ? 'FormData (con imagen)' : 'JSON (sin imagen)',
+      //   'scheduled_date que se envía': scheduledDateTime,
+      //   'Fecha original del modal': formData.scheduled_date,
+      //   'Hora original del modal': formData.scheduled_time
+      // })
       
-      if (hasImage) {
-        console.log('📎 FormData - Valores que se envían:')
-        if (requestData instanceof FormData) {
-          for (let pair of requestData.entries()) {
-            console.log(`  ${pair[0]}:`, pair[1])
-          }
-        }
-      } else {
-        console.log('📦 JSON - Objeto completo que se envía:')
-        console.log(JSON.stringify(requestData, null, 2))
-      }
-      console.log('🚀 ==================================================')
+      // if (hasImage) {
+      //   console.log('📎 FormData - Valores que se envían:')
+      //   if (requestData instanceof FormData) {
+      //     for (let pair of requestData.entries()) {
+      //       console.log(`  ${pair[0]}:`, pair[1])
+      //     }
+      //   }
+      // } else {
+      //   console.log('📦 JSON - Objeto completo que se envía:')
+      //   console.log(JSON.stringify(requestData, null, 2))
+      // }
+      // console.log('🚀 ==================================================')
       
       const response = await axios[method](url, requestData, {
         headers: headers
       })
       
-      console.log('✅ Respuesta del servidor recibida:', {
-        'success': response.data.success,
-        'message': response.data.message,
-        'program_id': response.data.data?.program_id,
-        'scheduled_date guardado': response.data.data?.scheduled_date
-      })
+      // console.log('✅ Respuesta del servidor recibida:', {
+      //   'success': response.data.success,
+      //   'message': response.data.message,
+      //   'program_id': response.data.data?.program_id,
+      //   'scheduled_date guardado': response.data.data?.scheduled_date
+      // })
       
       if (response.data.success) {
         toast({
@@ -831,7 +831,7 @@ const Programs = () => {
         throw new Error(response.data.message || (isEditing ? 'Error al actualizar el programa' : 'Error al crear el programa'))
       }
     } catch (error) {
-      console.error('Error creating program:', error)
+      // console.error('Error creating program:', error)
       toast({
         title: 'Error',
         description: error.response?.data?.message || error.message || 'No se pudo crear el programa',

@@ -73,9 +73,9 @@ const PublicMenu = () => {
   const isTablet = useBreakpointValue({ base: false, md: true, lg: false })
   
   // Debug: Log del estado de autenticación (remover en producción)
-  console.log('PublicMenu - Auth state:', auth)
-  console.log('PublicMenu - User state:', user)
-  console.log('PublicMenu - Is authenticated:', !!user)
+  // console.log('PublicMenu - Auth state:', auth)
+  // console.log('PublicMenu - User state:', user)
+  // console.log('PublicMenu - Is authenticated:', !!user)
   
   // Estado para los elementos del menú desde el API
   const [menuItems, setMenuItems] = useState([])
@@ -121,7 +121,7 @@ const PublicMenu = () => {
       
       // Obtener menú público desde el API
       const response = await axios.get('/api/menu/main')
-      console.log('Menu API response:', response.data)
+      // console.log('Menu API response:', response.data)
       
       if (response.data.success && Array.isArray(response.data.data)) {
         // Mapear los datos del API al formato esperado
@@ -136,15 +136,15 @@ const PublicMenu = () => {
             description: item.description || ''
           }))
         
-        console.log('Mapped menu items:', mappedItems)
+        // console.log('Mapped menu items:', mappedItems)
         setMenuItems(mappedItems)
       } else {
         // Fallback a configuración local si el API falla
-        console.log('API failed, using local config')
+        // console.log('API failed, using local config')
         setMenuItems(getPublicMenuItems())
       }
     } catch (error) {
-      console.error('Error fetching menu items:', error)
+      // console.error('Error fetching menu items:', error)
       // Fallback a configuración local en caso de error
       setMenuItems(getPublicMenuItems())
     } finally {

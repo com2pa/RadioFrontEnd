@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
+import Hls from 'hls.js'
 import { useParams, useNavigate } from 'react-router-dom'
 import {
   Box,
@@ -103,7 +104,7 @@ const ProgramView = () => {
           }
         }
       } catch (error) {
-        console.error('Error fetching program:', error)
+        // console.error('Error fetching program:', error)
         toast({
           title: 'Error',
           description: 'No se pudo cargar la información del programa',
@@ -119,26 +120,283 @@ const ProgramView = () => {
     fetchProgram()
   }, [id, toast])
   
-  // Cargar URL de transmisión en vivo
+  // Cargar URL de transmisión en vivo (solo una vez)
   useEffect(() => {
-    // En producción, esto vendría del backend o de la configuración del programa
-    // 
-    // CONFIGURACIÓN DE TRANSMISIÓN:
-    // 1. Crea un archivo .env en la raíz del proyecto
-    // 2. Añade: VITE_STREAM_URL=tu_url_aqui
-    // 
-    // Ejemplos de URLs:
-    // - HLS local: 'http://localhost:8000/live/stream.m3u8'
-    // - YouTube Live: 'https://www.youtube.com/embed/VIDEO_ID'
-    // - Twitch: 'https://player.twitch.tv/?channel=CANAL&parent=tu-dominio.com'
-    //
-    // O configura directamente aquí:
     const defaultStreamUrl = import.meta.env?.VITE_STREAM_URL || 
-      // 'http://localhost:8000/live/stream.m3u8' // Descomenta y configura tu URL aquí
-      ''
+      'http://localhost:8000/live/stream.m3u8'
     setStreamUrl(defaultStreamUrl)
   }, [])
   
+  // Inicializar HLS cuando streamUrl esté disponible
+  useEffect(() => {
+    if (!streamUrl || streamType !== 'hls') {
+      // console.log('⏸️ HLS no inicializado - streamUrl:', streamUrl, 'streamType:', streamType)
+      return
+    }
+    
+    // Capturar referencia del video al inicio para evitar problemas en cleanup
+    const videoElement = videoRef.current
+    let hlsInstance = null
+    let timer = null
+    
+    // Esperar a que el video element esté disponible
+    const initHLS = () => {
+      const video = videoRef.current || videoElement
+      if (!video) {
+        // console.log('⏳ Esperando video element...')
+        timer = setTimeout(initHLS, 100)
+        return
+      }
+      
+      // console.log('🔄 Inicializando HLS con URL:', streamUrl)
+      
+      // Usar HLS.js para mejor compatibilidad
+      if (Hls.isSupported()) {
+        // console.log('✅ HLS.js soportado, inicializando...')
+        hlsInstance = new Hls({
+          enableWorker: true,
+          lowLatencyMode: false, // Desactivar para evitar congelamientos
+          backBufferLength: 60, // Buffer más grande para estabilidad
+          maxBufferLength: 60, // 60 segundos de buffer
+          maxMaxBufferLength: 120, // Máximo 120 segundos
+          maxBufferSize: 100 * 1000 * 1000, // 100MB de buffer
+          maxBufferHole: 0.5, // Tolerancia para gaps en el buffer
+          highBufferWatchdogPeriod: 3, // Verificar buffer cada 3 segundos
+          nudgeOffset: 0.1,
+          nudgeMaxRetry: 5, // Más reintentos para recuperación
+          maxFragLoadingTimeOut: 30000, // 30 segundos para cargar fragmentos
+          fragLoadingTimeOut: 30000,
+          manifestLoadingTimeOut: 15000, // 15 segundos para el manifest
+          levelLoadingTimeOut: 15000,
+          startLevel: -1, // Auto-detect nivel inicial
+          capLevelToPlayerSize: false, // No limitar calidad por tamaño del player
+          debug: false,
+          xhrSetup: (xhr) => {
+            // Permitir CORS
+            xhr.withCredentials = false
+            // Timeout más largo para requests
+            xhr.timeout = 30000
+          }
+        })
+        
+        hlsInstance.loadSource(streamUrl)
+        hlsInstance.attachMedia(video)
+        
+        hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
+          if (import.meta.env.DEV) {
+            // console.log('✅ Manifest HLS parseado correctamente')
+          }
+          const currentVideo = videoRef.current
+          if (currentVideo && currentVideo.paused) {
+            currentVideo.play().catch(() => {
+              // Silencioso - solo log en desarrollo
+            })
+          }
+        })
+        
+        hlsInstance.on(Hls.Events.ERROR, (event, data) => {
+          // Manejar errores no fatales (como bufferStalledError)
+          if (!data.fatal) {
+            if (data.type === Hls.ErrorTypes.MEDIA_ERROR && data.details === 'bufferStalledError') {
+              if (import.meta.env.DEV) {
+                // console.warn('⚠️ Buffer stalling detectado, intentando recuperar...')
+              }
+              // Intentar recuperar automáticamente
+              const currentVideo = videoRef.current
+              if (currentVideo && currentVideo.readyState >= 2) {
+                // Si el video tiene datos suficientes, intentar continuar
+                try {
+                  currentVideo.play().catch(() => {
+                    // Si falla, recargar el stream desde el último punto
+                    hlsInstance.startLoad()
+                  })
+                } catch {
+                  hlsInstance.startLoad()
+                }
+              } else {
+                // Si no hay datos suficientes, recargar
+                hlsInstance.startLoad()
+              }
+            }
+            return
+          }
+          
+          // Manejar errores fatales
+          if (import.meta.env.DEV) {
+            // console.error('❌ Error HLS fatal:', data)
+          }
+          switch (data.type) {
+            case Hls.ErrorTypes.NETWORK_ERROR:
+              if (import.meta.env.DEV) {
+                // console.error('🔄 Error de red HLS, intentando recuperar...')
+              }
+              try {
+                hlsInstance.startLoad()
+              } catch {
+                if (import.meta.env.DEV) {
+                  // console.error('❌ No se pudo recuperar, recargando stream...')
+                }
+                setTimeout(() => {
+                  if (hlsInstance && videoRef.current) {
+                    hlsInstance.loadSource(streamUrl)
+                    hlsInstance.startLoad()
+                  }
+                }, 1000)
+              }
+              break
+            case Hls.ErrorTypes.MEDIA_ERROR:
+              if (import.meta.env.DEV) {
+                // console.error('🔄 Error de media HLS, intentando recuperar...')
+              }
+              try {
+                hlsInstance.recoverMediaError()
+              } catch {
+                if (import.meta.env.DEV) {
+                  // console.error('❌ No se pudo recuperar error de media')
+                }
+                // Intentar recargar completamente
+                setTimeout(() => {
+                  if (hlsInstance && videoRef.current) {
+                    hlsInstance.loadSource(streamUrl)
+                    hlsInstance.startLoad()
+                  }
+                }, 1000)
+              }
+              break
+            default:
+              if (import.meta.env.DEV) {
+                // console.error('❌ Error fatal HLS desconocido')
+              }
+              // Intentar recargar como último recurso
+              setTimeout(() => {
+                if (hlsInstance && videoRef.current) {
+                  hlsInstance.loadSource(streamUrl)
+                  hlsInstance.startLoad()
+                }
+              }, 2000)
+              break
+          }
+        })
+        
+        // Listener para detectar cuando el buffer se está quedando sin datos
+        hlsInstance.on(Hls.Events.BUFFER_APPENDING, () => {
+          // Log silencioso - solo para debugging si es necesario
+        })
+        
+        // Listener para detectar cuando el buffer está bajo
+        hlsInstance.on(Hls.Events.BUFFER_RESET, () => {
+          if (import.meta.env.DEV) {
+            // console.warn('⚠️ Buffer reseteado, puede haber interrupciones')
+          }
+        })
+        
+        // Guardar referencia para limpiar después
+        video._hls = hlsInstance
+      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        // Safari soporta HLS nativamente
+        // console.log('✅ Safari detectado, usando HLS nativo')
+        video.src = streamUrl
+      } else {
+        // console.error('❌ HLS no soportado en este navegador')
+        toastRef.current({
+          title: 'Navegador no compatible',
+          description: 'Tu navegador no soporta HLS. Usa Chrome, Firefox o Edge.',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        })
+      }
+    }
+    
+    // Iniciar después de un pequeño delay para asegurar que el DOM esté listo
+    timer = setTimeout(initHLS, 100)
+    
+    // Limpiar al desmontar o cambiar streamUrl
+    return () => {
+      if (timer) {
+        clearTimeout(timer)
+      }
+      // Usar la referencia capturada al inicio del efecto
+      const currentVideo = videoElement
+      const currentHlsInstance = hlsInstance
+      
+      if (currentVideo && currentVideo._hls) {
+        if (import.meta.env.DEV) {
+          // console.log('🧹 Limpiando instancia HLS')
+        }
+        currentVideo._hls.destroy()
+        currentVideo._hls = null
+      }
+      if (currentHlsInstance) {
+        currentHlsInstance.destroy()
+      }
+    }
+  }, [streamUrl, streamType])
+  
+  // Usar useRef para toast para evitar re-renders
+  const toastRef = useRef(toast)
+  useEffect(() => {
+    toastRef.current = toast
+  }, [toast])
+
+  // Handler de error del video (memoizado para evitar re-renders)
+  const handleVideoError = useCallback((e) => {
+    const video = e.target
+    const error = video.error
+    let errorMessage = 'Error desconocido al cargar el stream'
+    
+    if (error) {
+      switch (error.code) {
+        case 1: // MEDIA_ERR_ABORTED
+          errorMessage = 'Carga del stream cancelada'
+          break
+        case 2: // MEDIA_ERR_NETWORK
+          errorMessage = 'Error de red. Verifica que el servidor esté corriendo en http://localhost:8000'
+          break
+        case 3: // MEDIA_ERR_DECODE
+          errorMessage = 'Error al decodificar el stream. Verifica que OBS esté transmitiendo'
+          break
+        case 4: // MEDIA_ERR_SRC_NOT_SUPPORTED
+          errorMessage = 'Stream no disponible. Verifica que OBS esté transmitiendo y el servidor esté corriendo'
+          break
+        default:
+          errorMessage = `Error ${error.code}: ${error.message || 'Error desconocido'}`
+      }
+    }
+    
+    if (import.meta.env.DEV) {
+      // console.error('Error en el video:', {
+      //   error,
+      //   errorCode: error?.code,
+      //   errorMessage: error?.message,
+      //   networkState: video.networkState,
+      //   readyState: video.readyState,
+      //   src: streamUrl
+      // })
+    }
+    
+    toastRef.current({
+      title: 'Error al cargar el stream',
+      description: errorMessage,
+      status: 'error',
+      duration: 7000,
+      isClosable: true,
+    })
+  }, [streamUrl])
+  
+  // Handlers memoizados para eventos del video (evitar re-renders)
+  const handleCanPlay = useCallback(() => {
+    // No hacer nada - solo para evitar que se recree la función
+  }, [])
+  
+  const handleWaiting = useCallback(() => {
+    // No hacer nada - solo para evitar que se recree la función
+  }, [])
+  
+  const handleStalled = useCallback(() => {
+    // No hacer nada - solo para evitar que se recree la función
+  }, [])
+
   // Cargar comentarios (simulado por ahora)
   useEffect(() => {
     // Simular comentarios - en producción esto vendría del backend
@@ -171,9 +429,9 @@ const ProgramView = () => {
     setComments(mockComments)
   }, [])
   
-  const handleSubmitComment = async () => {
+  const handleSubmitComment = useCallback(async () => {
     if (!newComment.trim()) {
-      toast({
+      toastRef.current({
         title: 'Comentario vacío',
         description: 'Por favor escribe un comentario',
         status: 'warning',
@@ -196,18 +454,18 @@ const ProgramView = () => {
         likes: 0,
       }
       
-      setComments([comment, ...comments])
+      setComments(prev => [comment, ...prev])
       setNewComment('')
       
-      toast({
+      toastRef.current({
         title: 'Comentario publicado',
         description: 'Tu comentario ha sido publicado exitosamente',
         status: 'success',
         duration: 2000,
         isClosable: true,
       })
-      } catch {
-      toast({
+    } catch {
+      toastRef.current({
         title: 'Error',
         description: 'No se pudo publicar el comentario',
         status: 'error',
@@ -217,7 +475,7 @@ const ProgramView = () => {
     } finally {
       setSubmittingComment(false)
     }
-  }
+  }, [newComment, comments.length])
   
   const formatDate = (dateString) => {
     if (!dateString) return 'Fecha no disponible'
@@ -479,61 +737,61 @@ const ProgramView = () => {
             
             {/* Sección de transmisión en vivo */}
             <Card
-              bg="rgba(255, 255, 255, 0.95)"
-              backdropFilter="blur(20px)"
-              borderRadius="2xl"
-              boxShadow="0 20px 60px rgba(0, 0, 0, 0.2)"
-              overflow="hidden"
-              sx={{
-                animation: `${slideIn} 0.7s ease-out`,
-              }}
-            >
-              <CardBody p={0}>
-                <VStack spacing={0} align="stretch">
-                  {/* Header de la transmisión */}
-                  <Box
-                    bgGradient={`linear(135deg, ${brandRed}, ${brandOrange})`}
-                    p={6}
-                  >
-                    <HStack justify="space-between" align="center" flexWrap="wrap">
-                      <HStack spacing={3}>
-                        <Icon as={FiVideo} boxSize={6} color={brandWhite} />
-                        <VStack align="start" spacing={0}>
-                          <Heading size="lg" color={brandWhite}>
-                            Transmisión en Vivo
-                          </Heading>
-                          <Text fontSize="sm" color={brandWhite} opacity={0.9}>
-                            Mira la transmisión en tiempo real
-                          </Text>
-                        </VStack>
+                bg="rgba(255, 255, 255, 0.95)"
+                backdropFilter="blur(20px)"
+                borderRadius="2xl"
+                boxShadow="0 20px 60px rgba(0, 0, 0, 0.2)"
+                overflow="hidden"
+                sx={{
+                  animation: `${slideIn} 0.7s ease-out`,
+                }}
+              >
+                <CardBody p={0}>
+                  <VStack spacing={0} align="stretch">
+                    {/* Header de la transmisión */}
+                    <Box
+                      bgGradient={`linear(135deg, ${brandRed}, ${brandOrange})`}
+                      p={6}
+                    >
+                      <HStack justify="space-between" align="center" flexWrap="wrap">
+                        <HStack spacing={3}>
+                          <Icon as={FiVideo} boxSize={6} color={brandWhite} />
+                          <VStack align="start" spacing={0}>
+                            <Heading size="lg" color={brandWhite}>
+                              Transmisión en Vivo
+                            </Heading>
+                            <Text fontSize="sm" color={brandWhite} opacity={0.9}>
+                              Mira la transmisión en tiempo real
+                            </Text>
+                          </VStack>
+                        </HStack>
+                        <Badge
+                          bg={brandWhite}
+                          color={brandRed}
+                          px={4}
+                          py={2}
+                          borderRadius="full"
+                          fontSize="sm"
+                          fontWeight="bold"
+                          sx={{
+                            animation: `${pulse} 2s ease-in-out infinite`,
+                          }}
+                        >
+                          🔴 EN VIVO
+                        </Badge>
                       </HStack>
-                      <Badge
-                        bg={brandWhite}
-                        color={brandRed}
-                        px={4}
-                        py={2}
-                        borderRadius="full"
-                        fontSize="sm"
-                        fontWeight="bold"
-                        sx={{
-                          animation: `${pulse} 2s ease-in-out infinite`,
-                        }}
-                      >
-                        🔴 EN VIVO
-                      </Badge>
-                    </HStack>
-                  </Box>
-                  
-                  {/* Reproductor de video */}
-                  <Box
-                    position="relative"
-                    bg="black"
-                    w="100%"
-                    minH={{ base: '300px', md: '400px', lg: '500px' }}
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                  >
+                    </Box>
+                    
+                    {/* Reproductor de video */}
+                    <Box
+                      position="relative"
+                      bg="black"
+                      w="100%"
+                      minH={{ base: '300px', md: '400px', lg: '500px' }}
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                    >
                     {streamUrl ? (
                       <>
                         {streamType === 'hls' ? (
@@ -545,14 +803,24 @@ const ProgramView = () => {
                             controls
                             autoPlay
                             playsInline
+                            muted={false}
+                            onError={handleVideoError}
+                            onCanPlay={handleCanPlay}
+                            onWaiting={handleWaiting}
+                            onStalled={handleStalled}
                             sx={{
                               '&::-webkit-media-controls-panel': {
                                 backgroundColor: 'rgba(0, 0, 0, 0.8)',
                               },
                             }}
                           >
-                            <source src={streamUrl} type="application/x-mpegURL" />
+                            {/* No usar <source> cuando usamos HLS.js, se maneja en el useEffect */}
                             Tu navegador no soporta la reproducción de video HLS.
+                            <Text color="white" p={4} fontSize="sm">
+                              Si el video no se muestra, verifica la consola del navegador (F12) para más detalles.
+                              <br />
+                              URL: {streamUrl}
+                            </Text>
                           </Box>
                         ) : streamType === 'youtube' ? (
                           <Box

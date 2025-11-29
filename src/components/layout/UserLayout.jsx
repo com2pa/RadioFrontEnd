@@ -36,7 +36,8 @@ import {
   FiCalendar,
   FiMail,
   FiInfo,
-  FiSettings
+  FiSettings,
+  FiUser
 } from 'react-icons/fi'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
@@ -140,7 +141,7 @@ const UserLayout = ({ children, title, subtitle }) => {
             // Normalizar el path (remover barra inicial si existe y convertir a minúsculas)
             const normalizedPath = path.replace(/^\/+/, '').toLowerCase().trim()
             
-            console.log(`🔍 [UserLayout] Path normalizado: "${normalizedPath}" (original: "${path}")`)
+            // console.log(`🔍 [UserLayout] Path normalizado: "${normalizedPath}" (original: "${path}")`)
             
             // Mapeo de paths conocidos - coincidencias exactas primero
             const exactMatches = {
@@ -149,6 +150,8 @@ const UserLayout = ({ children, title, subtitle }) => {
               'noticias': '/dashboard/user/noticias',
               'noticia': '/dashboard/user/noticias',
               'news': '/dashboard/user/noticias',
+              'profile': '/dashboard/user/profile',
+              'perfil': '/dashboard/user/profile',
               'dashboard/user': '/dashboard/user',
               'user': '/dashboard/user',
               'home': '/dashboard/user',
@@ -157,21 +160,21 @@ const UserLayout = ({ children, title, subtitle }) => {
             
             // Buscar coincidencia exacta primero
             if (exactMatches[normalizedPath]) {
-              console.log(`✅ [UserLayout] Coincidencia exacta encontrada: ${normalizedPath} → ${exactMatches[normalizedPath]}`)
+              // console.log(`✅ [UserLayout] Coincidencia exacta encontrada: ${normalizedPath} → ${exactMatches[normalizedPath]}`)
               return exactMatches[normalizedPath]
             }
             
             // Buscar coincidencia parcial (incluye)
             for (const [key, route] of Object.entries(exactMatches)) {
               if (normalizedPath.includes(key) || key.includes(normalizedPath)) {
-                console.log(`✅ [UserLayout] Coincidencia parcial encontrada: ${key} en ${normalizedPath} → ${route}`)
+                // console.log(`✅ [UserLayout] Coincidencia parcial encontrada: ${key} en ${normalizedPath} → ${route}`)
                 return route
               }
             }
             
             // Si no hay coincidencia, construir la ruta con el prefijo /dashboard/user
             const finalRoute = `/dashboard/user/${normalizedPath}`
-            console.log(`🔧 [UserLayout] Ruta construida automáticamente: ${finalRoute}`)
+            // console.log(`🔧 [UserLayout] Ruta construida automáticamente: ${finalRoute}`)
             return finalRoute
           }
           
@@ -180,7 +183,7 @@ const UserLayout = ({ children, title, subtitle }) => {
             const originalPath = item.path || '#'
             const mappedRoute = mapPathToRoute(originalPath)
             
-            console.log(`🔗 [UserLayout] Mapeando ruta: "${originalPath}" → "${mappedRoute}"`)
+            // console.log(`🔗 [UserLayout] Mapeando ruta: "${originalPath}" → "${mappedRoute}"`)
             
             return {
               id: item.id,
@@ -191,14 +194,14 @@ const UserLayout = ({ children, title, subtitle }) => {
             }
           })
           
-          console.log('✅ [UserLayout] Items del menú mapeados:', mappedMenuItems)
+          // console.log('✅ [UserLayout] Items del menú mapeados:', mappedMenuItems)
           setSubscriberMenuItems(mappedMenuItems)
         } else {
-          console.error('❌ [UserLayout] Estructura de respuesta no esperada del API')
+          // console.error('❌ [UserLayout] Estructura de respuesta no esperada del API')
           setSubscriberMenuItems([])
         }
       } catch (error) {
-        console.error('❌ [UserLayout] Error al cargar el menú del dashboard:', error)
+        // console.error('❌ [UserLayout] Error al cargar el menú del dashboard:', error)
         setSubscriberMenuItems([])
       } finally {
         setLoadingMenu(false)
@@ -215,9 +218,9 @@ const UserLayout = ({ children, title, subtitle }) => {
       setIsLoggingOut(true)
       onClose()
       await logout()
-      console.log('✅ Sesión cerrada exitosamente')
+      // console.log('✅ Sesión cerrada exitosamente')
     } catch (error) {
-      console.error('❌ Error inesperado en el logout:', error)
+      // console.error('❌ Error inesperado en el logout:', error)
     } finally {
       setIsLoggingOut(false)
     }

@@ -8,21 +8,21 @@ export const useAuthRedirect = () => {
   const navigate = useNavigate()
 
   const redirectToDashboard = () => {
-    console.log('🔄 [useAuthRedirect] - Starting redirect...')
-    console.log('🔄 [useAuthRedirect] - Current auth state:', auth)
+    // console.log('🔄 [useAuthRedirect] - Starting redirect...')
+    // console.log('🔄 [useAuthRedirect] - Current auth state:', auth)
     
     if (auth) {
-      console.log('🔄 [useAuthRedirect] - Auth exists, getting dashboard route...')
+      // console.log('🔄 [useAuthRedirect] - Auth exists, getting dashboard route...')
       const dashboardRoute = getDashboardRoute(auth)
-      console.log('🎯 [useAuthRedirect] - Redirecting to:', dashboardRoute)
-      console.log('🎯 [useAuthRedirect] - User role:', auth.role)
-      console.log('🎯 [useAuthRedirect] - User role_id:', auth.role_id)
+      // console.log('🎯 [useAuthRedirect] - Redirecting to:', dashboardRoute)
+      // console.log('🎯 [useAuthRedirect] - User role:', auth.role)
+      // console.log('🎯 [useAuthRedirect] - User role_id:', auth.role_id)
       
       navigate(dashboardRoute, { replace: true })
     } else {
-      console.log('❌ [useAuthRedirect] - No auth data available for redirect')
-      console.log('❌ [useAuthRedirect] - localStorage token:', localStorage.getItem('authToken'))
-      console.log('❌ [useAuthRedirect] - localStorage user:', localStorage.getItem('user'))
+      // console.log('❌ [useAuthRedirect] - No auth data available for redirect')
+      // console.log('❌ [useAuthRedirect] - localStorage token:', localStorage.getItem('authToken'))
+      // console.log('❌ [useAuthRedirect] - localStorage user:', localStorage.getItem('user'))
     }
   }
 

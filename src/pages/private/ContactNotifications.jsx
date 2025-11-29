@@ -99,7 +99,7 @@ const ContactNotifications = () => {
       
       // Escuchar notificaciones de contacto
       webSocketService.on('new-contact', (data) => {
-        console.log('📨 Nueva notificación de contacto:', data)
+        // console.log('📨 Nueva notificación de contacto:', data)
         
         // Mapear los datos del backend a la estructura esperada por el frontend
         const messageData = {
@@ -114,7 +114,7 @@ const ContactNotifications = () => {
           status: 'unread'
         }
         
-        console.log('📝 Mensaje mapeado:', messageData)
+        // console.log('📝 Mensaje mapeado:', messageData)
         
         setMessages(prev => [messageData, ...prev])
         
@@ -129,7 +129,7 @@ const ContactNotifications = () => {
 
       // Escuchar notificaciones generales
       webSocketService.on('notification', (notification) => {
-        console.log('📢 Notificación general recibida:', notification)
+        // console.log('📢 Notificación general recibida:', notification)
         
         // Si es una notificación de contacto, procesarla
         if (notification.type === 'new_contact' || notification.type === 'contact') {
@@ -148,7 +148,7 @@ const ContactNotifications = () => {
             status: 'unread'
           }
           
-          console.log('📝 Mensaje desde notificación general:', messageData)
+          // console.log('📝 Mensaje desde notificación general:', messageData)
           
           setMessages(prev => [messageData, ...prev])
           
@@ -178,7 +178,7 @@ const ContactNotifications = () => {
 
       setConnectionStatus('connected')
     } catch (error) {
-      console.error('❌ Error al conectar WebSocket:', error)
+      // console.error('❌ Error al conectar WebSocket:', error)
       setConnectionStatus('error')
       
       // Solo mostrar toast de error si no hay conexión previa
@@ -212,23 +212,23 @@ const ContactNotifications = () => {
       }
 
       const data = await response.json()
-      console.log('📨 Datos recibidos del endpoint /api/contacts:', data)
+      // console.log('📨 Datos recibidos del endpoint /api/contacts:', data)
       
       // El backend envía los datos en data.data (array)
       const contactsArray = data.data || data.messages || data.contacts || []
-      console.log('📋 Array de contactos encontrado:', contactsArray)
+      // console.log('📋 Array de contactos encontrado:', contactsArray)
       
       // Mapear los datos del backend a la estructura esperada por el frontend
       const mappedMessages = contactsArray.map(contact => {
-        console.log('📋 Mapeando contacto:', {
-          id: contact.contact_id,
-          name: contact.contact_name,
-          // Verificar todos los posibles campos de estado
-          contact_status: contact.contact_status,
-          is_read: contact.is_read,
-          read: contact.read,
-          status: contact.status
-        })
+        // console.log('📋 Mapeando contacto:', {
+        //   id: contact.contact_id,
+        //   name: contact.contact_name,
+        //   // Verificar todos los posibles campos de estado
+        //   contact_status: contact.contact_status,
+        //   is_read: contact.is_read,
+        //   read: contact.read,
+        //   status: contact.status
+        // })
         
         return {
           id: contact.contact_id || contact.id,
@@ -244,11 +244,11 @@ const ContactNotifications = () => {
         }
       })
       
-      console.log('📝 Mensajes mapeados:', mappedMessages)
-      console.log('📊 Total de mensajes a mostrar:', mappedMessages.length)
+      // console.log('📝 Mensajes mapeados:', mappedMessages)
+      // console.log('📊 Total de mensajes a mostrar:', mappedMessages.length)
       setMessages(mappedMessages)
     } catch (error) {
-      console.error('Error al cargar mensajes:', error)
+      // console.error('Error al cargar mensajes:', error)
       // Solo mostrar toast una vez
       if (!hasTriedToLoad) {
         toast({
@@ -267,7 +267,7 @@ const ContactNotifications = () => {
   // Marcar mensaje como leído
   const markAsRead = async (messageId) => {
     try {
-      console.log('✅ Marcando mensaje como leído, ID:', messageId)
+      // console.log('✅ Marcando mensaje como leído, ID:', messageId)
       
       const response = await axios.patch(`/api/contacts/${messageId}/mark-read`, {}, {
         headers: {
@@ -276,8 +276,8 @@ const ContactNotifications = () => {
         }
       })
 
-      console.log('📡 Respuesta del servidor para marcar como leído:', response.status, response.statusText)
-      console.log('✅ Respuesta del servidor:', response.data)
+      // console.log('📡 Respuesta del servidor para marcar como leído:', response.status, response.statusText)
+      // console.log('✅ Respuesta del servidor:', response.data)
 
       // Verificar si la operación fue exitosa según la respuesta del backend
       if (response.data.success) {
@@ -298,7 +298,7 @@ const ContactNotifications = () => {
         throw new Error(response.data.message || 'Error al marcar como leído')
       }
     } catch (error) {
-      console.error('❌ Error al marcar como leído:', error)
+      // console.error('❌ Error al marcar como leído:', error)
       
       const errorMessage = error.response?.data?.message || error.message || 'Error desconocido'
       const statusCode = error.response?.status || 'N/A'
@@ -316,8 +316,8 @@ const ContactNotifications = () => {
   // Eliminar mensaje
   const deleteMessage = async (messageId) => {
     try {
-      console.log('🗑️ Intentando eliminar mensaje con ID:', messageId)
-      console.log('📋 Mensajes actuales antes de eliminar:', messages.length)
+      // console.log('🗑️ Intentando eliminar mensaje con ID:', messageId)
+      // console.log('📋 Mensajes actuales antes de eliminar:', messages.length)
       
       const response = await fetch(`/api/contacts/${messageId}`, {
         method: 'DELETE',
@@ -333,7 +333,7 @@ const ContactNotifications = () => {
 
       setMessages(prev => {
         const filtered = prev.filter(msg => msg.id !== messageId)
-        console.log('📋 Mensajes después de eliminar:', filtered.length)
+        // console.log('📋 Mensajes después de eliminar:', filtered.length)
         return filtered
       })
 
@@ -344,7 +344,7 @@ const ContactNotifications = () => {
         isClosable: true,
       })
     } catch (error) {
-      console.error('Error al eliminar mensaje:', error)
+      // console.error('Error al eliminar mensaje:', error)
       toast({
         title: 'Error',
         description: 'No se pudo eliminar el mensaje',
@@ -357,7 +357,7 @@ const ContactNotifications = () => {
 
   // Ver detalles del mensaje
   const viewMessage = (message) => {
-    console.log('👁️ Abriendo detalles del mensaje:', message)
+    // console.log('👁️ Abriendo detalles del mensaje:', message)
     setSelectedMessage(message)
     onOpen()
     
@@ -409,11 +409,11 @@ const ContactNotifications = () => {
 
   // Efecto para monitorear cambios en los mensajes
   useEffect(() => {
-    console.log('📊 Estado de mensajes actualizado:', {
-      total: messages.length,
-      unread: messages.filter(msg => msg.status === 'unread').length,
-      read: messages.filter(msg => msg.status === 'read').length
-    })
+    // console.log('📊 Estado de mensajes actualizado:', {
+    //   total: messages.length,
+    //   unread: messages.filter(msg => msg.status === 'unread').length,
+    //   read: messages.filter(msg => msg.status === 'read').length
+    // })
   }, [messages])
 
 
@@ -568,7 +568,7 @@ const ContactNotifications = () => {
                     leftIcon={<FiFilter />}
                     variant="outline"
                     onClick={() => {
-                      console.log('🔄 Actualizando mensajes manualmente...')
+                      // console.log('🔄 Actualizando mensajes manualmente...')
                       setHasTriedToLoad(false)
                       fetchMessages()
                     }}
@@ -582,7 +582,7 @@ const ContactNotifications = () => {
                     colorScheme="blue"
                     variant="solid"
                     onClick={() => {
-                      console.log('🔄 Recargando mensajes desde el servidor...')
+                      // console.log('🔄 Recargando mensajes desde el servidor...')
                       setHasTriedToLoad(false)
                       fetchMessages()
                     }}

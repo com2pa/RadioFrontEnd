@@ -40,7 +40,7 @@ const pulse = keyframes`
 `
 
 const StickyRadioPlayer = () => {
-  console.log('🎧 [StickyRadioPlayer] Componente renderizado')
+  // console.log('🎧 [StickyRadioPlayer] Componente renderizado')
   
   // Estados del reproductor
   const [isPlaying, setIsPlaying] = useState(false)
@@ -65,17 +65,17 @@ const StickyRadioPlayer = () => {
   
   // Log de depuración
   useEffect(() => {
-    console.log('📻 [StickyRadioPlayer] Configuración:', {
-      streamUrl,
-      isValid: isValidStreamUrl(streamUrl),
-      stationName: radioConfig.stationName
-    })
+    // console.log('📻 [StickyRadioPlayer] Configuración:', {
+    //   streamUrl,
+    //   isValid: isValidStreamUrl(streamUrl),
+    //   stationName: radioConfig.stationName
+    // })
   }, [streamUrl])
 
   // Función de reconexión
   const handleReconnect = useCallback(() => {
     if (reconnectAttempts >= radioConfig.reconnectAttempts) {
-      console.error('❌ [Reconnect] Máximo de intentos alcanzado')
+      // console.error('❌ [Reconnect] Máximo de intentos alcanzado')
       // Solo mostrar toast si no se ha mostrado ya
       if (!errorToastShown) {
         setErrorToastShown(true)
@@ -91,7 +91,7 @@ const StickyRadioPlayer = () => {
     }
 
     const delay = radioConfig.reconnectDelay * (reconnectAttempts + 1)
-    console.log(`🔄 [Reconnect] Intentando reconectar en ${delay}ms (intento ${reconnectAttempts + 1}/${radioConfig.reconnectAttempts})`)
+    // console.log(`🔄 [Reconnect] Intentando reconectar en ${delay}ms (intento ${reconnectAttempts + 1}/${radioConfig.reconnectAttempts})`)
     
     setTimeout(() => {
       setReconnectAttempts(prev => prev + 1)
@@ -99,7 +99,7 @@ const StickyRadioPlayer = () => {
         audioRef.current.load()
         if (isPlaying) {
           audioRef.current.play().catch(err => {
-            console.error('❌ [Reconnect] Error al reproducir después de reconectar:', err)
+            // console.error('❌ [Reconnect] Error al reproducir después de reconectar:', err)
           })
         }
       }
@@ -110,7 +110,7 @@ const StickyRadioPlayer = () => {
   useEffect(() => {
     if (!isValidStreamUrl(streamUrl)) {
       const errorMsg = `URL de stream inválida: ${streamUrl}. Por favor, configura una URL válida en src/config/radioConfig.js`
-      console.error('❌ [StickyRadioPlayer]', errorMsg)
+      // console.error('❌ [StickyRadioPlayer]', errorMsg)
       setError(errorMsg)
       toast({
         title: 'Error de configuración',
@@ -126,11 +126,11 @@ const StickyRadioPlayer = () => {
   useEffect(() => {
     const audio = audioRef.current
     if (!audio || !isValidStreamUrl(streamUrl)) {
-      console.warn('⚠️ [Audio] Audio element o URL no válida')
+      // console.warn('⚠️ [Audio] Audio element o URL no válida')
       return
     }
 
-    console.log('🎵 [Audio] Configurando stream:', streamUrl)
+    // console.log('🎵 [Audio] Configurando stream:', streamUrl)
     
     // Configurar URL del stream
     // Primero intentar sin crossOrigin, luego con crossOrigin si es necesario
@@ -140,19 +140,19 @@ const StickyRadioPlayer = () => {
     try {
       audio.crossOrigin = null // null en lugar de 'anonymous' para evitar problemas CORS
     } catch (e) {
-      console.warn('⚠️ [Audio] No se pudo configurar crossOrigin:', e)
+      // console.warn('⚠️ [Audio] No se pudo configurar crossOrigin:', e)
     }
     
     // Configurar src y forzar carga
     if (audio.src !== streamUrl) {
       audio.src = streamUrl
       audio.load() // Forzar recarga del stream
-      console.log('✅ [Audio] URL configurada y cargada')
+      // console.log('✅ [Audio] URL configurada y cargada')
     }
 
     // Event listeners
     const handleCanPlay = () => {
-      console.log('✅ [Audio] Stream listo para reproducir')
+      // console.log('✅ [Audio] Stream listo para reproducir')
       setIsLoading(false)
       setError(null)
       setReconnectAttempts(0)
@@ -160,12 +160,12 @@ const StickyRadioPlayer = () => {
     }
 
     const handleLoadStart = () => {
-      console.log('🔄 [Audio] Cargando stream...')
+      // console.log('🔄 [Audio] Cargando stream...')
       setIsLoading(true)
     }
 
     const handlePlay = () => {
-      console.log('▶️ [Audio] Reproducción iniciada')
+      // console.log('▶️ [Audio] Reproducción iniciada')
       setIsPlaying(true)
       setIsLoading(false)
       setError(null)
@@ -179,28 +179,28 @@ const StickyRadioPlayer = () => {
     }
 
     const handlePause = () => {
-      console.log('⏸️ [Audio] Reproducción pausada')
+      // console.log('⏸️ [Audio] Reproducción pausada')
       setIsPlaying(false)
     }
 
     const handleWaiting = () => {
-      console.log('⏳ [Audio] Buffering...')
+      // console.log('⏳ [Audio] Buffering...')
       setIsLoading(true)
     }
 
     const handlePlaying = () => {
-      console.log('🎵 [Audio] Reproduciendo')
+      // console.log('🎵 [Audio] Reproduciendo')
       setIsLoading(false)
     }
 
     const handleError = (e) => {
-      console.error('❌ [Audio] Error:', {
-        error: e,
-        errorCode: audio.error?.code,
-        errorMessage: audio.error?.message,
-        networkState: audio.networkState,
-        readyState: audio.readyState
-      })
+      // console.error('❌ [Audio] Error:', {
+      //   error: e,
+      //   errorCode: audio.error?.code,
+      //   errorMessage: audio.error?.message,
+      //   networkState: audio.networkState,
+      //   readyState: audio.readyState
+      // })
       
       setIsPlaying(false)
       setIsLoading(false)
@@ -253,12 +253,12 @@ const StickyRadioPlayer = () => {
     }
 
     const handleStalled = () => {
-      console.warn('⚠️ [Audio] Stream estancado, intentando reconectar...')
+      // console.warn('⚠️ [Audio] Stream estancado, intentando reconectar...')
       setIsLoading(true)
     }
 
     const handleSuspend = () => {
-      console.log('⏸️ [Audio] Stream suspendido')
+      // console.log('⏸️ [Audio] Stream suspendido')
     }
 
     audio.addEventListener('canplay', handleCanPlay)
@@ -295,7 +295,7 @@ const StickyRadioPlayer = () => {
   const handlePlayPause = async () => {
     const audio = audioRef.current
     if (!audio) {
-      console.error('❌ [handlePlayPause] Audio element no disponible')
+      // console.error('❌ [handlePlayPause] Audio element no disponible')
       toast({
         title: 'Error',
         description: 'Reproductor de audio no disponible',
@@ -307,7 +307,7 @@ const StickyRadioPlayer = () => {
     }
 
     if (!isValidStreamUrl(streamUrl)) {
-      console.error('❌ [handlePlayPause] URL inválida:', streamUrl)
+      // console.error('❌ [handlePlayPause] URL inválida:', streamUrl)
         toast({
         title: 'Error',
         description: 'URL de stream no configurada correctamente',
@@ -320,17 +320,17 @@ const StickyRadioPlayer = () => {
 
     try {
       if (isPlaying) {
-        console.log('⏸️ [handlePlayPause] Pausando...')
+        // console.log('⏸️ [handlePlayPause] Pausando...')
           audio.pause()
         setIsPlaying(false)
       } else {
-        console.log('▶️ [handlePlayPause] Iniciando reproducción...')
+        // console.log('▶️ [handlePlayPause] Iniciando reproducción...')
         setIsLoading(true)
         setError(null)
         
         // Asegurar que el src esté configurado
         if (!audio.src || audio.src !== streamUrl) {
-          console.log('🔄 [handlePlayPause] Configurando src del audio...')
+          // console.log('🔄 [handlePlayPause] Configurando src del audio...')
           audio.src = streamUrl
           audio.load()
           // Esperar un momento para que el audio se cargue
@@ -339,20 +339,20 @@ const StickyRadioPlayer = () => {
         
         // Intentar reproducir
           await audio.play()
-        console.log('✅ [handlePlayPause] Reproducción iniciada exitosamente')
+        // console.log('✅ [handlePlayPause] Reproducción iniciada exitosamente')
         setIsPlaying(true)
         setIsLoading(false)
         }
       } catch (error) {
-      console.error('❌ [handlePlayPause] Error completo:', {
-        name: error.name,
-        message: error.message,
-        error: error,
-        audioSrc: audio.src,
-        audioReadyState: audio.readyState,
-        audioNetworkState: audio.networkState,
-        audioError: audio.error
-      })
+      // console.error('❌ [handlePlayPause] Error completo:', {
+      //   name: error.name,
+      //   message: error.message,
+      //   error: error,
+      //   audioSrc: audio.src,
+      //   audioReadyState: audio.readyState,
+      //   audioNetworkState: audio.networkState,
+      //   audioError: audio.error
+      // })
       
           setIsPlaying(false)
       setIsLoading(false)
@@ -408,7 +408,7 @@ const StickyRadioPlayer = () => {
       }
     } catch (error) {
       if (error.name !== 'AbortError') {
-        console.error('Error al compartir:', error)
+        // console.error('Error al compartir:', error)
       }
     }
   }

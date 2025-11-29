@@ -26,12 +26,12 @@ const Register = () => {
   const textColor = useColorModeValue(brandDarkGray, brandLightGray)
 
   const handleRegisterSuccess = (response) => {
-    console.log('Registro exitoso:', response)
+    // console.log('Registro exitoso:', response)
     // Aquí puedes redirigir al usuario o mostrar un mensaje
   }
 
   const handleRegisterError = (error) => {
-    console.error('Error en registro:', error)
+    // console.error('Error en registro:', error)
     // Aquí puedes manejar errores específicos
   }
 

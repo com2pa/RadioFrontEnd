@@ -10,7 +10,7 @@ const PersistAuth = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    console.log('🔄 PersistAuth - Checking authentication...');
+    // console.log('🔄 PersistAuth - Checking authentication...');
     
     // Simular verificación de token (reemplaza con tu lógica real)
     const verifyAuth = async () => {
@@ -18,23 +18,23 @@ const PersistAuth = () => {
         const token = localStorage.getItem('authToken');
         const userData = localStorage.getItem('user');
         
-        console.log('📦 PersistAuth - LocalStorage:', { token, userData });
+        // console.log('📦 PersistAuth - LocalStorage:', { token, userData });
         
         if (token && userData) {
           // Si hay datos en localStorage pero no en el estado, actualizar el estado
           if (!auth) {
             const user = JSON.parse(userData);
             setAuth({ token, ...user });
-            console.log('✅ PersistAuth - Auth state updated from localStorage');
+            // console.log('✅ PersistAuth - Auth state updated from localStorage');
           }
         }
       } catch (error) {
-        console.error('❌ PersistAuth - Error:', error);
+        // console.error('❌ PersistAuth - Error:', error);
         localStorage.removeItem('authToken');
         localStorage.removeItem('user');
       } finally {
         setIsLoading(false);
-        console.log('🏁 PersistAuth - Loading complete');
+        // console.log('🏁 PersistAuth - Loading complete');
       }
     };
 
@@ -42,7 +42,7 @@ const PersistAuth = () => {
   }, [auth, setAuth]);
 
   if (isLoading) {
-    console.log('⏳ PersistAuth - Showing loader');
+    // console.log('⏳ PersistAuth - Showing loader');
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
         <HashLoader color="red" loading size={90} speedMultiplier={2} />
@@ -50,7 +50,7 @@ const PersistAuth = () => {
     );
   }
 
-  console.log('🚀 PersistAuth - Rendering protected routes');
+  // console.log('🚀 PersistAuth - Rendering protected routes');
   return <Outlet />;
 };
 

@@ -94,6 +94,13 @@ export const adminMenuItems = [
     href: '/dashboard/admin/auditoria',
     icon: 'FiFileText',
     description: 'Ver logs de auditoría del sistema'
+  },
+  {
+    id:'perfil',
+    label:'Mi Perfil',
+    href:'/dashboard/admin/profile',
+    icon:'FiUser',
+    description:'Gestionar perfil y actualizar datos personales'
   }
 ]
 
@@ -105,7 +112,7 @@ export const adminMenuItems = [
 export const getFilteredMenuItems = (userPermissions = []) => {
   // Por ahora retorna todos los elementos, pero se puede extender para filtrar por permisos
   // userPermissions se puede usar en el futuro para filtrar elementos según permisos
-  console.log('User permissions:', userPermissions) // Evitar warning de variable no usada
+  // console.log('User permissions:', userPermissions) // Evitar warning de variable no usada
   return adminMenuItems
 }
 

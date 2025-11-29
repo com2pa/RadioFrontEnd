@@ -14,11 +14,11 @@ class WebSocketService {
   // Conectar al servidor WebSocket
   connect() {
     if (this.socket && this.isConnected) {
-      console.log('🔌 Ya conectado al servidor WebSocket');
+      // console.log('🔌 Ya conectado al servidor WebSocket');
       return Promise.resolve();
     }
 
-    console.log('🔌 Conectando a:', this.serverUrl);
+    // console.log('🔌 Conectando a:', this.serverUrl);
 
     return new Promise((resolve, reject) => {
       this.socket = io(this.serverUrl, {
@@ -36,29 +36,29 @@ class WebSocketService {
       // Timeout para la conexión
       const connectionTimeout = setTimeout(() => {
         if (!this.isConnected) {
-          console.warn('⏰ Timeout de conexión WebSocket');
+          // console.warn('⏰ Timeout de conexión WebSocket');
           reject(new Error('Timeout de conexión'));
         }
       }, 10000);
 
       this.socket.on('connect', () => {
         clearTimeout(connectionTimeout);
-        console.log('✅ Conectado al WebSocket:', this.socket.id);
+        // console.log('✅ Conectado al WebSocket:', this.socket.id);
         resolve();
       });
 
       this.socket.on('connect_error', (error) => {
         clearTimeout(connectionTimeout);
-        console.error('❌ Error de conexión WebSocket:', error.message || error);
+        // console.error('❌ Error de conexión WebSocket:', error.message || error);
         
         // No rechazar inmediatamente, permitir que Socket.IO maneje la reconexión
         if (error.type === 'TransportError') {
-          console.warn('🔄 Error de transporte, Socket.IO intentará reconectar automáticamente');
+          // console.warn('🔄 Error de transporte, Socket.IO intentará reconectar automáticamente');
         }
       });
 
       this.socket.on('disconnect', (reason) => {
-        console.log('🔌 Desconectado del WebSocket:', reason);
+        // console.log('🔌 Desconectado del WebSocket:', reason);
         this.isConnected = false;
       });
     });
@@ -78,33 +78,33 @@ class WebSocketService {
     });
 
     this.socket.on('notification', (notification) => {
-      console.log('📢 Notificación recibida:', notification);
+      // console.log('📢 Notificación recibida:', notification);
       this.emit('notification', notification);
     });
 
     this.socket.on('new_contact', (data) => {
-      console.log('📞 Nuevo contacto:', data);
+      // console.log('📞 Nuevo contacto:', data);
       this.emit('new-contact', data);
     });
 
     // Eventos de comentarios de podcasts
     this.socket.on('new_podcast_comment', (data) => {
-      console.log('💬 Nuevo comentario de podcast:', data);
+      // console.log('💬 Nuevo comentario de podcast:', data);
       this.emit('new-podcast-comment', data);
     });
 
     this.socket.on('podcast_comment_updated', (data) => {
-      console.log('✏️ Comentario de podcast actualizado:', data);
+      // console.log('✏️ Comentario de podcast actualizado:', data);
       this.emit('podcast-comment-updated', data);
     });
 
     this.socket.on('podcast_comment_deleted', (data) => {
-      console.log('🗑️ Comentario de podcast eliminado:', data);
+      // console.log('🗑️ Comentario de podcast eliminado:', data);
       this.emit('podcast-comment-deleted', data);
     });
 
     this.socket.on('podcast_comment_count_updated', (data) => {
-      console.log('🔢 Conteo de comentarios actualizado:', data);
+      // console.log('🔢 Conteo de comentarios actualizado:', data);
       this.emit('podcast-comment-count-updated', data);
     });
   }
@@ -112,13 +112,13 @@ class WebSocketService {
   // Unirse como administrador
   joinAdmin() {
     if (!this.socket || !this.isConnected) {
-      console.error('❌ No hay conexión WebSocket');
+      // console.error('❌ No hay conexión WebSocket');
       return false;
     }
 
     this.socket.emit('join-admin');
     this.isAdmin = true;
-    console.log('👤 Unido como administrador');
+    // console.log('👤 Unido como administrador');
     this.emit('admin-status', { isAdmin: true });
     return true;
   }
@@ -126,36 +126,36 @@ class WebSocketService {
   // Unirse a la sala de un podcast específico
   joinPodcastRoom(podcastId) {
     if (!this.socket || !this.isConnected) {
-      console.error('❌ No hay conexión WebSocket');
+      // console.error('❌ No hay conexión WebSocket');
       return false;
     }
 
     this.socket.emit('join-podcast-room', podcastId);
-    console.log(`🎧 Unido a la sala del podcast ${podcastId}`);
+    // console.log(`🎧 Unido a la sala del podcast ${podcastId}`);
     return true;
   }
 
   // Salir de la sala de un podcast específico
   leavePodcastRoom(podcastId) {
     if (!this.socket || !this.isConnected) {
-      console.error('❌ No hay conexión WebSocket');
+      // console.error('❌ No hay conexión WebSocket');
       return false;
     }
 
     this.socket.emit('leave-podcast-room', podcastId);
-    console.log(`👋 Salido de la sala del podcast ${podcastId}`);
+    // console.log(`👋 Salido de la sala del podcast ${podcastId}`);
     return true;
   }
 
   // Salir de todas las salas de podcasts
   leaveAllPodcastRooms() {
     if (!this.socket || !this.isConnected) {
-      console.error('❌ No hay conexión WebSocket');
+      // console.error('❌ No hay conexión WebSocket');
       return false;
     }
 
     this.socket.emit('leave-all-podcast-rooms');
-    console.log('👋 Salido de todas las salas de podcasts');
+    // console.log('👋 Salido de todas las salas de podcasts');
     return true;
   }
 
@@ -183,7 +183,7 @@ class WebSocketService {
         try {
           callback(data);
         } catch (error) {
-          console.error(`Error en callback ${event}:`, error);
+          // console.error(`Error en callback ${event}:`, error);
         }
       });
     }

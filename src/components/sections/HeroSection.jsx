@@ -162,7 +162,7 @@ const HeroSection = () => {
         }
       }
     } catch (error) {
-      console.error('Error fetching programs:', error)
+      // console.error('Error fetching programs:', error)
     }
   }, [])
   

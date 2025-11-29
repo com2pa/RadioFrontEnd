@@ -48,7 +48,7 @@ import UserLayout from '../../components/layout/UserLayout'
 import axios from 'axios'
 
 const NewsView = () => {
-  console.log('📰 [NewsView] Componente renderizado')
+  // console.log('📰 [NewsView] Componente renderizado')
   
   const cardBg = useColorModeValue('white', 'gray.800')
   const textColor = useColorModeValue('gray.600', 'gray.300')
@@ -73,7 +73,7 @@ const NewsView = () => {
   const fetchNews = useCallback(async () => {
     setLoading(true)
     try {
-      console.log('🔍 [NewsView] Obteniendo todas las noticias...')
+      // console.log('🔍 [NewsView] Obteniendo todas las noticias...')
       const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken')
       const response = await axios.get('/api/news', {
         headers: {
@@ -84,17 +84,17 @@ const NewsView = () => {
       const data = response.data?.data || response.data || []
       const newsArray = Array.isArray(data) ? data : []
       
-      console.log(`✅ [NewsView] Noticias obtenidas: ${newsArray.length}`)
-      console.log('📸 [NewsView] Ejemplo de noticia:', newsArray[0] ? {
-        id: newsArray[0].news_id || newsArray[0].id,
-        title: newsArray[0].news_title || newsArray[0].title,
-        image: newsArray[0].news_image || newsArray[0].image,
-        allFields: Object.keys(newsArray[0])
-      } : 'No hay noticias')
+      // console.log(`✅ [NewsView] Noticias obtenidas: ${newsArray.length}`)
+      // console.log('📸 [NewsView] Ejemplo de noticia:', newsArray[0] ? {
+      //   id: newsArray[0].news_id || newsArray[0].id,
+      //   title: newsArray[0].news_title || newsArray[0].title,
+      //   image: newsArray[0].news_image || newsArray[0].image,
+      //   allFields: Object.keys(newsArray[0])
+      // } : 'No hay noticias')
       setNews(newsArray)
       setFilteredNews(newsArray)
     } catch (error) {
-      console.error('❌ [NewsView] Error obteniendo noticias:', error)
+      // console.error('❌ [NewsView] Error obteniendo noticias:', error)
       toast({
         title: 'Error',
         description: 'No se pudieron cargar las noticias',
@@ -116,9 +116,9 @@ const NewsView = () => {
       const response = await axios.get('/api/subcategory-news')
       const data = Array.isArray(response.data) ? response.data : []
       setSubcategories(data)
-      console.log(`✅ [NewsView] Subcategorías obtenidas: ${data.length}`)
+      // console.log(`✅ [NewsView] Subcategorías obtenidas: ${data.length}`)
     } catch (error) {
-      console.error('❌ [NewsView] Error obteniendo subcategorías:', error)
+      // console.error('❌ [NewsView] Error obteniendo subcategorías:', error)
       setSubcategories([])
     } finally {
       setLoadingSubcategories(false)
@@ -129,7 +129,7 @@ const NewsView = () => {
   const fetchNewsBySubcategory = useCallback(async (subcategoryId) => {
     setLoading(true)
     try {
-      console.log(`🔍 [NewsView] Obteniendo noticias para subcategoría: ${subcategoryId}`)
+      // console.log(`🔍 [NewsView] Obteniendo noticias para subcategoría: ${subcategoryId}`)
       const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken')
       
       // Intentar endpoint por subcategoría
@@ -142,11 +142,11 @@ const NewsView = () => {
         const data = response.data?.data || response.data || []
         const newsArray = Array.isArray(data) ? data : []
         
-        console.log(`✅ [NewsView] Noticias por subcategoría: ${newsArray.length}`)
+        // console.log(`✅ [NewsView] Noticias por subcategoría: ${newsArray.length}`)
         setFilteredNews(newsArray)
         return
       } catch {
-        console.log(`⚠️ [NewsView] Endpoint /api/news/subcategory/ no disponible, usando filtro local...`)
+        // console.log(`⚠️ [NewsView] Endpoint /api/news/subcategory/ no disponible, usando filtro local...`)
       }
       
       // Fallback: filtrar manualmente
@@ -156,7 +156,7 @@ const NewsView = () => {
       )
       setFilteredNews(filtered)
     } catch (error) {
-      console.error('❌ [NewsView] Error obteniendo noticias por subcategoría:', error)
+      // console.error('❌ [NewsView] Error obteniendo noticias por subcategoría:', error)
       toast({
         title: 'Error',
         description: 'No se pudieron cargar las noticias de esta subcategoría',
@@ -179,7 +179,7 @@ const NewsView = () => {
     
     setLoading(true)
     try {
-      console.log(`🔍 [NewsView] Buscando noticias por término: ${term}`)
+      // console.log(`🔍 [NewsView] Buscando noticias por término: ${term}`)
       const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken')
       
       const response = await axios.get(`/api/news/search/${encodeURIComponent(term)}`, {
@@ -191,10 +191,10 @@ const NewsView = () => {
       const data = response.data?.data || response.data || []
       const newsArray = Array.isArray(data) ? data : []
       
-      console.log(`✅ [NewsView] Resultados de búsqueda: ${newsArray.length}`)
+      // console.log(`✅ [NewsView] Resultados de búsqueda: ${newsArray.length}`)
       setFilteredNews(newsArray)
     } catch (error) {
-      console.error('❌ [NewsView] Error buscando noticias:', error)
+      // console.error('❌ [NewsView] Error buscando noticias:', error)
       // Si falla, filtrar manualmente
       const filtered = news.filter(item =>
         item.news_title?.toLowerCase().includes(term.toLowerCase()) ||
@@ -276,12 +276,12 @@ const NewsView = () => {
   // Obtener URL de imagen
   const getImageUrl = (imagePath) => {
     if (!imagePath) {
-      console.log('⚠️ [NewsView] No hay ruta de imagen')
+      // console.log('⚠️ [NewsView] No hay ruta de imagen')
       return null
     }
     
     if (imagePath.startsWith('http')) {
-      console.log('✅ [NewsView] URL externa:', imagePath)
+      // console.log('✅ [NewsView] URL externa:', imagePath)
       return imagePath
     }
     
@@ -294,7 +294,7 @@ const NewsView = () => {
     // Si no funciona, usar /uploads/news/ como fallback (como en otros componentes)
     // Se puede cambiar fácilmente a uno u otro según lo que funcione en el backend
     const finalUrl = `http://localhost:3000/uploads/news/${filename}`
-    console.log(`🔗 [NewsView] Construyendo URL: "${imagePath}" → "${finalUrl}"`)
+    // console.log(`🔗 [NewsView] Construyendo URL: "${imagePath}" → "${finalUrl}"`)
     return finalUrl
   }
 
@@ -424,12 +424,12 @@ const NewsView = () => {
                     {(() => {
                       const imagePath = newsItem.news_image || newsItem.image
                       const imageUrl = getImageUrl(imagePath)
-                      console.log('🖼️ [NewsView] Renderizando imagen para noticia:', {
-                        newsId: newsItem.news_id || newsItem.id,
-                        title: newsItem.news_title || newsItem.title,
-                        imagePath,
-                        imageUrl
-                      })
+                      // console.log('🖼️ [NewsView] Renderizando imagen para noticia:', {
+                      //   newsId: newsItem.news_id || newsItem.id,
+                      //   title: newsItem.news_title || newsItem.title,
+                      //   imagePath,
+                      //   imageUrl
+                      // })
                       
                       return imageUrl ? (
                         <Image
@@ -439,11 +439,11 @@ const NewsView = () => {
                           w="100%"
                           h="200px"
                           onError={() => {
-                            console.error('❌ [NewsView] Error cargando imagen:', imageUrl)
-                            console.error('📰 [NewsView] Datos de la noticia:', newsItem)
+                            // console.error('❌ [NewsView] Error cargando imagen:', imageUrl)
+                            // console.error('📰 [NewsView] Datos de la noticia:', newsItem)
                           }}
                           onLoad={() => {
-                            console.log('✅ [NewsView] Imagen cargada:', imageUrl)
+                            // console.log('✅ [NewsView] Imagen cargada:', imageUrl)
                           }}
                         />
                       ) : (
@@ -534,11 +534,11 @@ const NewsView = () => {
                             h="150px"
                             borderRadius="md"
                             onError={() => {
-                              console.error('❌ [NewsView] Error cargando imagen en lista:', imageUrl)
-                              console.error('📰 [NewsView] Datos:', newsItem)
+                              // console.error('❌ [NewsView] Error cargando imagen en lista:', imageUrl)
+                              // console.error('📰 [NewsView] Datos:', newsItem)
                             }}
                             onLoad={() => {
-                              console.log('✅ [NewsView] Imagen cargada en lista:', imageUrl)
+                              // console.log('✅ [NewsView] Imagen cargada en lista:', imageUrl)
                             }}
                           />
                         ) : (
@@ -615,7 +615,7 @@ const NewsView = () => {
                     const imagePath = selectedNews.news_image || selectedNews.image
                     const imageUrl = getImageUrl(imagePath)
                     
-                    console.log('🖼️ [NewsView] Modal - Imagen:', { imagePath, imageUrl })
+                    // console.log('🖼️ [NewsView] Modal - Imagen:', { imagePath, imageUrl })
                     
                     return imageUrl ? (
                       <Box borderRadius="md" overflow="hidden">
@@ -626,11 +626,11 @@ const NewsView = () => {
                           maxH="400px"
                           objectFit="cover"
                           onError={() => {
-                            console.error('❌ [NewsView] Error cargando imagen en modal:', imageUrl)
-                            console.error('📰 [NewsView] Datos completos:', selectedNews)
+                            // console.error('❌ [NewsView] Error cargando imagen en modal:', imageUrl)
+                            // console.error('📰 [NewsView] Datos completos:', selectedNews)
                           }}
                           onLoad={() => {
-                            console.log('✅ [NewsView] Imagen cargada en modal:', imageUrl)
+                            // console.log('✅ [NewsView] Imagen cargada en modal:', imageUrl)
                           }}
                         />
                       </Box>

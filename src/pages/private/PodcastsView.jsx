@@ -61,7 +61,7 @@ import { canAdmin } from '../../utils/roleUtils'
 import webSocketService from '../../services/websocketService'
 
 const PodcastsView = () => {
-  console.log('🎧 [PodcastsView] Componente renderizado')
+  // console.log('🎧 [PodcastsView] Componente renderizado')
   
   const cardBg = useColorModeValue('white', 'gray.800')
   const textColor = useColorModeValue('gray.600', 'gray.300')
@@ -120,7 +120,7 @@ const PodcastsView = () => {
 
         // Listener para nuevo comentario
         const handleNewComment = (data) => {
-          console.log('💬 [PodcastsView] Nuevo comentario recibido:', data)
+          // console.log('💬 [PodcastsView] Nuevo comentario recibido:', data)
           
           // Solo agregar si es del podcast actual
           if (data.comment && data.comment.podcast_id === podcastId) {
@@ -142,7 +142,7 @@ const PodcastsView = () => {
 
         // Listener para comentario actualizado
         const handleCommentUpdated = (data) => {
-          console.log('✏️ [PodcastsView] Comentario actualizado:', data)
+          // console.log('✏️ [PodcastsView] Comentario actualizado:', data)
           
           if (data.comment && data.comment.podcast_id === podcastId) {
             setComments(prev => 
@@ -157,7 +157,7 @@ const PodcastsView = () => {
 
         // Listener para comentario eliminado
         const handleCommentDeleted = (data) => {
-          console.log('🗑️ [PodcastsView] Comentario eliminado:', data)
+          // console.log('🗑️ [PodcastsView] Comentario eliminado:', data)
           
           if (data.podcast_id === podcastId && data.comment_id) {
             setComments(prev => 
@@ -173,7 +173,7 @@ const PodcastsView = () => {
 
         // Listener para actualización de conteo
         const handleCountUpdated = (data) => {
-          console.log('🔢 [PodcastsView] Conteo actualizado:', data)
+          // console.log('🔢 [PodcastsView] Conteo actualizado:', data)
           
           if (data.podcast_id === podcastId && data.count !== undefined) {
             setCommentCount(data.count)
@@ -195,7 +195,7 @@ const PodcastsView = () => {
           webSocketService.leavePodcastRoom(podcastId)
         }
       } catch (error) {
-        console.error('❌ [PodcastsView] Error conectando WebSocket:', error)
+        // console.error('❌ [PodcastsView] Error conectando WebSocket:', error)
         // No mostrar error al usuario, solo log
       }
     }
@@ -245,7 +245,7 @@ const PodcastsView = () => {
         setComments([])
       }
     } catch (error) {
-      console.error('❌ [PodcastsView] Error obteniendo comentarios:', error)
+      // console.error('❌ [PodcastsView] Error obteniendo comentarios:', error)
       setComments([])
     } finally {
       setLoadingComments(false)
@@ -265,7 +265,7 @@ const PodcastsView = () => {
         setCommentCount(0)
       }
     } catch (error) {
-      console.error('❌ [PodcastsView] Error obteniendo conteo de comentarios:', error)
+      // console.error('❌ [PodcastsView] Error obteniendo conteo de comentarios:', error)
       setCommentCount(0)
     }
   }, [])
@@ -340,7 +340,7 @@ const PodcastsView = () => {
         throw new Error(response.data.message || 'Error al crear el comentario')
       }
     } catch (error) {
-      console.error('❌ [PodcastsView] Error creando comentario:', error)
+      // console.error('❌ [PodcastsView] Error creando comentario:', error)
       toast({
         title: 'Error',
         description: error.response?.data?.message || 'No se pudo crear el comentario',
@@ -426,7 +426,7 @@ const PodcastsView = () => {
         throw new Error(response.data.message || 'Error al actualizar el comentario')
       }
     } catch (error) {
-      console.error('❌ [PodcastsView] Error actualizando comentario:', error)
+      // console.error('❌ [PodcastsView] Error actualizando comentario:', error)
       toast({
         title: 'Error',
         description: error.response?.data?.message || 'No se pudo actualizar el comentario',
@@ -485,7 +485,7 @@ const PodcastsView = () => {
         throw new Error(response.data.message || 'Error al eliminar el comentario')
       }
     } catch (error) {
-      console.error('❌ [PodcastsView] Error eliminando comentario:', error)
+      // console.error('❌ [PodcastsView] Error eliminando comentario:', error)
       toast({
         title: 'Error',
         description: error.response?.data?.message || 'No se pudo eliminar el comentario',
@@ -536,7 +536,7 @@ const PodcastsView = () => {
       setPodcasts(data)
       setFilteredPodcasts(data)
     } catch (error) {
-      console.error('Error obteniendo podcasts:', error)
+      // console.error('Error obteniendo podcasts:', error)
       toast({
         title: 'Error',
         description: 'No se pudieron cargar los podcasts',
@@ -558,7 +558,7 @@ const PodcastsView = () => {
       const data = Array.isArray(response.data) ? response.data : []
       setCategories(data)
     } catch (error) {
-      console.error('Error obteniendo categorías:', error)
+      // console.error('Error obteniendo categorías:', error)
     }
   }, [])
 
@@ -580,7 +580,7 @@ const PodcastsView = () => {
       )
       setSubcategories(filtered)
     } catch (error) {
-      console.error('Error obteniendo subcategorías:', error)
+      // console.error('Error obteniendo subcategorías:', error)
       setSubcategories([])
     } finally {
       setLoadingSubcategories(false)
@@ -591,7 +591,7 @@ const PodcastsView = () => {
   const fetchPodcastsBySubcategory = useCallback(async (subcategoryId) => {
     setLoading(true)
     try {
-      console.log(`🔍 [PodcastsView] Obteniendo podcasts para subcategoría: ${subcategoryId}`)
+      // console.log(`🔍 [PodcastsView] Obteniendo podcasts para subcategoría: ${subcategoryId}`)
       
       // Intentar diferentes variantes del endpoint
       let response
@@ -609,12 +609,12 @@ const PodcastsView = () => {
           : []
         
         if (data.length > 0) {
-          console.log(`✅ [PodcastsView] Podcasts obtenidos del endpoint /api/podcasts/subcategory/: ${data.length}`)
+          // console.log(`✅ [PodcastsView] Podcasts obtenidos del endpoint /api/podcasts/subcategory/: ${data.length}`)
           setFilteredPodcasts(data)
           return
         }
       } catch {
-        console.log(`⚠️ [PodcastsView] Endpoint /api/podcasts/subcategory/ no disponible, intentando alternativa...`)
+        // console.log(`⚠️ [PodcastsView] Endpoint /api/podcasts/subcategory/ no disponible, intentando alternativa...`)
       }
       
       // Segunda opción: /api/subcategory/:subcategoryId
@@ -629,12 +629,12 @@ const PodcastsView = () => {
           : []
         
         if (data.length > 0) {
-          console.log(`✅ [PodcastsView] Podcasts obtenidos del endpoint /api/subcategory/: ${data.length}`)
+          // console.log(`✅ [PodcastsView] Podcasts obtenidos del endpoint /api/subcategory/: ${data.length}`)
           setFilteredPodcasts(data)
           return
         }
       } catch {
-        console.log(`⚠️ [PodcastsView] Endpoint /api/subcategory/ no disponible, usando filtro local...`)
+        // console.log(`⚠️ [PodcastsView] Endpoint /api/subcategory/ no disponible, usando filtro local...`)
       }
       
       // Fallback: filtrar manualmente desde todos los podcasts
@@ -642,7 +642,7 @@ const PodcastsView = () => {
         podcast.podcast_subcategory_id?.toString() === subcategoryId.toString()
       )
       
-      console.log(`🔧 [PodcastsView] Filtrado local: ${filtered.length} podcasts encontrados`)
+      // console.log(`🔧 [PodcastsView] Filtrado local: ${filtered.length} podcasts encontrados`)
       setFilteredPodcasts(filtered)
       
       if (filtered.length === 0) {
@@ -655,7 +655,7 @@ const PodcastsView = () => {
         })
       }
     } catch (error) {
-      console.error('❌ [PodcastsView] Error obteniendo podcasts por subcategoría:', error)
+      // console.error('❌ [PodcastsView] Error obteniendo podcasts por subcategoría:', error)
       // Si todos los endpoints fallan, filtrar manualmente
       const filtered = podcasts.filter(podcast =>
         podcast.podcast_subcategory_id?.toString() === subcategoryId.toString()

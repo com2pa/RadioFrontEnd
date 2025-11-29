@@ -8,7 +8,12 @@
     "dev:8000": "vite --port 8000 --host 127.0.0.1",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "stream:install": "cd server && npm install",
+    "stream:start": "cd server && npm start",
+    "stream:dev": "cd server && npm run dev",
+    "stream:check": "cd server && npm run check-ffmpeg",
+    "stream:verify": "cd server && npm run verify"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.2.4",
@@ -17,6 +22,7 @@
     "@emotion/styled": "^11.14.1",
     "axios": "^1.12.2",
     "framer-motion": "^12.23.22",
+    "hls.js": "^1.6.15",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-icons": "^5.5.0",

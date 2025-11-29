@@ -113,7 +113,7 @@ const Contact = () => {
         status: 'unread' // Estado inicial del mensaje
       }
       
-      console.log('Enviando datos al backend:', dataToSend)
+      // console.log('Enviando datos al backend:', dataToSend)
       
       // Enviar datos al backend
       const response = await fetch('/api/contacts', {
@@ -124,16 +124,16 @@ const Contact = () => {
         body: JSON.stringify(dataToSend)
       })
       
-      console.log('Respuesta del servidor:', response.status, response.statusText)
+      // console.log('Respuesta del servidor:', response.status, response.statusText)
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}))
-        console.error('Error del servidor:', errorData)
+        // console.error('Error del servidor:', errorData)
         throw new Error(errorData.message || `Error del servidor: ${response.status}`)
       }
 
       const result = await response.json()
-      console.log('Respuesta del servidor:', result)
+      // console.log('Respuesta del servidor:', result)
       
       toast({
         title: 'Mensaje enviado',
@@ -154,7 +154,7 @@ const Contact = () => {
       setErrors({})
 
     } catch (error) {
-      console.error('Error sending message:', error)
+      // console.error('Error sending message:', error)
       toast({
         title: 'Error',
         description: 'No se pudo enviar el mensaje. Inténtalo de nuevo.',

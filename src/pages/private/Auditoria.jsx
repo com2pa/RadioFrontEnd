@@ -89,8 +89,8 @@ const Auditoria = () => {
           limit: itemsPerPage
         }
       })
-      console.log('📋 [Auditoria] Respuesta completa:', response)
-      console.log('📋 [Auditoria] Logs obtenidos:', response.data)
+      // console.log('📋 [Auditoria] Respuesta completa:', response)
+      // console.log('📋 [Auditoria] Logs obtenidos:', response.data)
       
       let logsData = []
       let paginationInfo = {
@@ -138,10 +138,10 @@ const Auditoria = () => {
         return log
       }).filter(log => log !== null)
       
-      console.log('✅ [Auditoria] Logs procesados:', logsData.length)
-      console.log('📊 [Auditoria] Paginación:', paginationInfo)
+      // console.log('✅ [Auditoria] Logs procesados:', logsData.length)
+      // console.log('📊 [Auditoria] Paginación:', paginationInfo)
       if (logsData.length > 0) {
-        console.log('📋 [Auditoria] Ejemplo de log procesado:', logsData[0])
+        // console.log('📋 [Auditoria] Ejemplo de log procesado:', logsData[0])
       }
       
       setLogs(logsData)
@@ -150,13 +150,13 @@ const Auditoria = () => {
       setTotal(paginationInfo.total)
       setLimit(paginationInfo.limit)
     } catch (error) {
-      console.error('❌ [Auditoria] Error obteniendo logs:', error)
-      console.error('❌ [Auditoria] Detalles del error:', {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status,
-        url: error.config?.url
-      })
+      // console.error('❌ [Auditoria] Error obteniendo logs:', error)
+      // console.error('❌ [Auditoria] Detalles del error:', {
+      //   message: error.message,
+      //   response: error.response?.data,
+      //   status: error.response?.status,
+      //   url: error.config?.url
+      // })
       toast({
         title: 'Error',
         description: error.response?.data?.message || error.message || 'No se pudieron cargar los logs de auditoría',

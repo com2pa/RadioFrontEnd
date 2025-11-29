@@ -11,11 +11,11 @@ const api = axios.create({
 // Servicio para obtener el menú principal
 export const getMainMenu = async (userRoleId = 3) => {
   try {
-    console.log('🔄 Obteniendo menú para rol:', userRoleId)
+    // console.log('🔄 Obteniendo menú para rol:', userRoleId)
     const response = await api.get('/api/menu/main', {
       params: { role_id: userRoleId }
     }) 
-    console.log('✅ Respuesta del backend:', response.data)
+    // console.log('✅ Respuesta del backend:', response.data)
     
     // Adaptar la estructura del backend a nuestro formato
     if (response.data.success && response.data.data) {
@@ -32,20 +32,20 @@ export const getMainMenu = async (userRoleId = 3) => {
         children: item.children || []
       }))
       
-      console.log('🔄 Datos adaptados:', menuData)
+      // console.log('🔄 Datos adaptados:', menuData)
       return menuData
     }
     
     return []
   } catch (error) {
-    console.error('❌ Error al obtener el menú:', error)
-    console.error('📊 Detalles del error:', {
-      message: error.message,
-      status: error.response?.status,
-      statusText: error.response?.statusText,
-      url: error.config?.url,
-      baseURL: error.config?.baseURL
-    })
+    // console.error('❌ Error al obtener el menú:', error)
+    // console.error('📊 Detalles del error:', {
+    //   message: error.message,
+    //   status: error.response?.status,
+    //   statusText: error.response?.statusText,
+    //   url: error.config?.url,
+    //   baseURL: error.config?.baseURL
+    // })
     throw error
   }
 }
@@ -63,7 +63,7 @@ export const getMenuByType = async (menuType = 'main', userRoleId = 3) => {
     
     return []
   } catch (error) {
-    console.error(`Error al obtener menú ${menuType}:`, error)
+    // console.error(`Error al obtener menú ${menuType}:`, error)
     throw error
   }
 }
@@ -74,14 +74,14 @@ export const getUserDashboardMenu = async () => {
     // Obtener token de autenticación
     const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken')
     
-    console.log('🔄 Obteniendo menú del dashboard del usuario...')
+    // console.log('🔄 Obteniendo menú del dashboard del usuario...')
     const response = await api.get('/api/menu/user-dashboard', {
       headers: {
         'Authorization': `Bearer ${token}`
       }
     })
     
-    console.log('✅ Respuesta del backend:', response.data)
+    // console.log('✅ Respuesta del backend:', response.data)
     
     // Adaptar la estructura del backend a nuestro formato
     if (response.data.success && response.data.data) {
@@ -99,19 +99,19 @@ export const getUserDashboardMenu = async () => {
         description: item.description || ''
       }))
       
-      console.log('🔄 Datos adaptados:', menuData)
+      // console.log('🔄 Datos adaptados:', menuData)
       return menuData
     }
     
     return []
   } catch (error) {
-    console.error('❌ Error al obtener el menú del dashboard:', error)
-    console.error('📊 Detalles del error:', {
-      message: error.message,
-      status: error.response?.status,
-      statusText: error.response?.statusText,
-      url: error.config?.url
-    })
+    // console.error('❌ Error al obtener el menú del dashboard:', error)
+    // console.error('📊 Detalles del error:', {
+    //   message: error.message,
+    //   status: error.response?.status,
+    //   statusText: error.response?.statusText,
+    //   url: error.config?.url
+    // })
     throw error
   }
 }
@@ -126,7 +126,7 @@ export const refreshMenu = async (userRoleId = 3) => {
     
     return response.data
   } catch (error) {
-    console.error('Error al refrescar menú:', error)
+    // console.error('Error al refrescar menú:', error)
     throw error
   }
 }
@@ -137,7 +137,7 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       // Manejar autenticación expirada
-      console.log('Sesión expirada')
+      // console.log('Sesión expirada')
     }
     return Promise.reject(error)
   }
