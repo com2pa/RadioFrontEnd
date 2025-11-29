@@ -129,21 +129,21 @@ const handleSubmit = async (e) => {
       
     } else {
       // console.error('❌ [6] LoginForm - Login failed - Response structure:', {
-        success: response.success,
-        hasUser: !!response.user,
-        hasToken: !!response.accesstoken,
-        message: response.message
-      })
+      //   success: response.success,
+      //   hasUser: !!response.user,
+      //   hasToken: !!response.accesstoken,
+      //   message: response.message
+      // })
       throw new Error(response.message || 'Error en el login')
     }
     
   } catch (error) {
     // console.error('❌ [ERROR] LoginForm - Catch block:', error)
     // console.error('❌ [ERROR] LoginForm - Error details:', {
-      message: error.message,
-      response: error.response?.data,
-      status: error.response?.status
-    })
+    //   message: error.message,
+    //   response: error.response?.data,
+    //   status: error.response?.status
+    // })
     
     const errorMessage = error.response?.data?.message || error.message || 'Error al iniciar sesión'
     

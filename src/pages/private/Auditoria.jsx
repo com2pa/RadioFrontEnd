@@ -238,6 +238,8 @@ const Auditoria = () => {
           ? (log.user_lastname ? `${log.user_name} ${log.user_lastname}` : log.user_name)
           : null
         const matchesSearch = 
+          (log.description && String(log.description).toLowerCase().includes(searchLower)) ||
+          (log.user_display && String(log.user_display).toLowerCase().includes(searchLower)) ||
           (log.action && String(log.action).toLowerCase().includes(searchLower)) ||
           (log.user_name && String(log.user_name).toLowerCase().includes(searchLower)) ||
           (log.user_lastname && String(log.user_lastname).toLowerCase().includes(searchLower)) ||
@@ -447,7 +449,7 @@ const Auditoria = () => {
                         <Th>Fecha/Hora</Th>
                         <Th>Usuario</Th>
                         <Th>Acción</Th>
-                        <Th>Detalles</Th>
+                        <Th>Descripción</Th>
                         <Th>IP</Th>
                       </Tr>
                     </Thead>
@@ -457,36 +459,53 @@ const Auditoria = () => {
                           <Td>
                             <HStack spacing={2}>
                               <Icon as={FiClock} color="gray.400" />
-                              <Text fontSize="sm">
-                                {formatDate(log.created_at || log.timestamp || log.date)}
-                              </Text>
+                              <VStack align="start" spacing={0}>
+                                <Text fontSize="sm" fontWeight="medium">
+                                  {formatDate(log.created_at || log.timestamp || log.date)}
+                                </Text>
+                                <Text fontSize="xs" color="gray.500">
+                                  {new Date(log.created_at || log.timestamp || log.date).toLocaleTimeString('es-ES', {
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    second: '2-digit'
+                                  })}
+                                </Text>
+                              </VStack>
                             </HStack>
                           </Td>
                           <Td>
                             <HStack spacing={2}>
                               <Icon as={FiUser} color="gray.400" />
                               <VStack align="start" spacing={0}>
-                                <Text fontSize="sm" fontWeight="medium">
-                                  {log.user_name 
-                                    ? (log.user_lastname ? `${log.user_name} ${log.user_lastname}` : log.user_name)
-                                    : (log.user_email || `Usuario ID: ${log.user_id || 'N/A'}` || 'Usuario desconocido')}
-                                </Text>
-                                {log.user_email && (
-                                  <Text fontSize="xs" color="gray.500">
-                                    {log.user_email}
+                                {log.user_display ? (
+                                  <Text fontSize="sm" fontWeight="medium">
+                                    {log.user_display}
                                   </Text>
-                                )}
-                                {log.user_id && !log.user_name && !log.user_email && (
-                                  <Text fontSize="xs" color="gray.500">
-                                    ID: {log.user_id}
-                                  </Text>
+                                ) : (
+                                  <>
+                                    <Text fontSize="sm" fontWeight="medium">
+                                      {log.user_name 
+                                        ? (log.user_lastname ? `${log.user_name} ${log.user_lastname}` : log.user_name)
+                                        : (log.user_email || `Usuario ID: ${log.user_id || 'N/A'}` || 'Usuario desconocido')}
+                                    </Text>
+                                    {log.user_email && log.user_name && (
+                                      <Text fontSize="xs" color="gray.500">
+                                        {log.user_email}
+                                      </Text>
+                                    )}
+                                    {log.user_id && !log.user_name && !log.user_email && (
+                                      <Text fontSize="xs" color="gray.500">
+                                        ID: {log.user_id}
+                                      </Text>
+                                    )}
+                                  </>
                                 )}
                               </VStack>
                             </HStack>
                           </Td>
                           <Td>
                             <VStack align="start" spacing={1}>
-                              <Badge colorScheme={getActionColor(log.action)}>
+                              <Badge colorScheme={getActionColor(log.action)} fontSize="xs">
                                 {log.action || 'N/A'}
                               </Badge>
                               {log.entity_type && (
@@ -498,20 +517,30 @@ const Auditoria = () => {
                             </VStack>
                           </Td>
                           <Td>
-                            <VStack align="start" spacing={0}>
-                              {log.metadata && typeof log.metadata === 'object' && (
-                                <Text fontSize="xs" color="gray.500" fontStyle="italic">
-                                  {JSON.stringify(log.metadata)}
+                            <VStack align="start" spacing={1}>
+                              {log.description ? (
+                                <Text fontSize="sm" color="gray.700" fontWeight="medium">
+                                  {log.description}
                                 </Text>
+                              ) : (
+                                <Text fontSize="sm" color="gray.500" fontStyle="italic">
+                                  Sin descripción disponible
+                                </Text>
+                              )}
+                              {log.metadata && typeof log.metadata === 'object' && Object.keys(log.metadata).length > 0 && (
+                                <Tooltip 
+                                  label={JSON.stringify(log.metadata, null, 2)}
+                                  placement="left"
+                                  hasArrow
+                                >
+                                  <Text fontSize="xs" color="gray.400" fontStyle="italic" cursor="help">
+                                    Ver detalles técnicos
+                                  </Text>
+                                </Tooltip>
                               )}
                               {log.user_agent && (
-                                <Text fontSize="xs" color="gray.400" noOfLines={1}>
-                                  {log.user_agent}
-                                </Text>
-                              )}
-                              {!log.metadata && !log.user_agent && (
-                                <Text fontSize="sm" color="gray.500">
-                                  Sin descripción
+                                <Text fontSize="xs" color="gray.400" noOfLines={1} title={log.user_agent}>
+                                  {log.user_agent.length > 50 ? `${log.user_agent.substring(0, 50)}...` : log.user_agent}
                                 </Text>
                               )}
                             </VStack>
