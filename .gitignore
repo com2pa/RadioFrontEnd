@@ -8,9 +8,9 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
-dist-ssr
-*.local
 
+*.local
+.env
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -21,3 +21,25 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# Streaming server files
+server/.env
+media/
+server/media/
+
+# HLS segments and playlists
+*.ts
+*.m3u8
+
+# documentacion 
+docs/*
+TROUBLESHOOTING.md
+
+# pruebas con la conexion con el obs locales
+media/*
+server/*
