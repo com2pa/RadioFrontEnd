@@ -569,7 +569,7 @@ const PodcastUpload = () => {
                       </Box>
                       <VStack align="start" spacing={0}>
                         <Text fontSize="3xl" fontWeight="bold" color="blue.600">
-                          OXÍ Radio
+                          Radio Oxígeno
                         </Text>
                         <Text fontSize="lg" color="gray.600" fontWeight="medium">
                           Podcasts & Videos

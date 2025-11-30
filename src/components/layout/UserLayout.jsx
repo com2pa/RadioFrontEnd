@@ -21,7 +21,13 @@ import {
   useBreakpointValue,
   Flex,
   Spinner,
-  Icon
+  Icon,
+  Show,
+  Hide,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem
 } from '@chakra-ui/react'
 import { 
   FiMenu, 
@@ -275,13 +281,32 @@ const UserLayout = ({ children, title, subtitle }) => {
               </VStack>
             </HStack>
 
-            {/* Botones de Acción */}
-            <HStack spacing={isTablet ? 1 : 2}>
+            {/* Botones de Acción - Responsive */}
+            <HStack 
+              spacing={{ base: 1, sm: 2, md: 2 }} 
+              flexShrink={0}
+              flexWrap={{ base: 'wrap', sm: 'nowrap' }}
+            >
+              {/* Menú hamburguesa - Solo móvil/tablet */}
+              <Show below="lg">
+                <IconButton
+                  aria-label="Abrir menú del dashboard"
+                  icon={<FiMenu />}
+                  variant="ghost"
+                  onClick={onOpen}
+                  size={{ base: 'sm', md: 'md' }}
+                  _hover={{
+                    bg: 'gray.100',
+                    color: 'blue.500'
+                  }}
+                />
+              </Show>
+
               {/* Botón Home */}
               <IconButton
                 aria-label="Ir al inicio"
                 icon={<FiHome />}
-                size={isTablet ? "xs" : "sm"}
+                size={{ base: 'sm', md: 'md' }}
                 variant="ghost"
                 onClick={handleHome}
                 _hover={{
@@ -290,65 +315,160 @@ const UserLayout = ({ children, title, subtitle }) => {
                 }}
               />
 
-              {/* Botón de Menú Hamburguesa */}
-              <IconButton
-                aria-label="Abrir menú del dashboard"
-                icon={<FiMenu />}
-                variant="ghost"
-                onClick={onOpen}
-                size={isTablet ? "xs" : "sm"}
-                _hover={{
-                  bg: 'gray.100',
-                  color: 'blue.500'
-                }}
-              />
-
-              {/* Botón Logout */}
-              <Button
-                size={isTablet ? "xs" : "sm"}
-                colorScheme="red"
-                variant="outline"
-                leftIcon={<Icon as={FiLogOut} />}
-                onClick={handleLogout}
-                isLoading={isLoggingOut}
-                loadingText={isTablet ? "Saliendo..." : "Cerrando..."}
-                disabled={isLoggingOut}
-                _hover={{
-                  bg: 'red.500',
-                  color: 'white',
-                  borderColor: 'red.500'
-                }}
-                _active={{
-                  bg: 'red.600',
-                  transform: 'scale(0.98)'
-                }}
-                transition="all 0.2s"
-              >
-                {isTablet ? "Salir" : "Cerrar Sesión"}
-              </Button>
+              {/* Botón Logout - Texto en desktop, solo icono en móvil */}
+              <Hide below="sm">
+                <Button
+                  size={{ base: 'sm', md: 'md' }}
+                  colorScheme="red"
+                  variant="outline"
+                  leftIcon={<Icon as={FiLogOut} />}
+                  onClick={handleLogout}
+                  isLoading={isLoggingOut}
+                  loadingText="Saliendo..."
+                  disabled={isLoggingOut}
+                  _hover={{
+                    bg: 'red.500',
+                    color: 'white',
+                    borderColor: 'red.500'
+                  }}
+                  _active={{
+                    bg: 'red.600',
+                    transform: 'scale(0.98)'
+                  }}
+                  transition="all 0.2s"
+                >
+                  Salir
+                </Button>
+              </Hide>
+              <Show below="sm">
+                <IconButton
+                  aria-label="Cerrar sesión"
+                  icon={<FiLogOut />}
+                  colorScheme="red"
+                  variant="outline"
+                  onClick={handleLogout}
+                  isLoading={isLoggingOut}
+                  size="sm"
+                />
+              </Show>
 
               {/* Información del Usuario */}
-              <HStack spacing={3}>
+              <HStack 
+                spacing={{ base: 2, md: 3 }}
+                display={{ base: 'none', sm: 'flex' }}
+              >
                 <Avatar 
-                  size="md" 
+                  size={{ base: 'sm', md: 'md' }}
                   name={user?.name || 'Usuario'} 
                   bg="blue.500"
                   color="white"
                 />
-                <VStack align="start" spacing={0}>
-                  <Text fontWeight="medium" fontSize="sm">
+                <VStack align="start" spacing={0} display={{ base: 'none', md: 'flex' }}>
+                  <Text fontWeight="medium" fontSize="sm" noOfLines={1}>
                     {user?.name || 'Usuario Suscriptor'}
                   </Text>
-                  <Text fontSize="xs" color={textColor}>
+                  <Text fontSize="xs" color={textColor} noOfLines={1}>
                     {user?.email || 'usuario@email.com'}
                   </Text>
-                  <Badge colorScheme="blue" size="sm" variant="subtle">
+                  <Badge colorScheme="blue" size="sm" variant="subtle" fontSize="2xs">
                     SUSCRIPTOR
                   </Badge>
                 </VStack>
               </HStack>
             </HStack>
           </HStack>
+
+          {/* Menú Horizontal - Solo desktop */}
+          <Show above="lg">
+            <Box 
+              borderTop="1px" 
+              borderColor={borderColor}
+              py={2}
+              overflowX="auto"
+              css={{
+                '&::-webkit-scrollbar': {
+                  height: '4px',
+                },
+                '&::-webkit-scrollbar-track': {
+                  background: 'transparent',
+                },
+                '&::-webkit-scrollbar-thumb': {
+                  background: borderColor,
+                  borderRadius: '2px',
+                },
+              }}
+            >
+              <HStack spacing={1} align="center" flexWrap="nowrap">
+                {loadingMenu ? (
+                  <Flex justify="center" align="center" py={2} w="100%">
+                    <Spinner size="sm" color="blue.500" />
+                    <Text ml={2} fontSize="xs" color={textColor}>
+                      Cargando menú...
+                    </Text>
+                  </Flex>
+                ) : subscriberMenuItems.length > 0 ? (
+                  <>
+                    {subscriberMenuItems.slice(0, 6).map((item, index) => {
+                      const isActive = window.location.pathname === item.href
+                      
+                      return (
+                        <Button
+                          key={`menu-item-${item.id || index}`}
+                          as={RouterLink}
+                          to={item.href}
+                          size="sm"
+                          variant={isActive ? "solid" : "ghost"}
+                          colorScheme={isActive ? "blue" : "gray"}
+                          leftIcon={<Icon as={item.icon} />}
+                          fontSize="xs"
+                          px={3}
+                          whiteSpace="nowrap"
+                          _hover={{
+                            bg: isActive ? "blue.600" : "gray.100"
+                          }}
+                        >
+                          {item.label}
+                        </Button>
+                      )
+                    })}
+                    
+                    {/* Menú "Más" para items adicionales */}
+                    {subscriberMenuItems.length > 6 && (
+                      <Menu>
+                        <MenuButton
+                          as={Button}
+                          size="sm"
+                          variant="ghost"
+                          colorScheme="gray"
+                          leftIcon={<Icon as={FiMenu} />}
+                          fontSize="xs"
+                          px={3}
+                        >
+                          Más
+                        </MenuButton>
+                        <MenuList>
+                          {subscriberMenuItems.slice(6).map((item, index) => (
+                            <MenuItem
+                              key={`menu-item-more-${item.id || index}`}
+                              as={RouterLink}
+                              to={item.href}
+                              icon={<Icon as={item.icon} />}
+                            >
+                              {item.label}
+                            </MenuItem>
+                          ))}
+                        </MenuList>
+                      </Menu>
+                    )}
+                  </>
+                ) : (
+                  <Text fontSize="xs" color={textColor} px={4}>
+                    No hay elementos en el menú
+                  </Text>
+                )}
+              </HStack>
+            </Box>
+          </Show>
         </Container>
       </Box>
 

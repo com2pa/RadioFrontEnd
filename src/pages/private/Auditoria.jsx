@@ -77,7 +77,7 @@ const Auditoria = () => {
   const [limit, setLimit] = useState(20)
 
   // Modal para el menú administrativo
-  const { isOpen: isMenuOpen, onOpen: onMenuOpen, onClose: onMenuClose } = useDisclosure()
+  const { isOpen, onOpen, onClose } = useDisclosure()
 
   // Obtener logs de auditoría
   const fetchLogs = useCallback(async (page = currentPage, itemsPerPage = limit) => {
@@ -294,51 +294,54 @@ const Auditoria = () => {
   return (
     <Box bg={bgColor} minH="100vh">
       <Container maxW="container.xl" py={8}>
-        {/* Header */}
-        <VStack spacing={6} align="stretch">
-          <HStack justify="space-between" align="center">
-            <HStack spacing={4}>
-              <IconButton
-                icon={<Icon as={FiMenu} />}
-                aria-label="Menú"
-                onClick={onMenuOpen}
-                variant="ghost"
-                size="md"
-              />
-              <Heading size="lg" color={textColor}>
-                Auditoría
-              </Heading>
+        <VStack spacing={8} align="stretch">
+          {/* Header del Dashboard */}
+          <Box>
+            <HStack justify="space-between" align="center" mb={4}>
+              <VStack align="start" spacing={1}>
+                <HStack spacing={4}>
+                  <Button
+                    as={RouterLink}
+                    to="/dashboard/admin"
+                    leftIcon={<Icon as={FiArrowLeft} />}
+                    variant="outline"
+                    size="sm"
+                  >
+                    Volver
+                  </Button>
+                  <Heading size="lg" color="blue.600">
+                    Auditoría
+                  </Heading>
+                </HStack>
+                <Text color={textColor}>
+                  Registro de actividades y acciones del sistema
+                </Text>
+              </VStack>
+              <HStack spacing={2}>
+                <Tooltip label="Recargar logs">
+                  <IconButton
+                    icon={<Icon as={FiRefreshCw} />}
+                    aria-label="Recargar"
+                    onClick={() => fetchLogs(currentPage, limit)}
+                    isLoading={loading}
+                    variant="ghost"
+                  />
+                </Tooltip>
+                <IconButton aria-label="Abrir menú" icon={<Icon as={FiMenu} />} onClick={onOpen} />
+                <IconButton as={RouterLink} to="/" aria-label="Inicio" icon={<Icon as={FiHome} />} />
+                <Button leftIcon={<Icon as={FiLogOut} />} colorScheme="red" variant="outline" onClick={logout}>
+                  Cerrar sesión
+                </Button>
+              </HStack>
             </HStack>
-            <HStack spacing={2}>
-              <Tooltip label="Recargar logs">
-                <IconButton
-                  icon={<Icon as={FiRefreshCw} />}
-                  aria-label="Recargar"
-                  onClick={() => fetchLogs(currentPage, limit)}
-                  isLoading={loading}
-                  variant="ghost"
-                />
-              </Tooltip>
-              <Button
-                as={RouterLink}
-                to="/dashboard/admin"
-                leftIcon={<Icon as={FiHome} />}
-                variant="ghost"
-                size="sm"
-              >
-                Dashboard
-              </Button>
-              <Button
-                onClick={logout}
-                leftIcon={<Icon as={FiLogOut} />}
-                colorScheme="red"
-                variant="ghost"
-                size="sm"
-              >
-                Salir
-              </Button>
-            </HStack>
-          </HStack>
+          </Box>
+
+          {/* Menú administrativo reutilizable */}
+          <AdminMenu 
+            isOpen={isOpen}
+            onClose={onClose}
+            currentPage="/dashboard/admin/auditoria"
+          />
 
           {/* Filtros y búsqueda */}
           <Card bg={cardBg}>
@@ -623,16 +626,6 @@ const Auditoria = () => {
           </Card>
         </VStack>
       </Container>
-
-      {/* Menú administrativo */}
-      <AdminMenu
-        isOpen={isMenuOpen}
-        onClose={onMenuClose}
-        currentPage="/dashboard/admin/auditoria"
-        showHeader={true}
-        showFooter={true}
-        onLogout={logout}
-      />
     </Box>
   )
 }

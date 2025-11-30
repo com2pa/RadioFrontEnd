@@ -42,16 +42,11 @@ import {
   FiRadio, 
   FiTrendingUp, 
   FiSettings, 
-  FiUser,
-  FiCalendar,
-  FiClock,
-  FiAlertTriangle,
-  FiCheckCircle,  
-  FiHeadphones,
-  FiDownload
+  FiMenu,
+  FiHome,
+  FiLogOut
 } from 'react-icons/fi'
 import { FaChartBar } from "react-icons/fa";
-import { FiMenu, FiHome, FiLogOut } from 'react-icons/fi'
 import { useAuth } from '../../hooks/useAuth'
 import { Link as RouterLink } from 'react-router-dom'
 import AdminMenu from '../../components/layout/AdminMenu'

@@ -398,84 +398,84 @@ const ProgramView = () => {
   }, [])
 
   // Cargar comentarios (simulado por ahora)
-  useEffect(() => {
-    // Simular comentarios - en producción esto vendría del backend
-    const mockComments = [
-      {
-        id: 1,
-        user: 'María González',
-        avatar: null,
-        text: '¡Excelente programa! Me encanta la música que están pasando.',
-        timestamp: new Date(Date.now() - 3600000),
-        likes: 12,
-      },
-      {
-        id: 2,
-        user: 'Carlos Rodríguez',
-        avatar: null,
-        text: 'Sigan así, son los mejores de la ciudad! 🔥',
-        timestamp: new Date(Date.now() - 7200000),
-        likes: 8,
-      },
-      {
-        id: 3,
-        user: 'Ana Martínez',
-        avatar: null,
-        text: '¿Podrían pasar más música de los 80s?',
-        timestamp: new Date(Date.now() - 10800000),
-        likes: 5,
-      },
-    ]
-    setComments(mockComments)
-  }, [])
+  // useEffect(() => {
+  //   // Simular comentarios - en producción esto vendría del backend
+  //   const mockComments = [
+  //     {
+  //       id: 1,
+  //       user: 'María González',
+  //       avatar: null,
+  //       text: '¡Excelente programa! Me encanta la música que están pasando.',
+  //       timestamp: new Date(Date.now() - 3600000),
+  //       likes: 12,
+  //     },
+  //     {
+  //       id: 2,
+  //       user: 'Carlos Rodríguez',
+  //       avatar: null,
+  //       text: 'Sigan así, son los mejores de la ciudad! 🔥',
+  //       timestamp: new Date(Date.now() - 7200000),
+  //       likes: 8,
+  //     },
+  //     {
+  //       id: 3,
+  //       user: 'Ana Martínez',
+  //       avatar: null,
+  //       text: '¿Podrían pasar más música de los 80s?',
+  //       timestamp: new Date(Date.now() - 10800000),
+  //       likes: 5,
+  //     },
+  //   ]
+  //   setComments(mockComments)
+  // }, [])
   
-  const handleSubmitComment = useCallback(async () => {
-    if (!newComment.trim()) {
-      toastRef.current({
-        title: 'Comentario vacío',
-        description: 'Por favor escribe un comentario',
-        status: 'warning',
-        duration: 2000,
-        isClosable: true,
-      })
-      return
-    }
+  // const handleSubmitComment = useCallback(async () => {
+  //   if (!newComment.trim()) {
+  //     toastRef.current({
+  //       title: 'Comentario vacío',
+  //       description: 'Por favor escribe un comentario',
+  //       status: 'warning',
+  //       duration: 2000,
+  //       isClosable: true,
+  //     })
+  //     return
+  //   }
     
-    setSubmittingComment(true)
+  //   setSubmittingComment(true)
     
-    try {
-      // Simular envío de comentario - en producción esto sería una llamada al backend
-      const comment = {
-        id: comments.length + 1,
-        user: 'Usuario Anónimo', // En producción esto vendría del auth
-        avatar: null,
-        text: newComment,
-        timestamp: new Date(),
-        likes: 0,
-      }
+  //   try {
+  //     // Simular envío de comentario - en producción esto sería una llamada al backend
+  //     const comment = {
+  //       id: comments.length + 1,
+  //       user: 'Usuario Anónimo', // En producción esto vendría del auth
+  //       avatar: null,
+  //       text: newComment,
+  //       timestamp: new Date(),
+  //       likes: 0,
+  //     }
       
-      setComments(prev => [comment, ...prev])
-      setNewComment('')
+  //     setComments(prev => [comment, ...prev])
+  //     setNewComment('')
       
-      toastRef.current({
-        title: 'Comentario publicado',
-        description: 'Tu comentario ha sido publicado exitosamente',
-        status: 'success',
-        duration: 2000,
-        isClosable: true,
-      })
-    } catch {
-      toastRef.current({
-        title: 'Error',
-        description: 'No se pudo publicar el comentario',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      })
-    } finally {
-      setSubmittingComment(false)
-    }
-  }, [newComment, comments.length])
+  //     toastRef.current({
+  //       title: 'Comentario publicado',
+  //       description: 'Tu comentario ha sido publicado exitosamente',
+  //       status: 'success',
+  //       duration: 2000,
+  //       isClosable: true,
+  //     })
+  //   } catch {
+  //     toastRef.current({
+  //       title: 'Error',
+  //       description: 'No se pudo publicar el comentario',
+  //       status: 'error',
+  //       duration: 3000,
+  //       isClosable: true,
+  //     })
+  //   } finally {
+  //     setSubmittingComment(false)
+  //   }
+  // }, [newComment, comments.length])
   
   const formatDate = (dateString) => {
     if (!dateString) return 'Fecha no disponible'
@@ -990,164 +990,166 @@ const ProgramView = () => {
               </CardBody>
             </Card>
             
-            {/* Sección de comentarios */}
-            <Card
-              bg="rgba(255, 255, 255, 0.95)"
-              backdropFilter="blur(20px)"
-              borderRadius="2xl"
-              boxShadow="0 20px 60px rgba(0, 0, 0, 0.2)"
-              sx={{
-                animation: `${slideIn} 0.8s ease-out`,
-              }}
-            >
-              <CardBody p={{ base: 6, md: 8 }}>
-                <VStack spacing={6} align="stretch">
-                  <HStack spacing={3}>
-                    <Icon as={FiMessageCircle} boxSize={6} color={brandRed} />
-                    <Heading size="lg" color="gray.700">
-                      Comentarios
-                    </Heading>
-                    <Badge
-                      bg={brandRed}
-                      color={brandWhite}
-                      px={3}
-                      py={1}
-                      borderRadius="full"
-                      fontSize="sm"
+            {/* Sección de comentarios - COMENTADA */}
+            {false && (
+              <Card
+                bg="rgba(255, 255, 255, 0.95)"
+                backdropFilter="blur(20px)"
+                borderRadius="2xl"
+                boxShadow="0 20px 60px rgba(0, 0, 0, 0.2)"
+                sx={{
+                  animation: `${slideIn} 0.8s ease-out`,
+                }}
+              >
+                <CardBody p={{ base: 6, md: 8 }}>
+                  <VStack spacing={6} align="stretch">
+                    <HStack spacing={3}>
+                      <Icon as={FiMessageCircle} boxSize={6} color={brandRed} />
+                      <Heading size="lg" color="gray.700">
+                        Comentarios
+                      </Heading>
+                      <Badge
+                        bg={brandRed}
+                        color={brandWhite}
+                        px={3}
+                        py={1}
+                        borderRadius="full"
+                        fontSize="sm"
+                      >
+                        {comments.length}
+                      </Badge>
+                    </HStack>
+                    
+                    <Divider />
+                    
+                    {/* Formulario de nuevo comentario */}
+                    <Box
+                      bg="gray.50"
+                      p={6}
+                      borderRadius="xl"
+                      border="2px solid"
+                      borderColor="gray.200"
                     >
-                      {comments.length}
-                    </Badge>
-                  </HStack>
-                  
-                  <Divider />
-                  
-                  {/* Formulario de nuevo comentario */}
-                  <Box
-                    bg="gray.50"
-                    p={6}
-                    borderRadius="xl"
-                    border="2px solid"
-                    borderColor="gray.200"
-                  >
+                      <VStack spacing={4} align="stretch">
+                        <Textarea
+                          placeholder="Escribe tu comentario aquí..."
+                          value={newComment}
+                          onChange={(e) => setNewComment(e.target.value)}
+                          rows={4}
+                          resize="none"
+                          borderRadius="lg"
+                          border="2px solid"
+                          borderColor="gray.300"
+                          _focus={{
+                            borderColor: brandRed,
+                            boxShadow: `0 0 0 1px ${brandRed}`,
+                          }}
+                          fontSize="md"
+                        />
+                        <HStack justify="flex-end">
+                          <Button
+                            leftIcon={<Icon as={FiSend} />}
+                            bgGradient={`linear(135deg, ${brandRed}, ${brandOrange})`}
+                            color={brandWhite}
+                            _hover={{
+                              bgGradient: `linear(135deg, #C00000, #FF8C00)`,
+                              transform: 'translateY(-2px)',
+                              boxShadow: `0 10px 25px ${brandRed}60`,
+                            }}
+                            onClick={handleSubmitComment}
+                            isLoading={submittingComment}
+                            loadingText="Publicando..."
+                            size="lg"
+                            borderRadius="xl"
+                          >
+                            Publicar comentario
+                          </Button>
+                        </HStack>
+                      </VStack>
+                    </Box>
+                    
+                    <Divider />
+                    
+                    {/* Lista de comentarios */}
                     <VStack spacing={4} align="stretch">
-                      <Textarea
-                        placeholder="Escribe tu comentario aquí..."
-                        value={newComment}
-                        onChange={(e) => setNewComment(e.target.value)}
-                        rows={4}
-                        resize="none"
-                        borderRadius="lg"
-                        border="2px solid"
-                        borderColor="gray.300"
-                        _focus={{
-                          borderColor: brandRed,
-                          boxShadow: `0 0 0 1px ${brandRed}`,
-                        }}
-                        fontSize="md"
-                      />
-                      <HStack justify="flex-end">
-                        <Button
-                          leftIcon={<Icon as={FiSend} />}
-                          bgGradient={`linear(135deg, ${brandRed}, ${brandOrange})`}
-                          color={brandWhite}
-                          _hover={{
-                            bgGradient: `linear(135deg, #C00000, #FF8C00)`,
-                            transform: 'translateY(-2px)',
-                            boxShadow: `0 10px 25px ${brandRed}60`,
-                          }}
-                          onClick={handleSubmitComment}
-                          isLoading={submittingComment}
-                          loadingText="Publicando..."
-                          size="lg"
-                          borderRadius="xl"
-                        >
-                          Publicar comentario
-                        </Button>
-                      </HStack>
+                      {comments.length === 0 ? (
+                        <Box textAlign="center" py={8}>
+                          <Text color="gray.500" fontSize="lg">
+                            No hay comentarios aún. ¡Sé el primero en comentar!
+                          </Text>
+                        </Box>
+                      ) : (
+                        comments.map((comment) => (
+                          <Card
+                            key={comment.id}
+                            bg="white"
+                            borderRadius="xl"
+                            boxShadow="0 4px 12px rgba(0, 0, 0, 0.1)"
+                            _hover={{
+                              boxShadow: '0 8px 20px rgba(0, 0, 0, 0.15)',
+                              transform: 'translateY(-2px)',
+                            }}
+                            transition="all 0.3s ease"
+                          >
+                            <CardBody p={6}>
+                              <VStack align="stretch" spacing={4}>
+                                <HStack justify="space-between" align="start">
+                                  <HStack spacing={3}>
+                                    <Avatar
+                                      size="md"
+                                      bgGradient={`linear(135deg, ${brandRed}, ${brandOrange})`}
+                                      icon={<Icon as={FiUser} boxSize={5} />}
+                                    />
+                                    <VStack align="start" spacing={0}>
+                                      <Text fontWeight="bold" color="gray.700" fontSize="md">
+                                        {comment.user}
+                                      </Text>
+                                      <Text fontSize="xs" color="gray.500">
+                                        {comment.timestamp.toLocaleString('es-ES', {
+                                          day: 'numeric',
+                                          month: 'short',
+                                          year: 'numeric',
+                                          hour: '2-digit',
+                                          minute: '2-digit',
+                                        })}
+                                      </Text>
+                                    </VStack>
+                                  </HStack>
+                                  <Tooltip label="Me gusta" placement="top">
+                                    <IconButton
+                                      aria-label="Me gusta"
+                                      icon={<Icon as={FiHeart} />}
+                                      variant="ghost"
+                                      color="gray.500"
+                                      size="sm"
+                                      _hover={{
+                                        color: brandRed,
+                                        transform: 'scale(1.2)',
+                                      }}
+                                    />
+                                  </Tooltip>
+                                </HStack>
+                                <Text color="gray.700" fontSize="md" lineHeight="tall">
+                                  {comment.text}
+                                </Text>
+                                <HStack spacing={4}>
+                                  <HStack spacing={1}>
+                                    <Icon as={FiHeart} boxSize={4} color={brandRed} />
+                                    <Text fontSize="sm" color="gray.600" fontWeight="medium">
+                                      {comment.likes}
+                                    </Text>
+                                  </HStack>
+                                </HStack>
+                              </VStack>
+                            </CardBody>
+                          </Card>
+                        ))
+                      )}
                     </VStack>
-                  </Box>
-                  
-                  <Divider />
-                  
-                  {/* Lista de comentarios */}
-                  <VStack spacing={4} align="stretch">
-                    {comments.length === 0 ? (
-                      <Box textAlign="center" py={8}>
-                        <Text color="gray.500" fontSize="lg">
-                          No hay comentarios aún. ¡Sé el primero en comentar!
-                        </Text>
-                      </Box>
-                    ) : (
-                      comments.map((comment) => (
-                        <Card
-                          key={comment.id}
-                          bg="white"
-                          borderRadius="xl"
-                          boxShadow="0 4px 12px rgba(0, 0, 0, 0.1)"
-                          _hover={{
-                            boxShadow: '0 8px 20px rgba(0, 0, 0, 0.15)',
-                            transform: 'translateY(-2px)',
-                          }}
-                          transition="all 0.3s ease"
-                        >
-                          <CardBody p={6}>
-                            <VStack align="stretch" spacing={4}>
-                              <HStack justify="space-between" align="start">
-                                <HStack spacing={3}>
-                                  <Avatar
-                                    size="md"
-                                    bgGradient={`linear(135deg, ${brandRed}, ${brandOrange})`}
-                                    icon={<Icon as={FiUser} boxSize={5} />}
-                                  />
-                                  <VStack align="start" spacing={0}>
-                                    <Text fontWeight="bold" color="gray.700" fontSize="md">
-                                      {comment.user}
-                                    </Text>
-                                    <Text fontSize="xs" color="gray.500">
-                                      {comment.timestamp.toLocaleString('es-ES', {
-                                        day: 'numeric',
-                                        month: 'short',
-                                        year: 'numeric',
-                                        hour: '2-digit',
-                                        minute: '2-digit',
-                                      })}
-                                    </Text>
-                                  </VStack>
-                                </HStack>
-                                <Tooltip label="Me gusta" placement="top">
-                                  <IconButton
-                                    aria-label="Me gusta"
-                                    icon={<Icon as={FiHeart} />}
-                                    variant="ghost"
-                                    color="gray.500"
-                                    size="sm"
-                                    _hover={{
-                                      color: brandRed,
-                                      transform: 'scale(1.2)',
-                                    }}
-                                  />
-                                </Tooltip>
-                              </HStack>
-                              <Text color="gray.700" fontSize="md" lineHeight="tall">
-                                {comment.text}
-                              </Text>
-                              <HStack spacing={4}>
-                                <HStack spacing={1}>
-                                  <Icon as={FiHeart} boxSize={4} color={brandRed} />
-                                  <Text fontSize="sm" color="gray.600" fontWeight="medium">
-                                    {comment.likes}
-                                  </Text>
-                                </HStack>
-                              </HStack>
-                            </VStack>
-                          </CardBody>
-                        </Card>
-                      ))
-                    )}
                   </VStack>
-                </VStack>
-              </CardBody>
-            </Card>
+                </CardBody>
+              </Card>
+            )}
           </VStack>
         </Container>
       </Box>
