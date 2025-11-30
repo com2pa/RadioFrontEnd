@@ -22,6 +22,7 @@ import UserRolesManagement from '../pages/private/UserRolesManagement'
 import ContactNotifications from '../pages/private/ContactNotifications'
 import Auditoria from '../pages/private/Auditoria'
 import ProfileUser from '../pages/private/ProfileUser'
+import ChangePassword from '../pages/private/ChangePassword'
 
 const LoadingFallback = () => (
   <Box display="flex" justifyContent="center" alignItems="center" minH="100vh">
@@ -51,6 +52,7 @@ const Private = () => {
       <Route path="user/podcasts" element={<PodcastsView />} />
       <Route path="user/noticias" element={<NewsView />} />
       <Route path="user/profile" element={<ProfileUser />} />
+      <Route path="user/change-password" element={<ChangePassword />} />
       
       {/* Rutas del dashboard */}
       <Route path="user" element={<DashboardUser />} />
@@ -71,6 +73,7 @@ const Private = () => {
       <Route path="admin/contact-notifications" element={<ContactNotifications />} />
       <Route path="admin/auditoria" element={<Auditoria />} />
       <Route path="admin/profile" element={<ProfileUser />} />
+      <Route path="admin/change-password" element={<ChangePassword />} />
       
       {/* Redirección automática */}
       <Route path="/" element={<Navigate to={getDashboardRoute(auth)} replace />} />

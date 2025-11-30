@@ -239,245 +239,214 @@ const UserLayout = ({ children, title, subtitle }) => {
 
   return (
     <>
-      {/* Header Principal */}
-      <Box
-        bg={headerBg}
-        borderBottom="1px"
-        borderColor={borderColor}
-        position="sticky"
-        top={0}
-        zIndex={1000}
-        shadow="sm"
-      >
-        <Container maxW="container.xl" px={isTablet ? 4 : 6}>
-          <HStack justify="space-between" py={isTablet ? 3 : 4}>
-            {/* Logo y Título */}
-            <HStack spacing={isTablet ? 2.5 : 3}>
-              <Box
-                p={isTablet ? 1.5 : 2}
-                borderRadius="lg"
-                bgGradient="linear(to-r, blue.500, purple.500)"
-                color="white"
-              >
-                <Icon as={FiRadio} boxSize={isTablet ? 5 : 6} />
-              </Box>
-              <VStack align="start" spacing={0}>
-                <Text
-                  fontSize={isTablet ? "lg" : "xl"}
-                  fontWeight="bold"
-                  color={logoColor}
-                  lineHeight="shorter"
-                >
-                  {title || 'Dashboard Suscriptor'}
-                </Text>
-                <Text 
-                  fontSize="xs" 
-                  color={textColor} 
-                  fontWeight="medium"
-                  display={isTablet ? "none" : "block"}
-                >
-                  {subtitle || 'Panel personal de Radio FM'}
-                </Text>
-              </VStack>
-            </HStack>
-
-            {/* Botones de Acción - Responsive */}
-            <HStack 
-              spacing={{ base: 1, sm: 2, md: 2 }} 
-              flexShrink={0}
-              flexWrap={{ base: 'wrap', sm: 'nowrap' }}
+      <Flex minH="100vh" bg={bgColor}>
+        {/* Sidebar - Solo desktop */}
+        <Show above="lg">
+          <Box
+            w="250px"
+            bg={headerBg}
+            borderRight="1px"
+            borderColor={borderColor}
+            position="fixed"
+            left={0}
+            top={0}
+            bottom={0}
+            overflowY="auto"
+            zIndex={999}
+            shadow="sm"
+          >
+            {/* Header del Sidebar */}
+            <Box
+              p={4}
+              borderBottom="1px"
+              borderColor={borderColor}
+              bgGradient="linear(to-r, blue.500, purple.500)"
+              color="white"
             >
-              {/* Menú hamburguesa - Solo móvil/tablet */}
-              <Show below="lg">
-                <IconButton
-                  aria-label="Abrir menú del dashboard"
-                  icon={<FiMenu />}
-                  variant="ghost"
-                  onClick={onOpen}
-                  size={{ base: 'sm', md: 'md' }}
-                  _hover={{
-                    bg: 'gray.100',
-                    color: 'blue.500'
-                  }}
-                />
-              </Show>
+              <HStack spacing={3}>
+                <Icon as={FiRadio} boxSize={6} />
+                <VStack align="start" spacing={0}>
+                  <Text fontSize="md" fontWeight="bold">
+                    {title || 'Dashboard Suscriptor'}
+                  </Text>
+                  <Text fontSize="xs" opacity={0.9}>
+                    {subtitle || 'Panel personal'}
+                  </Text>
+                </VStack>
+              </HStack>
+            </Box>
 
-              {/* Botón Home */}
-              <IconButton
-                aria-label="Ir al inicio"
-                icon={<FiHome />}
-                size={{ base: 'sm', md: 'md' }}
-                variant="ghost"
-                onClick={handleHome}
-                _hover={{
-                  bg: 'gray.100',
-                  color: 'blue.500'
-                }}
-              />
+            {/* Menú del Sidebar */}
+            <VStack align="stretch" spacing={1} p={4}>
+              {loadingMenu ? (
+                <Flex justify="center" align="center" py={8}>
+                  <Spinner size="md" color="blue.500" />
+                  <Text ml={3} fontSize="sm" color={textColor}>
+                    Cargando...
+                  </Text>
+                </Flex>
+              ) : subscriberMenuItems.length > 0 ? (
+                subscriberMenuItems.map((item, index) => {
+                  const isActive = window.location.pathname === item.href
+                  
+                  return (
+                    <Button
+                      key={`menu-item-${item.id || index}`}
+                      as={RouterLink}
+                      to={item.href}
+                      justifyContent="start"
+                      variant={isActive ? "solid" : "ghost"}
+                      colorScheme={isActive ? "blue" : "gray"}
+                      leftIcon={<Icon as={item.icon} />}
+                      size="md"
+                      h="auto"
+                      py={3}
+                      px={4}
+                      _hover={{
+                        bg: isActive ? "blue.600" : "gray.100"
+                      }}
+                    >
+                      <VStack align="start" spacing={0} flex={1}>
+                        <Text fontSize="sm" fontWeight="medium">
+                          {item.label}
+                        </Text>
+                        {item.description && (
+                          <Text fontSize="xs" color={isActive ? "whiteAlpha.800" : "gray.500"} noOfLines={1}>
+                            {item.description}
+                          </Text>
+                        )}
+                      </VStack>
+                    </Button>
+                  )
+                })
+              ) : (
+                <Text p={4} color={textColor} fontSize="sm" textAlign="center">
+                  No hay elementos en el menú
+                </Text>
+              )}
+            </VStack>
 
-              {/* Botón Logout - Texto en desktop, solo icono en móvil */}
-              <Hide below="sm">
-                <Button
-                  size={{ base: 'sm', md: 'md' }}
-                  colorScheme="red"
-                  variant="outline"
-                  leftIcon={<Icon as={FiLogOut} />}
-                  onClick={handleLogout}
-                  isLoading={isLoggingOut}
-                  loadingText="Saliendo..."
-                  disabled={isLoggingOut}
-                  _hover={{
-                    bg: 'red.500',
-                    color: 'white',
-                    borderColor: 'red.500'
-                  }}
-                  _active={{
-                    bg: 'red.600',
-                    transform: 'scale(0.98)'
-                  }}
-                  transition="all 0.2s"
-                >
-                  Salir
-                </Button>
-              </Hide>
-              <Show below="sm">
-                <IconButton
-                  aria-label="Cerrar sesión"
-                  icon={<FiLogOut />}
-                  colorScheme="red"
-                  variant="outline"
-                  onClick={handleLogout}
-                  isLoading={isLoggingOut}
-                  size="sm"
-                />
-              </Show>
-
-              {/* Información del Usuario */}
-              <HStack 
-                spacing={{ base: 2, md: 3 }}
-                display={{ base: 'none', sm: 'flex' }}
-              >
+            {/* Footer del Sidebar con info del usuario */}
+            <Box
+              p={4}
+              borderTop="1px"
+              borderColor={borderColor}
+              position="absolute"
+              bottom={0}
+              left={0}
+              right={0}
+              bg={headerBg}
+            >
+              <HStack spacing={3} mb={3}>
                 <Avatar 
-                  size={{ base: 'sm', md: 'md' }}
+                  size="sm" 
                   name={user?.name || 'Usuario'} 
                   bg="blue.500"
                   color="white"
                 />
-                <VStack align="start" spacing={0} display={{ base: 'none', md: 'flex' }}>
-                  <Text fontWeight="medium" fontSize="sm" noOfLines={1}>
-                    {user?.name || 'Usuario Suscriptor'}
+                <VStack align="start" spacing={0} flex={1}>
+                  <Text fontSize="sm" fontWeight="medium" noOfLines={1}>
+                    {user?.name || 'Usuario'}
                   </Text>
                   <Text fontSize="xs" color={textColor} noOfLines={1}>
                     {user?.email || 'usuario@email.com'}
                   </Text>
-                  <Badge colorScheme="blue" size="sm" variant="subtle" fontSize="2xs">
+                  <Badge colorScheme="blue" size="sm" variant="subtle" fontSize="2xs" mt={1}>
                     SUSCRIPTOR
                   </Badge>
                 </VStack>
               </HStack>
-            </HStack>
-          </HStack>
-
-          {/* Menú Horizontal - Solo desktop */}
-          <Show above="lg">
-            <Box 
-              borderTop="1px" 
-              borderColor={borderColor}
-              py={2}
-              overflowX="auto"
-              css={{
-                '&::-webkit-scrollbar': {
-                  height: '4px',
-                },
-                '&::-webkit-scrollbar-track': {
-                  background: 'transparent',
-                },
-                '&::-webkit-scrollbar-thumb': {
-                  background: borderColor,
-                  borderRadius: '2px',
-                },
-              }}
-            >
-              <HStack spacing={1} align="center" flexWrap="nowrap">
-                {loadingMenu ? (
-                  <Flex justify="center" align="center" py={2} w="100%">
-                    <Spinner size="sm" color="blue.500" />
-                    <Text ml={2} fontSize="xs" color={textColor}>
-                      Cargando menú...
-                    </Text>
-                  </Flex>
-                ) : subscriberMenuItems.length > 0 ? (
-                  <>
-                    {subscriberMenuItems.slice(0, 6).map((item, index) => {
-                      const isActive = window.location.pathname === item.href
-                      
-                      return (
-                        <Button
-                          key={`menu-item-${item.id || index}`}
-                          as={RouterLink}
-                          to={item.href}
-                          size="sm"
-                          variant={isActive ? "solid" : "ghost"}
-                          colorScheme={isActive ? "blue" : "gray"}
-                          leftIcon={<Icon as={item.icon} />}
-                          fontSize="xs"
-                          px={3}
-                          whiteSpace="nowrap"
-                          _hover={{
-                            bg: isActive ? "blue.600" : "gray.100"
-                          }}
-                        >
-                          {item.label}
-                        </Button>
-                      )
-                    })}
-                    
-                    {/* Menú "Más" para items adicionales */}
-                    {subscriberMenuItems.length > 6 && (
-                      <Menu>
-                        <MenuButton
-                          as={Button}
-                          size="sm"
-                          variant="ghost"
-                          colorScheme="gray"
-                          leftIcon={<Icon as={FiMenu} />}
-                          fontSize="xs"
-                          px={3}
-                        >
-                          Más
-                        </MenuButton>
-                        <MenuList>
-                          {subscriberMenuItems.slice(6).map((item, index) => (
-                            <MenuItem
-                              key={`menu-item-more-${item.id || index}`}
-                              as={RouterLink}
-                              to={item.href}
-                              icon={<Icon as={item.icon} />}
-                            >
-                              {item.label}
-                            </MenuItem>
-                          ))}
-                        </MenuList>
-                      </Menu>
-                    )}
-                  </>
-                ) : (
-                  <Text fontSize="xs" color={textColor} px={4}>
-                    No hay elementos en el menú
-                  </Text>
-                )}
-              </HStack>
+              <Button
+                w="100%"
+                size="sm"
+                colorScheme="red"
+                variant="outline"
+                leftIcon={<Icon as={FiLogOut} />}
+                onClick={handleLogout}
+                isLoading={isLoggingOut}
+                loadingText="Saliendo..."
+                disabled={isLoggingOut}
+              >
+                Salir
+              </Button>
             </Box>
-          </Show>
-        </Container>
-      </Box>
+          </Box>
+        </Show>
 
-      {/* Contenido Principal */}
-      <Box minH="100vh" bg={bgColor}>
-        <Container maxW="container.xl" py={8}>
-          {children}
-        </Container>
-      </Box>
+        {/* Contenido Principal */}
+        <Box flex={1} ml={{ base: 0, lg: '250px' }}>
+          {/* Header Principal - Solo móvil/tablet */}
+          <Hide above="lg">
+            <Box
+              bg={headerBg}
+              borderBottom="1px"
+              borderColor={borderColor}
+              position="sticky"
+              top={0}
+              zIndex={1000}
+              shadow="sm"
+            >
+              <Container maxW="container.xl" px={4}>
+                <HStack justify="space-between" py={3}>
+                  {/* Logo y Título */}
+                  <HStack spacing={2.5}>
+                    <Box
+                      p={1.5}
+                      borderRadius="lg"
+                      bgGradient="linear(to-r, blue.500, purple.500)"
+                      color="white"
+                    >
+                      <Icon as={FiRadio} boxSize={5} />
+                    </Box>
+                    <VStack align="start" spacing={0}>
+                      <Text fontSize="lg" fontWeight="bold" color={logoColor} lineHeight="shorter">
+                        {title || 'Dashboard Suscriptor'}
+                      </Text>
+                      <Text fontSize="xs" color={textColor} fontWeight="medium">
+                        {subtitle || 'Panel personal'}
+                      </Text>
+                    </VStack>
+                  </HStack>
+
+                  {/* Botones de Acción */}
+                  <HStack spacing={1}>
+                    <IconButton
+                      aria-label="Abrir menú del dashboard"
+                      icon={<FiMenu />}
+                      variant="ghost"
+                      onClick={onOpen}
+                      size="sm"
+                    />
+                    <IconButton
+                      aria-label="Ir al inicio"
+                      icon={<FiHome />}
+                      size="sm"
+                      variant="ghost"
+                      onClick={handleHome}
+                    />
+                    <IconButton
+                      aria-label="Cerrar sesión"
+                      icon={<FiLogOut />}
+                      colorScheme="red"
+                      variant="outline"
+                      onClick={handleLogout}
+                      isLoading={isLoggingOut}
+                      size="sm"
+                    />
+                  </HStack>
+                </HStack>
+              </Container>
+            </Box>
+          </Hide>
+
+          {/* Contenido */}
+          <Box minH="100vh" bg={bgColor}>
+            <Container maxW="container.xl" py={8}>
+              {children}
+            </Container>
+          </Box>
+        </Box>
+      </Flex>
 
       {/* Drawer Móvil */}
       <Drawer isOpen={isOpen} placement="left" onClose={onClose} size="xs">

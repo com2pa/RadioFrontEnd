@@ -17,13 +17,6 @@ import {
   Divider,
   Flex,
   Avatar,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
   useDisclosure,
   FormErrorMessage,
   Badge,
@@ -53,15 +46,8 @@ const ProfileUser = () => {
   const [isUpdating, setIsUpdating] = useState(false);
   const [errors, setErrors] = useState({});
   
-  // Estados para cambio de contraseña
-  const [passwordData, setPasswordData] = useState({
-    newPassword: '',
-    confirmPassword: ''
-  });
-  
-  // Estados separados para el menú lateral y el modal de contraseña
+  // Estados separados para el menú lateral
   const { isOpen: isMenuOpen, onOpen: onMenuOpen, onClose: onMenuClose } = useDisclosure();
-  const { isOpen: isPasswordModalOpen, onOpen: onPasswordModalOpen, onClose: onPasswordModalClose } = useDisclosure();
   const toast = useToast();
   
   // Determinar si el usuario es administrador
@@ -347,94 +333,6 @@ const ProfileUser = () => {
     })();
   };
 
-  // Manejar cambio de contraseña
-  const handlePasswordChange = (field, value) => {
-    setPasswordData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
-
-  // Validar y cambiar contraseña usando las validaciones existentes
-  const handleChangePassword = async () => {
-    const newErrors = {};
-
-    if (!passwordData.newPassword) {
-      newErrors.newPassword = 'La nueva contraseña es requerida';
-    } else {
-      // Usar la validación de password existente
-      const passwordValidation = validateField('password', passwordData.newPassword);
-      if (!passwordValidation.isValid) {
-        newErrors.newPassword = passwordValidation.message;
-      }
-    }
-
-    if (!passwordData.confirmPassword) {
-      newErrors.confirmPassword = 'Confirma tu nueva contraseña';
-    } else if (passwordData.newPassword !== passwordData.confirmPassword) {
-      newErrors.confirmPassword = 'Las contraseñas no coinciden';
-    }
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
-
-    try {
-      setIsUpdating(true);
-      const token = localStorage.getItem('token') || localStorage.getItem('authToken');
-      
-      if (!token) {
-        throw new Error('No se encontró el token de autenticación');
-      }
-      
-      // Intentar con el endpoint correcto
-      const response = await axios.put('/api/perfilUser/password', passwordData, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }).catch(async (error) => {
-        // Si falla, intentar con el endpoint alternativo
-        if (error.response?.status === 404) {
-          return await axios.put('/api/profile/password', passwordData, {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          });
-        }
-        throw error;
-      });
-
-      if (response.data.success) {
-        toast({
-          title: 'Contraseña actualizada',
-          description: 'Tu contraseña se ha cambiado correctamente',
-          status: 'success',
-          duration: 3000,
-          isClosable: true,
-        });
-        setPasswordData({
-          newPassword: '',
-          confirmPassword: ''
-        });
-        setErrors({});
-        onPasswordModalClose();
-      } else {
-        throw new Error(response.data.message || 'Error al cambiar la contraseña');
-      }
-    } catch (error) {
-      // console.error('Error changing password:', error);
-      toast({
-        title: 'Error',
-        description: error.response?.data?.message || error.message || 'Error al cambiar la contraseña',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
-    } finally {
-      setIsUpdating(false);
-    }
-  };
 
   // Formatear fecha
   const formatDate = (dateString) => {
@@ -675,10 +573,11 @@ const ProfileUser = () => {
                 <CardBody>
                   <VStack spacing={3} align="stretch">
                     <Button
+                      as={RouterLink}
+                      to={userIsAdmin ? "/dashboard/admin/change-password" : "/dashboard/user/change-password"}
                       leftIcon={<LockIcon />}
                       variant="outline"
                       colorScheme="blue"
-                      onClick={onPasswordModalOpen}
                     >
                       Cambiar Contraseña
                     </Button>
@@ -706,68 +605,6 @@ const ProfileUser = () => {
         </Grid>
       </VStack>
 
-      {/* Modal para cambiar contraseña */}
-      <Modal isOpen={isPasswordModalOpen} onClose={onPasswordModalClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Cambiar Contraseña</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <VStack spacing={4}>
-              <FormControl isInvalid={errors.newPassword}>
-                <FormLabel>Nueva Contraseña</FormLabel>
-                <Input
-                  type="password"
-                  value={passwordData.newPassword}
-                  onChange={(e) => handlePasswordChange('newPassword', e.target.value)}
-                  placeholder="Ingresa tu nueva contraseña"
-                />
-                <FormErrorMessage>{errors.newPassword}</FormErrorMessage>
-              </FormControl>
-
-              <FormControl isInvalid={errors.confirmPassword}>
-                <FormLabel>Confirmar Contraseña</FormLabel>
-                <Input
-                  type="password"
-                  value={passwordData.confirmPassword}
-                  onChange={(e) => handlePasswordChange('confirmPassword', e.target.value)}
-                  placeholder="Confirma tu nueva contraseña"
-                />
-                <FormErrorMessage>{errors.confirmPassword}</FormErrorMessage>
-              </FormControl>
-
-              <Box 
-                bg="blue.50" 
-                p={3} 
-                borderRadius="md" 
-                fontSize="sm" 
-                color="blue.800"
-                width="full"
-              >
-                <Text fontWeight="bold">Requisitos de contraseña:</Text>
-                <Text>• Entre 8 y 15 caracteres</Text>
-                <Text>• Al menos una letra mayúscula</Text>
-                <Text>• Al menos una letra minúscula</Text>
-                <Text>• Al menos un número</Text>
-                <Text>• Al menos un símbolo</Text>
-              </Box>
-            </VStack>
-          </ModalBody>
-
-          <ModalFooter>
-            <Button variant="outline" mr={3} onClick={onPasswordModalClose}>
-              Cancelar
-            </Button>
-            <Button 
-              colorScheme="blue" 
-              onClick={handleChangePassword}
-              isLoading={isUpdating}
-            >
-              Cambiar Contraseña
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
       </Container>
     );
   };
