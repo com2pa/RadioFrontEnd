@@ -80,55 +80,60 @@ const ChangePassword = () => {
   }
 
   // Validar y cambiar contraseña
-  const handleChangePassword = async () => {
-    const newErrors = {}
+  // Validar y cambiar contraseña - VERSIÓN OPTIMIZADA
+const handleChangePassword = async () => {
+  // Validaciones del formulario
+  const newErrors = {}
 
-    // Validar nueva contraseña usando validations.js
-    if (!passwordData.newPassword) {
+  // Validar nueva contraseña usando validations.js
+  if (!passwordData.newPassword) {
       newErrors.newPassword = 'La nueva contraseña es requerida'
-    } else {
+  } else {
       const passwordValidation = validateField('password', passwordData.newPassword)
       if (!passwordValidation.isValid) {
-        newErrors.newPassword = passwordValidation.message
+          newErrors.newPassword = passwordValidation.message
       }
-    }
+  }
 
-    // Validar confirmación
-    if (!passwordData.confirmPassword) {
+  // Validar confirmación
+  if (!passwordData.confirmPassword) {
       newErrors.confirmPassword = 'Confirma tu nueva contraseña'
-    } else if (passwordData.newPassword !== passwordData.confirmPassword) {
+  } else if (passwordData.newPassword !== passwordData.confirmPassword) {
       newErrors.confirmPassword = 'Las contraseñas no coinciden'
-    }
+  }
 
-    if (Object.keys(newErrors).length > 0) {
+  if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors)
       return
-    }
+  }
 
-    try {
+   // Declarar timeoutId fuera del try para que esté disponible en catch
+   let timeoutId = null
+   
+   try {
       setIsUpdating(true)
       
       // Obtener token del contexto de autenticación o localStorage
-      const token = auth?.token || localStorage.getItem('authToken') || localStorage.getItem('token')
+      const token = auth?.token || auth?.accessToken || localStorage.getItem('authToken') || localStorage.getItem('token') || localStorage.getItem('accessToken')
       
       if (!token) {
-        toast({
-          title: 'Error de autenticación',
-          description: 'No se encontró el token de autenticación. Por favor, inicia sesión nuevamente.',
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        })
-        setTimeout(() => {
-          logout()
-          navigate('/login')
-        }, 2000)
-        return
+          toast({
+              title: 'Error de autenticación',
+              description: 'No se encontró el token de autenticación. Por favor, inicia sesión nuevamente.',
+              status: 'error',
+              duration: 5000,
+              isClosable: true,
+          })
+          setTimeout(() => {
+              logout()
+              navigate('/login')
+          }, 2000)
+          return
       }
       
       // Preparar el body según lo que espera el backend
       const requestBody = {
-        newPassword: passwordData.newPassword
+          newPassword: passwordData.newPassword
       }
       
       // Verificar que el endpoint sea correcto (sin doble barra)
@@ -136,122 +141,170 @@ const ChangePassword = () => {
       
       // Log temporal para debugging
       console.log('📤 [ChangePassword] Enviando request:', {
-        endpoint,
-        method: 'PUT',
-        hasToken: !!token,
-        tokenLength: token?.length,
-        requestBody: { ...requestBody, newPassword: '***' } // Ocultar contraseña
+          endpoint,
+          method: 'PUT',
+          hasToken: !!token,
+          tokenLength: token?.length,
+          requestBody: { ...requestBody, newPassword: '***' } // Ocultar contraseña
       })
       
-      // Enviar la petición al endpoint correcto con timeout optimizado
-      // El backend ahora responde inmediatamente (< 2 segundos)
+      // Configuración optimizada con timeout
+      const source = axios.CancelToken.source();
+      timeoutId = setTimeout(() => {
+          source.cancel('Timeout - La solicitud está tomando demasiado tiempo');
+      }, 20000); // 20 segundos de timeout
+      
       const requestConfig = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        withCredentials: true, // Incluir cookies automáticamente
-        timeout: 30000, // 30 segundos de timeout (aumentado para operaciones de hash)
-        validateStatus: (status) => status < 500, // No rechazar automáticamente códigos 4xx
+          headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json'
+          },
+          withCredentials: true,
+          cancelToken: source.token,
+          timeout: 20000, // Timeout de 20 segundos
+          // Configuraciones adicionales para mejor performance
+          decompress: true,
+          responseType: 'json'
       }
       
       console.log('📤 [ChangePassword] Configuración de request:', {
-        endpoint,
-        timeout: requestConfig.timeout,
-        hasToken: !!token
+          endpoint,
+          timeout: requestConfig.timeout,
+          hasToken: !!token
       })
       
       const response = await axios.put(endpoint, requestBody, requestConfig)
       
+      // Limpiar timeout si la respuesta llega a tiempo
+      clearTimeout(timeoutId);
+      
       console.log('✅ [ChangePassword] Respuesta recibida:', {
-        status: response.status,
-        success: response.data?.success,
-        message: response.data?.message,
-        timestamp: new Date().toISOString()
+          status: response.status,
+          success: response.data?.success,
+          message: response.data?.message,
+          timestamp: new Date().toISOString()
       })
 
       // Verificar respuesta del servidor
       if (!response || !response.data) {
-        throw new Error('No se recibió respuesta del servidor')
+          throw new Error('No se recibió respuesta del servidor')
       }
 
       // El backend ahora responde inmediatamente (< 2 segundos)
       if (response.data.success === true || response.data.success === 'true') {
-        // Mostrar mensaje de éxito inmediatamente
-        toast({
-          title: '✅ Contraseña actualizada',
-          description: 'Tu contraseña se ha cambiado correctamente. Serás redirigido al login...',
-          status: 'success',
-          duration: 3000,
-          isClosable: true,
-        })
-        
-        // Limpiar formulario inmediatamente
-        setPasswordData({
-          newPassword: '',
-          confirmPassword: ''
-        })
-        setErrors({})
-        
-        // Cerrar sesión y redirigir al login (reducido el delay ya que la respuesta es rápida)
-        setTimeout(() => {
-          logout()
-          navigate('/login')
-        }, 1500) // Reducido de 2000 a 1500ms
+          // Mostrar mensaje de éxito inmediatamente
+          toast({
+              title: '✅ Contraseña actualizada',
+              description: response.data.message || 'Tu contraseña se ha cambiado correctamente. Serás redirigido al login...',
+              status: 'success',
+              duration: 3000,
+              isClosable: true,
+          })
+          
+          // Limpiar formulario inmediatamente
+          setPasswordData({
+              newPassword: '',
+              confirmPassword: ''
+          })
+          setErrors({})
+          
+          // Si requiere logout, cerrar sesión después de un breve delay
+          if (response.data.requiresLogout) {
+              setTimeout(() => {
+                  console.log('🔐 Redirigiendo al login después de cambiar contraseña...');
+                  logout()
+                  navigate('/login')
+              }, 2000)
+          } else {
+              // Si no requiere logout, redirigir al dashboard
+              setTimeout(() => {
+                  navigate(userIsAdmin ? "/dashboard/admin" : "/dashboard/user")
+              }, 1500)
+          }
       } else {
-        // Si success es false o no existe, mostrar el mensaje del servidor
-        const errorMessage = response.data?.message || 
-                            response.data?.error || 
-                            'La contraseña no se pudo actualizar. Por favor, intenta de nuevo.'
-        throw new Error(errorMessage)
+          // Si success es false o no existe, mostrar el mensaje del servidor
+          const errorMessage = response.data?.message || 
+                              response.data?.error || 
+                              'La contraseña no se pudo actualizar. Por favor, intenta de nuevo.'
+          throw new Error(errorMessage)
       }
-    } catch (error) {
+  } catch (error) {
+      // Limpiar timeout en caso de error
+      if (timeoutId) clearTimeout(timeoutId);
+      
       let errorMessage = 'Error al cambiar la contraseña'
+      let errorStatus = 'error'
       
       // Log detallado del error para debugging
       console.error('❌ [ChangePassword] Error completo:', {
-        message: error.message,
-        code: error.code,
-        response: error.response?.data,
-        status: error.response?.status,
-        statusText: error.response?.statusText
+          message: error.message,
+          code: error.code,
+          response: error.response?.data,
+          status: error.response?.status,
+          statusText: error.response?.statusText,
+          isCancel: axios.isCancel(error)
       })
       
       // Manejar diferentes tipos de errores
-      if (error.code === 'ECONNABORTED' || error.message.includes('timeout')) {
-        errorMessage = 'La solicitud tardó demasiado. Por favor, verifica tu conexión e intenta de nuevo.'
+      if (axios.isCancel(error)) {
+          errorMessage = 'La operación está tomando demasiado tiempo. Por favor, verifica tu conexión e intenta de nuevo.'
+          errorStatus = 'warning'
+      } else if (error.code === 'ECONNABORTED' || error.message.includes('timeout')) {
+          errorMessage = 'La solicitud tardó demasiado. Por favor, verifica tu conexión e intenta de nuevo.'
       } else if (error.response) {
-        // El servidor respondió con un código de error
-        const status = error.response.status
-        const backendMessage = error.response.data?.message || error.response.data?.error
-        
-        if (status === 401) {
-          errorMessage = 'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.'
-        } else if (status === 400) {
-          errorMessage = backendMessage || 'Datos inválidos. Verifica que la contraseña cumpla con los requisitos.'
-        } else if (status === 404) {
-          errorMessage = 'Usuario no encontrado. Por favor, inicia sesión nuevamente.'
-        } else {
-          errorMessage = backendMessage || `Error del servidor: ${status}`
-        }
+          // El servidor respondió con un código de error
+          const status = error.response.status
+          const backendMessage = error.response.data?.message || error.response.data?.error
+          
+          if (status === 401) {
+              errorMessage = 'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.'
+              // Redirigir al login después de mostrar el error
+              setTimeout(() => {
+                  logout()
+                  navigate('/login')
+              }, 3000)
+          } else if (status === 400) {
+              errorMessage = backendMessage || 'Datos inválidos. Verifica que la contraseña cumpla con los requisitos.'
+          } else if (status === 404) {
+              errorMessage = 'Usuario no encontrado. Por favor, inicia sesión nuevamente.'
+              setTimeout(() => {
+                  logout()
+                  navigate('/login')
+              }, 3000)
+          } else if (status === 408) {
+              errorMessage = 'El servidor está ocupado. Por favor, intenta nuevamente en unos momentos.'
+              errorStatus = 'warning'
+          } else if (status >= 500) {
+              errorMessage = 'Error del servidor. Por favor, intenta nuevamente más tarde.'
+          } else {
+              errorMessage = backendMessage || `Error del servidor: ${status}`
+          }
       } else if (error.request) {
-        // La solicitud se hizo pero no hubo respuesta
-        errorMessage = 'No se recibió respuesta del servidor. Verifica tu conexión a internet.'
+          // La solicitud se hizo pero no hubo respuesta
+          errorMessage = 'No se recibió respuesta del servidor. Verifica tu conexión a internet.'
       } else {
-        errorMessage = error.message || 'Error desconocido al cambiar la contraseña'
+          errorMessage = error.message || 'Error desconocido al cambiar la contraseña'
       }
       
       toast({
-        title: 'Error',
-        description: errorMessage,
-        status: 'error',
-        duration: 6000,
-        isClosable: true,
+          title: 'Error',
+          description: errorMessage,
+          status: errorStatus,
+          duration: 6000,
+          isClosable: true,
       })
-    } finally {
+      
+      // En caso de error de autenticación, limpiar el formulario
+      if (error.response?.status === 401 || error.response?.status === 404) {
+          setPasswordData({
+              newPassword: '',
+              confirmPassword: ''
+          })
+      }
+  } finally {
       setIsUpdating(false)
-    }
   }
+}
 
   // Contenido del formulario (reutilizable)
   const passwordFormContent = (
