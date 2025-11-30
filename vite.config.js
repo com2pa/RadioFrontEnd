@@ -13,6 +13,14 @@ export default defineConfig({
         target: 'http://localhost:3000',
         changeOrigin: true,
         secure: false,
+        // Configuración para mejorar rendimiento y manejo de cookies
+        cookieDomainRewrite: '',
+        configure: (proxy, _options) => {
+          proxy.on('proxyReq', (proxyReq, req, _res) => {
+            // Agregar headers para mejor rendimiento
+            proxyReq.setHeader('Connection', 'keep-alive');
+          });
+        },
       },
     },
   },
@@ -26,6 +34,14 @@ export default defineConfig({
         target: 'http://localhost:3000',
         changeOrigin: true,
         secure: false,
+        // Configuración para mejorar rendimiento y manejo de cookies
+        cookieDomainRewrite: '',
+        configure: (proxy, _options) => {
+          proxy.on('proxyReq', (proxyReq, req, _res) => {
+            // Agregar headers para mejor rendimiento
+            proxyReq.setHeader('Connection', 'keep-alive');
+          });
+        },
       },
     },
   },

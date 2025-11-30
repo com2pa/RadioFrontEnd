@@ -229,16 +229,21 @@ const getRoleName = (roleId) => {
     }
 
     setIsCheckingEmail(true)
+    setForgotPasswordErrors({}) // Limpiar errores previos
+    
     try {
       // Verificar si el correo existe y está verificado
       const response = await axios.post('/api/auth/verify-email-for-password-reset', {
-        email: forgotPasswordData.email
+        email: forgotPasswordData.email.trim()
+      }, {
+        timeout: 10000 // 10 segundos de timeout
       })
 
-      if (response.data.success) {
-        if (response.data.verified) {
+      if (response.data && response.data.success) {
+        if (response.data.verified === true || response.data.verified === 'true') {
           setEmailVerified(true)
           setForgotPasswordStep(2)
+          setForgotPasswordErrors({}) // Limpiar errores al avanzar
           toast({
             title: 'Correo verificado',
             description: 'El correo está verificado. Puedes continuar con el cambio de contraseña.',
@@ -247,6 +252,9 @@ const getRoleName = (roleId) => {
             isClosable: true,
           })
         } else {
+          setForgotPasswordErrors({ 
+            email: 'Este correo no ha sido verificado. Por favor verifica tu correo primero.' 
+          })
           toast({
             title: 'Correo no verificado',
             description: 'Este correo no ha sido verificado. Por favor verifica tu correo primero.',
@@ -256,10 +264,44 @@ const getRoleName = (roleId) => {
           })
         }
       } else {
-        throw new Error(response.data.message || 'Error al verificar el correo')
+        const errorMsg = response.data?.message || 'Error al verificar el correo'
+        setForgotPasswordErrors({ email: errorMsg })
+        throw new Error(errorMsg)
       }
     } catch (error) {
-      const errorMessage = error.response?.data?.message || error.message || 'Error al verificar el correo'
+      let errorMessage = 'Error al verificar el correo'
+      
+      // Manejar diferentes tipos de errores
+      if (error.response) {
+        // El servidor respondió con un código de error
+        const status = error.response.status
+        const backendMessage = error.response.data?.message || error.response.data?.error
+        
+        // Si el endpoint no existe (404 en la ruta)
+        if (status === 404 && !backendMessage) {
+          errorMessage = 'El servicio de recuperación de contraseña no está disponible. Por favor, contacta al administrador.'
+          setForgotPasswordErrors({ 
+            email: 'Servicio no disponible. Contacta al administrador.' 
+          })
+        } else if (status === 404 || status === 400) {
+          // Correo no registrado o no verificado
+          errorMessage = backendMessage || (status === 404 ? 'Este correo no está registrado' : 'Este correo no ha sido verificado')
+          setForgotPasswordErrors({ 
+            email: errorMessage
+          })
+        } else {
+          errorMessage = backendMessage || `Error del servidor: ${status}`
+          setForgotPasswordErrors({ email: errorMessage })
+        }
+      } else if (error.request) {
+        // La solicitud se hizo pero no hubo respuesta
+        errorMessage = 'No se recibió respuesta del servidor. Verifica tu conexión a internet.'
+        setForgotPasswordErrors({ email: errorMessage })
+      } else {
+        errorMessage = error.message || 'Error desconocido al verificar el correo'
+        setForgotPasswordErrors({ email: errorMessage })
+      }
+      
       toast({
         title: 'Error',
         description: errorMessage,
@@ -267,10 +309,6 @@ const getRoleName = (roleId) => {
         duration: 5000,
         isClosable: true,
       })
-      
-      if (error.response?.status === 404) {
-        setForgotPasswordErrors({ email: 'Este correo no está registrado' })
-      }
     } finally {
       setIsCheckingEmail(false)
     }
@@ -510,13 +548,20 @@ const getRoleName = (roleId) => {
                         type="email"
                         value={forgotPasswordData.email}
                         onChange={(e) => {
-                          setForgotPasswordData(prev => ({ ...prev, email: e.target.value }))
+                          const newEmail = e.target.value
+                          setForgotPasswordData(prev => ({ ...prev, email: newEmail }))
+                          // Limpiar error cuando el usuario empiece a escribir
                           if (forgotPasswordErrors.email) {
-                            setForgotPasswordErrors(prev => ({ ...prev, email: '' }))
+                            setForgotPasswordErrors(prev => {
+                              const newErrors = { ...prev }
+                              delete newErrors.email
+                              return newErrors
+                            })
                           }
                         }}
                         placeholder="ejemplo@correo.com"
                         pl="10"
+                        autoFocus
                       />
                     </InputGroup>
                     <FormErrorMessage>{forgotPasswordErrors.email}</FormErrorMessage>
