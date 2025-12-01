@@ -30,7 +30,8 @@ import {
   AlertTitle,
   AlertDescription,
   Spinner,
-  useDisclosure
+  useDisclosure,
+  Flex
 } from '@chakra-ui/react'
 import { FiSave, FiEdit, FiTrash2, FiMenu, FiHome, FiLogOut, FiArrowLeft } from 'react-icons/fi'
 import { useAuth } from '../../hooks/useAuth'
@@ -125,12 +126,19 @@ const PodcastCategory = () => {
   // Verificar permisos de administrador
   if (!auth || (auth.role !== 'admin' && auth.role !== 'superAdmin')) {
     return (
-      <Box minH="100vh" bg={bgColor} display="flex" alignItems="center" justifyContent="center">
-        <Alert status="error" maxW="md">
+      <Box 
+        minH="100vh" 
+        bg={bgColor} 
+        display="flex" 
+        alignItems="center" 
+        justifyContent="center"
+        px={4}
+      >
+        <Alert status="error" maxW="md" borderRadius="md">
           <AlertIcon />
           <Box>
-            <AlertTitle>Acceso Denegado</AlertTitle>
-            <AlertDescription>
+            <AlertTitle fontSize={{ base: "sm", md: "md" }}>Acceso Denegado</AlertTitle>
+            <AlertDescription fontSize={{ base: "xs", md: "sm" }}>
               No tienes permisos para acceder a esta página.
             </AlertDescription>
           </Box>
@@ -269,38 +277,78 @@ const PodcastCategory = () => {
 
   return (
     <Box minH="100vh" bg={bgColor}>
-      <Container maxW="container.xl" py={8}>
-        <VStack spacing={8} align="stretch">
+      <Container maxW="container.xl" py={{ base: 4, md: 6, lg: 8 }} px={{ base: 4, md: 6 }}>
+        <VStack spacing={{ base: 4, md: 6, lg: 8 }} align="stretch">
           {/* Header del Dashboard */}
           <Box>
-            <HStack justify="space-between" align="center" mb={4}>
-              <VStack align="start" spacing={1}>
-                <HStack spacing={4}>
+            <VStack align="stretch" spacing={4}>
+              {/* Título y botón volver */}
+              <VStack align={{ base: "start", md: "start" }} spacing={2}>
+                <Flex
+                  direction={{ base: "column", sm: "row" }}
+                  align={{ base: "start", sm: "center" }}
+                  gap={{ base: 3, md: 4 }}
+                  wrap="wrap"
+                >
                   <Button
                     as={RouterLink}
                     to="/dashboard/admin"
                     leftIcon={<FiArrowLeft />}
                     variant="outline"
-                    size="sm"
+                    size={{ base: "xs", md: "sm" }}
                   >
-                    Volver
+                    <Text display={{ base: "none", sm: "block" }}>Volver</Text>
+                    <Text display={{ base: "block", sm: "none" }}>←</Text>
                   </Button>
-                  <Heading size="lg" color="blue.600">
+                  <Heading 
+                    size={{ base: "md", md: "lg", lg: "xl" }} 
+                    color="blue.600"
+                  >
                     Gestión de Categorías de Podcasts
                   </Heading>
-                </HStack>
-                <Text color={textColor}>
+                </Flex>
+                <Text 
+                  color={textColor}
+                  fontSize={{ base: "sm", md: "md" }}
+                >
                   Crear y administrar categorías para podcasts
                 </Text>
               </VStack>
-              <HStack spacing={2}>
-                <IconButton aria-label="Abrir menú" icon={<FiMenu />} onClick={onOpen} />
-                <IconButton as={RouterLink} to="/" aria-label="Inicio" icon={<FiHome />} />
-                <Button leftIcon={<FiLogOut />} colorScheme="red" variant="outline" onClick={logout}>
-                  Cerrar sesión
+              
+              {/* Navegación */}
+              <Flex
+                direction={{ base: "row", md: "row" }}
+                justify="flex-end"
+                align="center"
+                gap={2}
+                wrap="wrap"
+              >
+                <IconButton 
+                  aria-label="Abrir menú" 
+                  icon={<FiMenu />} 
+                  onClick={onOpen}
+                  size={{ base: "sm", md: "md" }}
+                />
+                <IconButton 
+                  as={RouterLink} 
+                  to="/" 
+                  aria-label="Inicio" 
+                  icon={<FiHome />}
+                  size={{ base: "sm", md: "md" }}
+                />
+                <Button 
+                  leftIcon={<FiLogOut />} 
+                  colorScheme="red" 
+                  variant="outline" 
+                  onClick={logout}
+                  size={{ base: "sm", md: "md" }}
+                  fontSize={{ base: "xs", md: "sm" }}
+                >
+                  <Text display={{ base: "none", sm: "block" }}>Cerrar sesión</Text>
+                  <Text display={{ base: "block", sm: "none" }}>Salir</Text>
                 </Button>
-              </HStack>
-            </HStack>
+              </Flex>
+            </VStack>
           </Box>
 
           {/* Menú administrativo reutilizable */}
@@ -311,28 +359,38 @@ const PodcastCategory = () => {
           />
 
           {/* Contenido principal */}
-          <Box display={{ base: 'block', lg: 'grid' }} gridTemplateColumns="1fr 1fr" gap={8}>
+          <Box 
+            display={{ base: 'block', lg: 'grid' }} 
+            gridTemplateColumns="1fr 1fr" 
+            gap={{ base: 4, md: 6, lg: 8 }}
+          >
             {/* Formulario */}
             <Card bg={cardBg} boxShadow="md">
-              <CardHeader>
-                <Heading size="md">
+              <CardHeader pb={{ base: 3, md: 4 }}>
+                <Heading size={{ base: "sm", md: "md" }}>
                   {editingId ? 'Editar Categoría' : 'Crear Nueva Categoría'}
                 </Heading>
               </CardHeader>
-              <CardBody>
+              <CardBody px={{ base: 4, md: 6 }} pb={{ base: 4, md: 6 }}>
                 <form onSubmit={handleSubmit}>
-                  <VStack spacing={4} align="stretch">
+                  <VStack spacing={{ base: 3, md: 4 }} align="stretch">
                     <FormControl isRequired>
-                      <FormLabel>Nombre de la categoría</FormLabel>
+                      <FormLabel fontSize={{ base: "sm", md: "md" }}>
+                        Nombre de la categoría
+                      </FormLabel>
                       <Input
                         name="categoryName"
                         value={formData.categoryName}
                         onChange={handleInputChange}
                         placeholder="Ej: Tecnología, Entretenimiento, Educación"
+                        size={{ base: "sm", md: "md" }}
                       />
                     </FormControl>
 
-                    <HStack spacing={3}>
+                    <Flex
+                      direction={{ base: "column", sm: "row" }}
+                      gap={3}
+                    >
                       <Button
                         type="submit"
                         leftIcon={<FiSave />}
@@ -340,6 +398,8 @@ const PodcastCategory = () => {
                         flex={1}
                         isLoading={submitting}
                         loadingText={editingId ? 'Actualizando...' : 'Creando...'}
+                        size={{ base: "sm", md: "md" }}
+                        fontSize={{ base: "xs", md: "sm" }}
                       >
                         {editingId ? 'Actualizar' : 'Crear'} Categoría
                       </Button>
@@ -349,11 +409,13 @@ const PodcastCategory = () => {
                           variant="outline"
                           flex={1}
                           isDisabled={submitting}
+                          size={{ base: "sm", md: "md" }}
+                          fontSize={{ base: "xs", md: "sm" }}
                         >
                           Cancelar
                         </Button>
                       )}
-                    </HStack>
+                    </Flex>
                   </VStack>
                 </form>
               </CardBody>
@@ -361,64 +423,97 @@ const PodcastCategory = () => {
 
             {/* Lista de categorías */}
             <Card bg={cardBg} boxShadow="md">
-              <CardHeader>
-                <HStack justify="space-between">
-                  <Heading size="md">Categorías Existentes</Heading>
-                  <Badge colorScheme="blue" variant="subtle">
+              <CardHeader pb={{ base: 3, md: 4 }}>
+                <Flex
+                  direction={{ base: "column", sm: "row" }}
+                  justify="space-between"
+                  align={{ base: "start", sm: "center" }}
+                  gap={3}
+                >
+                  <Heading size={{ base: "sm", md: "md" }}>
+                    Categorías Existentes
+                  </Heading>
+                  <Badge 
+                    colorScheme="blue" 
+                    variant="subtle"
+                    fontSize={{ base: "xs", md: "sm" }}
+                  >
                     {categories.length} categorías
                   </Badge>
-                </HStack>
+                </Flex>
               </CardHeader>
-              <CardBody pt={0}>
+              <CardBody pt={0} px={{ base: 3, md: 6 }} pb={{ base: 3, md: 6 }}>
                 {loading ? (
                   <Box display="flex" justifyContent="center" py={8}>
-                    <Spinner size="lg" color="blue.500" />
+                    <VStack spacing={4}>
+                      <Spinner 
+                        size={{ base: "md", md: "lg" }} 
+                        color="blue.500" 
+                      />
+                      <Text 
+                        color={textColor}
+                        fontSize={{ base: "xs", md: "sm" }}
+                      >
+                        Cargando categorías...
+                      </Text>
+                    </VStack>
                   </Box>
                 ) : !Array.isArray(categories) || categories.length === 0 ? (
                   <Box textAlign="center" py={8}>
-                    <Text color={textColor}>No hay categorías creadas</Text>
+                    <Text 
+                      color={textColor}
+                      fontSize={{ base: "xs", md: "sm" }}
+                    >
+                      No hay categorías creadas
+                    </Text>
                   </Box>
                 ) : (
-                  <Table size="sm">
-                    <Thead>
-                      <Tr>
-                        <Th>Nombre</Th>
-                        <Th>Acciones</Th>
-                      </Tr>
-                    </Thead>
-                    <Tbody>
-                      {categories.map((category, index) => (
-                        <Tr key={category.category_id || `category-${index}`}>
-                          <Td>
-                            <Text fontWeight="medium" fontSize="sm">
-                              {category.category_name}
-                            </Text>
-                          </Td>
-                          <Td>
-                            <HStack spacing={1}>
-                              <IconButton
-                                aria-label="Editar categoría"
-                                icon={<FiEdit />}
-                                size="sm"
-                                variant="ghost"
-                                onClick={() => handleEdit(category)}
-                                isDisabled={submitting}
-                              />
-                              <IconButton
-                                aria-label="Eliminar categoría"
-                                icon={<FiTrash2 />}
-                                size="sm"
-                                variant="ghost"
-                                colorScheme="red"
-                                onClick={() => handleDelete(category.category_id)}
-                                isDisabled={submitting}
-                              />
-                            </HStack>
-                          </Td>
+                  <Box overflowX="auto">
+                    <Table size={{ base: "xs", md: "sm" }} variant="simple">
+                      <Thead>
+                        <Tr>
+                          <Th fontSize={{ base: "xs", md: "sm" }}>Nombre</Th>
+                          <Th fontSize={{ base: "xs", md: "sm" }}>Acciones</Th>
                         </Tr>
-                      ))}
-                    </Tbody>
-                  </Table>
+                      </Thead>
+                      <Tbody>
+                        {categories.map((category, index) => (
+                          <Tr key={category.category_id || `category-${index}`}>
+                            <Td>
+                              <Text 
+                                fontWeight="medium" 
+                                fontSize={{ base: "xs", md: "sm" }}
+                                wordBreak="break-word"
+                              >
+                                {category.category_name}
+                              </Text>
+                            </Td>
+                            <Td>
+                              <HStack spacing={1}>
+                                <IconButton
+                                  aria-label="Editar categoría"
+                                  icon={<FiEdit />}
+                                  size={{ base: "xs", md: "sm" }}
+                                  variant="ghost"
+                                  onClick={() => handleEdit(category)}
+                                  isDisabled={submitting}
+                                />
+                                <IconButton
+                                  aria-label="Eliminar categoría"
+                                  icon={<FiTrash2 />}
+                                  size={{ base: "xs", md: "sm" }}
+                                  variant="ghost"
+                                  colorScheme="red"
+                                  onClick={() => handleDelete(category.category_id)}
+                                  isDisabled={submitting}
+                                />
+                              </HStack>
+                            </Td>
+                          </Tr>
+                        ))}
+                      </Tbody>
+                    </Table>
+                  </Box>
                 )}
               </CardBody>
             </Card>

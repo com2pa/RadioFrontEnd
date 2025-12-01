@@ -302,45 +302,85 @@ const UserRolesManagement = () => {
 
   return (
     <Box minH="100vh" bg={bgColor}>
-      <Container maxW="container.xl" py={8}>
-        <VStack spacing={8} align="stretch">
+      <Container maxW="container.xl" py={{ base: 4, md: 6, lg: 8 }} px={{ base: 4, md: 6 }}>
+        <VStack spacing={{ base: 4, md: 6, lg: 8 }} align="stretch">
           {/* Header del Dashboard */}
           <Box>
-            <HStack justify="space-between" align="center" mb={4}>
-              <VStack align="start" spacing={1}>
-                <HStack spacing={4}>
+            <VStack align="stretch" spacing={4}>
+              {/* Título y botón volver */}
+              <VStack align={{ base: "start", md: "start" }} spacing={2}>
+                <Flex
+                  direction={{ base: "column", sm: "row" }}
+                  align={{ base: "start", sm: "center" }}
+                  gap={{ base: 3, md: 4 }}
+                  wrap="wrap"
+                >
                   <Button
                     as={RouterLink}
                     to="/dashboard/admin"
                     leftIcon={<FiArrowLeft />}
                     variant="outline"
-                    size="sm"
+                    size={{ base: "xs", md: "sm" }}
                   >
-                    Volver
+                    <Text display={{ base: "none", sm: "block" }}>Volver</Text>
+                    <Text display={{ base: "block", sm: "none" }}>←</Text>
                   </Button>
-                  <Heading size="lg" color="blue.600">
+                  <Heading 
+                    size={{ base: "md", md: "lg", lg: "xl" }} 
+                    color="blue.600"
+                  >
                     Gestión de Roles del Sistema
                   </Heading>
-                </HStack>
-                <Text color={textColor}>
+                </Flex>
+                <Text 
+                  color={textColor}
+                  fontSize={{ base: "sm", md: "md" }}
+                >
                   Administra roles y permisos del sistema
                 </Text>
               </VStack>
-              <HStack spacing={2}>
-                <IconButton aria-label="Abrir menú" icon={<FiMenu />} onClick={onOpen} />
-                <IconButton as={RouterLink} to="/" aria-label="Inicio" icon={<FiHome />} />
-                <Button leftIcon={<FiLogOut />} colorScheme="red" variant="outline" onClick={logout}>
-                  Cerrar sesión
+              
+              {/* Navegación */}
+              <Flex
+                direction={{ base: "row", md: "row" }}
+                justify="flex-end"
+                align="center"
+                gap={2}
+                wrap="wrap"
+              >
+                <IconButton 
+                  aria-label="Abrir menú" 
+                  icon={<FiMenu />} 
+                  onClick={onOpen}
+                  size={{ base: "sm", md: "md" }}
+                />
+                <IconButton 
+                  as={RouterLink} 
+                  to="/" 
+                  aria-label="Inicio" 
+                  icon={<FiHome />}
+                  size={{ base: "sm", md: "md" }}
+                />
+                <Button 
+                  leftIcon={<FiLogOut />} 
+                  colorScheme="red" 
+                  variant="outline" 
+                  onClick={logout}
+                  size={{ base: "sm", md: "md" }}
+                  fontSize={{ base: "xs", md: "sm" }}
+                >
+                  <Text display={{ base: "none", sm: "block" }}>Cerrar sesión</Text>
+                  <Text display={{ base: "block", sm: "none" }}>Salir</Text>
                 </Button>
-                <HStack spacing={4}>
-                  <Avatar size="md" name="Admin" bg="red.500" />
-                  <VStack align="start" spacing={0}>
-                    <Text fontWeight="medium">Administrador</Text>
-                    <Text fontSize="sm" color={textColor}>admin@radiofm.com</Text>
+                <HStack spacing={2} display={{ base: "none", lg: "flex" }}>
+                  <Avatar size={{ base: "sm", md: "md" }} name="Admin" bg="red.500" />
+                  <VStack align="start" spacing={0} display={{ base: "none", xl: "flex" }}>
+                    <Text fontWeight="medium" fontSize={{ base: "xs", md: "sm" }}>Administrador</Text>
+                    <Text fontSize={{ base: "2xs", md: "sm" }} color={textColor}>admin@radiofm.com</Text>
                   </VStack>
                 </HStack>
-              </HStack>
-            </HStack>
+              </Flex>
+            </VStack>
           </Box>
 
           {/* Menú administrativo reutilizable */}
@@ -351,7 +391,7 @@ const UserRolesManagement = () => {
           />
 
           {/* Estadísticas principales */}
-          <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' }} gap={6}>
+          <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' }} gap={{ base: 4, md: 6 }}>
             <GridItem>
               <Card bg={cardBg} boxShadow="md">
                 <CardBody>
@@ -400,8 +440,8 @@ const UserRolesManagement = () => {
 
           {/* Filtros y búsqueda */}
           <Card bg={cardBg} boxShadow="md">
-            <CardBody>
-              <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap={4}>
+            <CardBody px={{ base: 4, md: 6 }} py={{ base: 4, md: 6 }}>
+              <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap={{ base: 3, md: 4 }}>
                 <GridItem>
                   <InputGroup>
                     <InputLeftElement pointerEvents="none">
@@ -411,6 +451,7 @@ const UserRolesManagement = () => {
                       placeholder="Buscar por nombre o descripción..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
+                      size={{ base: "sm", md: "md" }}
                     />
                   </InputGroup>
                 </GridItem>
@@ -419,6 +460,7 @@ const UserRolesManagement = () => {
                     placeholder="Filtrar por estado"
                     value={filterStatus}
                     onChange={(e) => setFilterStatus(e.target.value)}
+                    size={{ base: "sm", md: "md" }}
                   >
                     <option value="all">Todos los estados</option>
                     <option value="activo">Activo</option>
@@ -431,253 +473,413 @@ const UserRolesManagement = () => {
 
           {/* Tabla de roles */}
           <Card bg={cardBg} boxShadow="md">
-            <CardHeader>
-              <HStack justify="space-between">
-                <Heading size="md">Lista de Roles ({filteredRoles.length})</Heading>
-                <HStack spacing={2}>
+            <CardHeader px={{ base: 4, md: 6 }} pb={{ base: 3, md: 4 }}>
+              <Flex
+                direction={{ base: "column", sm: "row" }}
+                justify="space-between"
+                align={{ base: "start", sm: "center" }}
+                gap={3}
+              >
+                <Heading size={{ base: "sm", md: "md" }}>
+                  Lista de Roles ({filteredRoles.length})
+                </Heading>
+                <HStack spacing={2} flexWrap="wrap">
                   <Button 
                     leftIcon={<FiUsers />} 
                     colorScheme="green" 
                     variant="outline" 
-                    size="sm"
+                    size={{ base: "sm", md: "md" }}
+                    fontSize={{ base: "xs", md: "sm" }}
                     onClick={() => setIsCreateModalOpen(true)}
                   >
-                    Crear Rol
+                    <Text display={{ base: "none", sm: "block" }}>Crear Rol</Text>
+                    <Text display={{ base: "block", sm: "none" }}>Crear</Text>
                   </Button>
-                  <Button leftIcon={<FiDownload />} colorScheme="blue" variant="outline" size="sm">
-                    Exportar
+                  <Button 
+                    leftIcon={<FiDownload />} 
+                    colorScheme="blue" 
+                    variant="outline" 
+                    size={{ base: "sm", md: "md" }}
+                    fontSize={{ base: "xs", md: "sm" }}
+                  >
+                    <Text display={{ base: "none", sm: "block" }}>Exportar</Text>
+                    <Text display={{ base: "block", sm: "none" }}>Exp</Text>
                   </Button>
                 </HStack>
-              </HStack>
+              </Flex>
             </CardHeader>
-            <CardBody pt={0}>
+            <CardBody pt={0} px={{ base: 3, md: 6 }} pb={{ base: 3, md: 6 }}>
               {loading ? (
                 <Box display="flex" justifyContent="center" py={8}>
-                  <Spinner size="lg" color="blue.500" />
+                  <VStack spacing={4}>
+                    <Spinner size={{ base: "md", md: "lg" }} color="blue.500" />
+                    <Text 
+                      color={textColor}
+                      fontSize={{ base: "xs", md: "sm" }}
+                    >
+                      Cargando roles...
+                    </Text>
+                  </VStack>
                 </Box>
               ) : error ? (
                 <Box textAlign="center" py={8}>
-                  <Text color="red.500" mb={4}>{error}</Text>
-                  <Button onClick={fetchRoles} colorScheme="blue" variant="outline">
+                  <Text 
+                    color="red.500" 
+                    mb={4}
+                    fontSize={{ base: "xs", md: "sm" }}
+                  >
+                    {error}
+                  </Text>
+                  <Button 
+                    onClick={fetchRoles} 
+                    colorScheme="blue" 
+                    variant="outline"
+                    size={{ base: "sm", md: "md" }}
+                    fontSize={{ base: "xs", md: "sm" }}
+                  >
                     Reintentar
                   </Button>
                 </Box>
               ) : !Array.isArray(roles) || roles.length === 0 ? (
                 <Box textAlign="center" py={8}>
-                  <Text color={textColor}>No hay roles registrados</Text>
+                  <Text 
+                    color={textColor}
+                    fontSize={{ base: "xs", md: "sm" }}
+                  >
+                    No hay roles registrados
+                  </Text>
                 </Box>
               ) : (
-                <Table size="sm">
-                  <Thead>
-                    <Tr>
-                      <Th>Rol</Th>
-                      <Th>Descripción</Th>
-                      <Th>Estado</Th>
-                      <Th>Fecha Creación</Th>
-                      <Th>Acciones</Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    {filteredRoles.map((role) => (
-                      <Tr key={role.id}>
-                        <Td>
-                          <HStack spacing={3}>
-                            <Icon as={getRoleIcon(role.name)} color={`${getRoleColor(role.name)}.500`} />
-                            <VStack align="start" spacing={0}>
-                              <Text fontWeight="medium" fontSize="sm">{role.name}</Text>
-                            </VStack>
-                          </HStack>
-                        </Td>
-                        <Td>
-                          <Text fontSize="sm" color={textColor} maxW="200px" isTruncated>
-                            {role.description}
-                          </Text>
-                        </Td>
-                        <Td>
-                          <Badge 
-                            colorScheme={getStatusColor(role.status)}
-                            variant="subtle"
-                            fontSize="xs"
-                          >
-                            {role.status}
-                          </Badge>
-                        </Td>
-                        <Td fontSize="sm" color={textColor}>{role.createdAt}</Td>
-                        <Td>
-                          <HStack spacing={1}>
-                            <IconButton
-                              aria-label="Ver detalles"
-                              icon={<FiEye />}
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => handleViewDetails(role)}
-                            />
-                            <IconButton
-                              aria-label="Editar rol"
-                              icon={<FiEdit />}
-                              size="sm"
-                              variant="ghost"
-                              colorScheme="blue"
-                              onClick={() => handleEditRole(role)}
-                            />
-                          </HStack>
-                        </Td>
+                <Box overflowX="auto">
+                  <Table size={{ base: "xs", md: "sm" }} variant="simple">
+                    <Thead>
+                      <Tr>
+                        <Th fontSize={{ base: "xs", md: "sm" }}>Rol</Th>
+                        <Th fontSize={{ base: "xs", md: "sm" }} display={{ base: "none", md: "table-cell" }}>
+                          Descripción
+                        </Th>
+                        <Th fontSize={{ base: "xs", md: "sm" }} display={{ base: "none", sm: "table-cell" }}>
+                          Estado
+                        </Th>
+                        <Th fontSize={{ base: "xs", md: "sm" }} display={{ base: "none", lg: "table-cell" }}>
+                          Fecha Creación
+                        </Th>
+                        <Th fontSize={{ base: "xs", md: "sm" }}>Acciones</Th>
                       </Tr>
-                    ))}
-                  </Tbody>
-                </Table>
+                    </Thead>
+                    <Tbody>
+                      {filteredRoles.map((role) => (
+                        <Tr key={role.id}>
+                          <Td>
+                            <VStack align="start" spacing={1}>
+                              <HStack spacing={2}>
+                                <Icon as={getRoleIcon(role.name)} color={`${getRoleColor(role.name)}.500`} boxSize={4} />
+                                <Text 
+                                  fontWeight="medium" 
+                                  fontSize={{ base: "xs", md: "sm" }}
+                                  wordBreak="break-word"
+                                >
+                                  {role.name}
+                                </Text>
+                              </HStack>
+                              {/* Mostrar información adicional en móvil */}
+                              <VStack align="start" spacing={1} mt={1} display={{ base: "flex", md: "none" }}>
+                                <Text 
+                                  fontSize="2xs" 
+                                  color={textColor}
+                                  wordBreak="break-word"
+                                >
+                                  {role.description}
+                                </Text>
+                                <HStack spacing={2} flexWrap="wrap">
+                                  <Badge 
+                                    colorScheme={getStatusColor(role.status)}
+                                    variant="subtle"
+                                    fontSize="2xs"
+                                  >
+                                    {role.status}
+                                  </Badge>
+                                  <Text fontSize="2xs" color={textColor}>
+                                    {role.createdAt}
+                                  </Text>
+                                </HStack>
+                              </VStack>
+                            </VStack>
+                          </Td>
+                          <Td display={{ base: "none", md: "table-cell" }}>
+                            <Text 
+                              fontSize={{ base: "xs", md: "sm" }} 
+                              color={textColor} 
+                              maxW="200px" 
+                              isTruncated
+                            >
+                              {role.description}
+                            </Text>
+                          </Td>
+                          <Td display={{ base: "none", sm: "table-cell" }}>
+                            <Badge 
+                              colorScheme={getStatusColor(role.status)}
+                              variant="subtle"
+                              fontSize={{ base: "2xs", md: "xs" }}
+                            >
+                              {role.status}
+                            </Badge>
+                          </Td>
+                          <Td 
+                            fontSize={{ base: "xs", md: "sm" }} 
+                            color={textColor}
+                            display={{ base: "none", lg: "table-cell" }}
+                          >
+                            {role.createdAt}
+                          </Td>
+                          <Td>
+                            <HStack spacing={1}>
+                              <IconButton
+                                aria-label="Ver detalles"
+                                icon={<FiEye />}
+                                size={{ base: "xs", md: "sm" }}
+                                variant="ghost"
+                                onClick={() => handleViewDetails(role)}
+                              />
+                              <IconButton
+                                aria-label="Editar rol"
+                                icon={<FiEdit />}
+                                size={{ base: "xs", md: "sm" }}
+                                variant="ghost"
+                                colorScheme="blue"
+                                onClick={() => handleEditRole(role)}
+                              />
+                            </HStack>
+                          </Td>
+                        </Tr>
+                      ))}
+                    </Tbody>
+                  </Table>
+                </Box>
               )}
             </CardBody>
           </Card>
 
           {/* Modal de detalles del rol */}
-          <Modal isOpen={isDetailModalOpen} onClose={() => setIsDetailModalOpen(false)} size="lg">
+          <Modal 
+            isOpen={isDetailModalOpen} 
+            onClose={() => setIsDetailModalOpen(false)} 
+            size={{ base: "full", md: "lg" }}
+          >
             <ModalOverlay />
-            <ModalContent>
-              <ModalHeader>Detalles del Rol</ModalHeader>
+            <ModalContent mx={{ base: 0, md: 4 }} my={{ base: 0, md: 4 }}>
+              <ModalHeader fontSize={{ base: "md", md: "lg" }}>Detalles del Rol</ModalHeader>
               <ModalCloseButton />
-              <ModalBody>
+              <ModalBody px={{ base: 4, md: 6 }} py={{ base: 4, md: 6 }}>
                 {selectedUser && (
                   <VStack spacing={4} align="stretch">
-                    <HStack spacing={4}>
-                      <Icon as={getRoleIcon(selectedUser.name)} color={`${getRoleColor(selectedUser.name)}.500`} boxSize={12} />
-                      <VStack align="start" spacing={1}>
-                        <Heading size="md">{selectedUser.name}</Heading>
-                        <Text color={textColor}>{selectedUser.description}</Text>
-                        <HStack spacing={2}>
+                    <Flex
+                      direction={{ base: "column", sm: "row" }}
+                      align={{ base: "start", sm: "center" }}
+                      gap={4}
+                    >
+                      <Icon 
+                        as={getRoleIcon(selectedUser.name)} 
+                        color={`${getRoleColor(selectedUser.name)}.500`} 
+                        boxSize={{ base: 10, md: 12 }} 
+                      />
+                      <VStack align="start" spacing={1} flex={1}>
+                        <Heading size={{ base: "sm", md: "md" }}>{selectedUser.name}</Heading>
+                        <Text color={textColor} fontSize={{ base: "xs", md: "sm" }}>{selectedUser.description}</Text>
+                        <HStack spacing={2} flexWrap="wrap">
                           <Badge 
                             colorScheme={getStatusColor(selectedUser.status)}
                             variant="subtle"
-                            fontSize="sm"
+                            fontSize={{ base: "xs", md: "sm" }}
                           >
                             {selectedUser.status}
                           </Badge>
                         </HStack>
                       </VStack>
-                    </HStack>
+                    </Flex>
                     
                     <Divider />
                     
-                    <Grid templateColumns="repeat(2, 1fr)" gap={4}>
+                    <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={4}>
                       <Box>
-                        <Text fontSize="sm" fontWeight="medium" color={textColor}>Estado</Text>
+                        <Text fontSize={{ base: "xs", md: "sm" }} fontWeight="medium" color={textColor}>Estado</Text>
                         <Badge 
                           colorScheme={getStatusColor(selectedUser.status)}
                           variant="subtle"
-                          fontSize="sm"
+                          fontSize={{ base: "xs", md: "sm" }}
                         >
                           {selectedUser.status}
                         </Badge>
                       </Box>
                       <Box>
-                        <Text fontSize="sm" fontWeight="medium" color={textColor}>Fecha de Creación</Text>
-                        <Text fontSize="sm">{selectedUser.createdAt}</Text>
+                        <Text fontSize={{ base: "xs", md: "sm" }} fontWeight="medium" color={textColor}>Fecha de Creación</Text>
+                        <Text fontSize={{ base: "xs", md: "sm" }}>{selectedUser.createdAt}</Text>
                       </Box>
                     </Grid>
                   </VStack>
                 )}
               </ModalBody>
-              <ModalFooter>
-                <Button variant="outline" mr={3} onClick={() => setIsDetailModalOpen(false)}>
-                  Cerrar
-                </Button>
-                <Button colorScheme="blue" onClick={() => {
-                  setIsDetailModalOpen(false)
-                  handleEditRole(selectedUser)
-                }}>
-                  Editar Rol
-                </Button>
+              <ModalFooter px={{ base: 4, md: 6 }} py={{ base: 3, md: 4 }}>
+                <Flex
+                  direction={{ base: "column", sm: "row" }}
+                  gap={2}
+                  w="100%"
+                >
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setIsDetailModalOpen(false)}
+                    flex={1}
+                    size={{ base: "sm", md: "md" }}
+                    fontSize={{ base: "xs", md: "sm" }}
+                  >
+                    Cerrar
+                  </Button>
+                  <Button 
+                    colorScheme="blue" 
+                    onClick={() => {
+                      setIsDetailModalOpen(false)
+                      handleEditRole(selectedUser)
+                    }}
+                    flex={1}
+                    size={{ base: "sm", md: "md" }}
+                    fontSize={{ base: "xs", md: "sm" }}
+                  >
+                    Editar Rol
+                  </Button>
+                </Flex>
               </ModalFooter>
             </ModalContent>
           </Modal>
 
           {/* Modal de edición de rol */}
-          <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} size="md">
+          <Modal 
+            isOpen={isEditModalOpen} 
+            onClose={() => setIsEditModalOpen(false)} 
+            size={{ base: "full", md: "md" }}
+          >
             <ModalOverlay />
-            <ModalContent>
-              <ModalHeader>Editar Rol</ModalHeader>
+            <ModalContent mx={{ base: 0, md: 4 }} my={{ base: 0, md: 4 }}>
+              <ModalHeader fontSize={{ base: "md", md: "lg" }}>Editar Rol</ModalHeader>
               <ModalCloseButton />
-              <ModalBody>
+              <ModalBody px={{ base: 4, md: 6 }} py={{ base: 4, md: 6 }}>
                 {editingRole && (
                   <VStack spacing={4} align="stretch">
                     <FormControl>
-                      <FormLabel>Nombre del Rol</FormLabel>
+                      <FormLabel fontSize={{ base: "xs", md: "sm" }}>Nombre del Rol</FormLabel>
                       <Input
                         value={editingRole.name}
                         onChange={(e) => setEditingRole({...editingRole, name: e.target.value})}
                         placeholder="Nombre del rol"
+                        size={{ base: "sm", md: "md" }}
                       />
                     </FormControl>
                     
                     <FormControl>
-                      <FormLabel>Descripción</FormLabel>
+                      <FormLabel fontSize={{ base: "xs", md: "sm" }}>Descripción</FormLabel>
                       <Input
                         value={editingRole.description}
                         onChange={(e) => setEditingRole({...editingRole, description: e.target.value})}
                         placeholder="Descripción del rol"
+                        size={{ base: "sm", md: "md" }}
                       />
                     </FormControl>
                   </VStack>
                 )}
               </ModalBody>
-              <ModalFooter>
-                <Button variant="outline" mr={3} onClick={() => setIsEditModalOpen(false)}>
-                  Cancelar
-                </Button>
-                <Button 
-                  colorScheme="blue" 
-                  onClick={() => {
-                    if (editingRole) {
-                      handleUpdateRole(editingRole.id, {
-                        role_name: editingRole.name,
-                        role_description: editingRole.description
-                      })
-                    }
-                  }}
+              <ModalFooter px={{ base: 4, md: 6 }} py={{ base: 3, md: 4 }}>
+                <Flex
+                  direction={{ base: "column", sm: "row" }}
+                  gap={2}
+                  w="100%"
                 >
-                  Actualizar
-                </Button>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setIsEditModalOpen(false)}
+                    flex={1}
+                    size={{ base: "sm", md: "md" }}
+                    fontSize={{ base: "xs", md: "sm" }}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button 
+                    colorScheme="blue" 
+                    onClick={() => {
+                      if (editingRole) {
+                        handleUpdateRole(editingRole.id, {
+                          role_name: editingRole.name,
+                          role_description: editingRole.description
+                        })
+                      }
+                    }}
+                    flex={1}
+                    size={{ base: "sm", md: "md" }}
+                    fontSize={{ base: "xs", md: "sm" }}
+                  >
+                    Actualizar
+                  </Button>
+                </Flex>
               </ModalFooter>
             </ModalContent>
           </Modal>
 
           {/* Modal de creación de rol */}
-          <Modal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} size="md">
+          <Modal 
+            isOpen={isCreateModalOpen} 
+            onClose={() => setIsCreateModalOpen(false)} 
+            size={{ base: "full", md: "md" }}
+          >
             <ModalOverlay />
-            <ModalContent>
-              <ModalHeader>Crear Nuevo Rol</ModalHeader>
+            <ModalContent mx={{ base: 0, md: 4 }} my={{ base: 0, md: 4 }}>
+              <ModalHeader fontSize={{ base: "md", md: "lg" }}>Crear Nuevo Rol</ModalHeader>
               <ModalCloseButton />
-              <ModalBody>
+              <ModalBody px={{ base: 4, md: 6 }} py={{ base: 4, md: 6 }}>
                 <VStack spacing={4} align="stretch">
                   <FormControl>
-                    <FormLabel>Nombre del Rol</FormLabel>
+                    <FormLabel fontSize={{ base: "xs", md: "sm" }}>Nombre del Rol</FormLabel>
                     <Input
                       value={newRole.role_name}
                       onChange={(e) => setNewRole({...newRole, role_name: e.target.value})}
                       placeholder="Nombre del rol"
+                      size={{ base: "sm", md: "md" }}
                     />
                   </FormControl>
                   
                   <FormControl>
-                    <FormLabel>Descripción</FormLabel>
+                    <FormLabel fontSize={{ base: "xs", md: "sm" }}>Descripción</FormLabel>
                     <Input
                       value={newRole.role_description}
                       onChange={(e) => setNewRole({...newRole, role_description: e.target.value})}
                       placeholder="Descripción del rol"
+                      size={{ base: "sm", md: "md" }}
                     />
                   </FormControl>
                 </VStack>
               </ModalBody>
-              <ModalFooter>
-                <Button variant="outline" mr={3} onClick={() => setIsCreateModalOpen(false)}>
-                  Cancelar
-                </Button>
-                <Button 
-                  colorScheme="green" 
-                  onClick={handleCreateRole}
+              <ModalFooter px={{ base: 4, md: 6 }} py={{ base: 3, md: 4 }}>
+                <Flex
+                  direction={{ base: "column", sm: "row" }}
+                  gap={2}
+                  w="100%"
                 >
-                  Crear Rol
-                </Button>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setIsCreateModalOpen(false)}
+                    flex={1}
+                    size={{ base: "sm", md: "md" }}
+                    fontSize={{ base: "xs", md: "sm" }}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button 
+                    colorScheme="green" 
+                    onClick={handleCreateRole}
+                    flex={1}
+                    size={{ base: "sm", md: "md" }}
+                    fontSize={{ base: "xs", md: "sm" }}
+                  >
+                    Crear Rol
+                  </Button>
+                </Flex>
               </ModalFooter>
             </ModalContent>
           </Modal>

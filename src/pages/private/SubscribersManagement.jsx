@@ -325,45 +325,85 @@ const SubscribersManagement = () => {
 
   return (
     <Box minH="100vh" bg={bgColor}>
-      <Container maxW="container.xl" py={8}>
-        <VStack spacing={8} align="stretch">
+      <Container maxW="container.xl" py={{ base: 4, md: 6, lg: 8 }} px={{ base: 4, md: 6 }}>
+        <VStack spacing={{ base: 4, md: 6, lg: 8 }} align="stretch">
           {/* Header del Dashboard */}
           <Box>
-            <HStack justify="space-between" align="center" mb={4}>
-              <VStack align="start" spacing={1}>
-                <HStack spacing={4}>
+            <VStack align="stretch" spacing={4}>
+              {/* Título y botón volver */}
+              <VStack align={{ base: "start", md: "start" }} spacing={2}>
+                <Flex
+                  direction={{ base: "column", sm: "row" }}
+                  align={{ base: "start", sm: "center" }}
+                  gap={{ base: 3, md: 4 }}
+                  wrap="wrap"
+                >
                   <Button
                     as={RouterLink}
                     to="/dashboard/admin"
                     leftIcon={<FiArrowLeft />}
                     variant="outline"
-                    size="sm"
+                    size={{ base: "xs", md: "sm" }}
                   >
-                    Volver
+                    <Text display={{ base: "none", sm: "block" }}>Volver</Text>
+                    <Text display={{ base: "block", sm: "none" }}>←</Text>
                   </Button>
-                  <Heading size="lg" color="blue.600">
+                  <Heading 
+                    size={{ base: "md", md: "lg", lg: "xl" }} 
+                    color="blue.600"
+                  >
                     Gestión de Suscriptores
                   </Heading>
-                </HStack>
-                <Text color={textColor}>
+                </Flex>
+                <Text 
+                  color={textColor}
+                  fontSize={{ base: "sm", md: "md" }}
+                >
                   Administra todos los usuarios suscritos a Radio FM
                 </Text>
               </VStack>
-              <HStack spacing={2}>
-                <IconButton aria-label="Abrir menú" icon={<FiMenu />} onClick={onOpen} />
-                <IconButton as={RouterLink} to="/" aria-label="Inicio" icon={<FiHome />} />
-                <Button leftIcon={<FiLogOut />} colorScheme="red" variant="outline" onClick={logout}>
-                  Cerrar sesión
+              
+              {/* Navegación */}
+              <Flex
+                direction={{ base: "row", md: "row" }}
+                justify="flex-end"
+                align="center"
+                gap={2}
+                wrap="wrap"
+              >
+                <IconButton 
+                  aria-label="Abrir menú" 
+                  icon={<FiMenu />} 
+                  onClick={onOpen}
+                  size={{ base: "sm", md: "md" }}
+                />
+                <IconButton 
+                  as={RouterLink} 
+                  to="/" 
+                  aria-label="Inicio" 
+                  icon={<FiHome />}
+                  size={{ base: "sm", md: "md" }}
+                />
+                <Button 
+                  leftIcon={<FiLogOut />} 
+                  colorScheme="red" 
+                  variant="outline" 
+                  onClick={logout}
+                  size={{ base: "sm", md: "md" }}
+                  fontSize={{ base: "xs", md: "sm" }}
+                >
+                  <Text display={{ base: "none", sm: "block" }}>Cerrar sesión</Text>
+                  <Text display={{ base: "block", sm: "none" }}>Salir</Text>
                 </Button>
-                <HStack spacing={4}>
-                  <Avatar size="md" name="Admin" bg="red.500" />
-                  <VStack align="start" spacing={0}>
-                    <Text fontWeight="medium">Administrador</Text>
-                    <Text fontSize="sm" color={textColor}>admin@radiofm.com</Text>
+                <HStack spacing={2} display={{ base: "none", lg: "flex" }}>
+                  <Avatar size={{ base: "sm", md: "md" }} name="Admin" bg="red.500" />
+                  <VStack align="start" spacing={0} display={{ base: "none", xl: "flex" }}>
+                    <Text fontWeight="medium" fontSize={{ base: "xs", md: "sm" }}>Administrador</Text>
+                    <Text fontSize={{ base: "2xs", md: "sm" }} color={textColor}>admin@radiofm.com</Text>
                   </VStack>
                 </HStack>
-              </HStack>
-            </HStack>
+              </Flex>
+            </VStack>
           </Box>
 
           {/* Menú administrativo reutilizable */}
@@ -374,7 +414,7 @@ const SubscribersManagement = () => {
           />
 
           {/* Estadísticas principales */}
-          <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' }} gap={6}>
+          <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' }} gap={{ base: 4, md: 6 }}>
             <GridItem>
               <Card bg={cardBg} boxShadow="md">
                 <CardBody>
@@ -438,8 +478,8 @@ const SubscribersManagement = () => {
 
           {/* Filtros y búsqueda */}
           <Card bg={cardBg} boxShadow="md">
-            <CardBody>
-              <Grid templateColumns={{ base: '1fr', md: 'repeat(3, 1fr)' }} gap={4}>
+            <CardBody px={{ base: 4, md: 6 }} py={{ base: 4, md: 6 }}>
+              <Grid templateColumns={{ base: '1fr', md: 'repeat(3, 1fr)' }} gap={{ base: 3, md: 4 }}>
                 <GridItem>
                   <InputGroup>
                     <InputLeftElement pointerEvents="none">
@@ -449,6 +489,7 @@ const SubscribersManagement = () => {
                       placeholder="Buscar por nombre o email..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
+                      size={{ base: "sm", md: "md" }}
                     />
                   </InputGroup>
                 </GridItem>
@@ -457,6 +498,7 @@ const SubscribersManagement = () => {
                     placeholder="Filtrar por estado"
                     value={filterStatus}
                     onChange={(e) => setFilterStatus(e.target.value)}
+                    size={{ base: "sm", md: "md" }}
                   >
                     <option value="all">Todos los estados</option>
                     <option value="activo">Activo</option>
@@ -469,6 +511,7 @@ const SubscribersManagement = () => {
                     placeholder="Filtrar por plan"
                     value={filterPlan}
                     onChange={(e) => setFilterPlan(e.target.value)}
+                    size={{ base: "sm", md: "md" }}
                   >
                     <option value="all">Todos los planes</option>
                     <option value="premium">Premium</option>
@@ -481,254 +524,410 @@ const SubscribersManagement = () => {
 
           {/* Tabla de suscriptores */}
           <Card bg={cardBg} boxShadow="md">
-            <CardHeader>
-              <HStack justify="space-between">
-                <Heading size="md">Lista de Suscriptores ({filteredSubscribers.length})</Heading>
-                <Button leftIcon={<FiDownload />} colorScheme="blue" variant="outline" size="sm">
-                  Exportar
+            <CardHeader px={{ base: 4, md: 6 }} pb={{ base: 3, md: 4 }}>
+              <Flex
+                direction={{ base: "column", sm: "row" }}
+                justify="space-between"
+                align={{ base: "start", sm: "center" }}
+                gap={3}
+              >
+                <Heading size={{ base: "sm", md: "md" }}>
+                  Lista de Suscriptores ({filteredSubscribers.length})
+                </Heading>
+                <Button 
+                  leftIcon={<FiDownload />} 
+                  colorScheme="blue" 
+                  variant="outline" 
+                  size={{ base: "sm", md: "md" }}
+                  fontSize={{ base: "xs", md: "sm" }}
+                >
+                  <Text display={{ base: "none", sm: "block" }}>Exportar</Text>
+                  <Text display={{ base: "block", sm: "none" }}>Exp</Text>
                 </Button>
-              </HStack>
+              </Flex>
             </CardHeader>
-            <CardBody pt={0}>
+            <CardBody pt={0} px={{ base: 3, md: 6 }} pb={{ base: 3, md: 6 }}>
               {loading ? (
                 <Box display="flex" justifyContent="center" py={8}>
-                  <Spinner size="lg" color="blue.500" />
+                  <VStack spacing={4}>
+                    <Spinner size={{ base: "md", md: "lg" }} color="blue.500" />
+                    <Text 
+                      color={textColor}
+                      fontSize={{ base: "xs", md: "sm" }}
+                    >
+                      Cargando suscriptores...
+                    </Text>
+                  </VStack>
                 </Box>
               ) : error ? (
                 <Box textAlign="center" py={8}>
-                  <Text color="red.500" mb={4}>{error}</Text>
-                  <Button onClick={fetchSubscribers} colorScheme="blue" variant="outline">
+                  <Text 
+                    color="red.500" 
+                    mb={4}
+                    fontSize={{ base: "xs", md: "sm" }}
+                  >
+                    {error}
+                  </Text>
+                  <Button 
+                    onClick={fetchSubscribers} 
+                    colorScheme="blue" 
+                    variant="outline"
+                    size={{ base: "sm", md: "md" }}
+                    fontSize={{ base: "xs", md: "sm" }}
+                  >
                     Reintentar
                   </Button>
                 </Box>
               ) : !Array.isArray(subscribers) || subscribers.length === 0 ? (
                 <Box textAlign="center" py={8}>
-                  <Text color={textColor}>No hay suscriptores registrados</Text>
+                  <Text 
+                    color={textColor}
+                    fontSize={{ base: "xs", md: "sm" }}
+                  >
+                    No hay suscriptores registrados
+                  </Text>
                 </Box>
               ) : (
-                <Table size="sm">
-                  <Thead>
-                    <Tr>
-                      <Th>Usuario</Th>
-                      <Th>Plan</Th>
-                      <Th>Rol</Th>
-                      <Th>Estado</Th>
-                      <Th>Fecha Suscripción</Th>
-                      <Th>Próximo Pago</Th>
-                      <Th>Total Pagado</Th>
-                      <Th>Acciones</Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    {filteredSubscribers.map((subscriber) => (
-                    <Tr key={subscriber.id}>
-                      <Td>
-                        <HStack spacing={3}>
-                          <Avatar size="sm" name={subscriber.name} bg="blue.500" />
-                          <VStack align="start" spacing={0}>
-                            <Text fontWeight="medium" fontSize="sm">{subscriber.user_name}</Text>
-                            <Text fontSize="xs" color={textColor}>{subscriber.user_email}</Text>
+                <Box overflowX="auto">
+                  <Table size={{ base: "xs", md: "sm" }} variant="simple">
+                    <Thead>
+                      <Tr>
+                        <Th fontSize={{ base: "xs", md: "sm" }}>Usuario</Th>
+                        <Th fontSize={{ base: "xs", md: "sm" }} display={{ base: "none", md: "table-cell" }}>
+                          Plan
+                        </Th>
+                        <Th fontSize={{ base: "xs", md: "sm" }} display={{ base: "none", lg: "table-cell" }}>
+                          Rol
+                        </Th>
+                        <Th fontSize={{ base: "xs", md: "sm" }} display={{ base: "none", md: "table-cell" }}>
+                          Estado
+                        </Th>
+                        <Th fontSize={{ base: "xs", md: "sm" }} display={{ base: "none", lg: "table-cell" }}>
+                          Fecha Suscripción
+                        </Th>
+                        <Th fontSize={{ base: "xs", md: "sm" }} display={{ base: "none", xl: "table-cell" }}>
+                          Próximo Pago
+                        </Th>
+                        <Th fontSize={{ base: "xs", md: "sm" }} display={{ base: "none", lg: "table-cell" }}>
+                          Total Pagado
+                        </Th>
+                        <Th fontSize={{ base: "xs", md: "sm" }}>Acciones</Th>
+                      </Tr>
+                    </Thead>
+                    <Tbody>
+                      {filteredSubscribers.map((subscriber) => (
+                      <Tr key={subscriber.id}>
+                        <Td>
+                          <VStack align="start" spacing={1}>
+                            <HStack spacing={2}>
+                              <Avatar size={{ base: "xs", md: "sm" }} name={subscriber.name} bg="blue.500" />
+                              <VStack align="start" spacing={0}>
+                                <Text 
+                                  fontWeight="medium" 
+                                  fontSize={{ base: "xs", md: "sm" }}
+                                  wordBreak="break-word"
+                                >
+                                  {subscriber.name}
+                                </Text>
+                                <Text 
+                                  fontSize={{ base: "2xs", md: "xs" }} 
+                                  color={textColor}
+                                  wordBreak="break-word"
+                                >
+                                  {subscriber.email}
+                                </Text>
+                              </VStack>
+                            </HStack>
+                            {/* Mostrar información adicional en móvil */}
+                            <VStack align="start" spacing={1} mt={1} display={{ base: "flex", md: "none" }}>
+                              <HStack spacing={2} flexWrap="wrap">
+                                <HStack spacing={1}>
+                                  <Icon as={getPlanIcon(subscriber.plan)} color={`${getPlanColor(subscriber.plan)}.500`} boxSize={3} />
+                                  <Badge 
+                                    colorScheme={getPlanColor(subscriber.plan)}
+                                    variant="subtle"
+                                    fontSize="2xs"
+                                  >
+                                    {subscriber.plan}
+                                  </Badge>
+                                </HStack>
+                                <HStack spacing={1}>
+                                  <Icon as={getRoleIcon(subscriber.role)} color={`${getRoleColor(subscriber.role)}.500`} boxSize={3} />
+                                  <Badge 
+                                    colorScheme={getRoleColor(subscriber.role)}
+                                    variant="subtle"
+                                    fontSize="2xs"
+                                  >
+                                    {subscriber.role}
+                                  </Badge>
+                                </HStack>
+                                <Badge 
+                                  colorScheme={getStatusColor(subscriber.status)}
+                                  variant="subtle"
+                                  fontSize="2xs"
+                                >
+                                  {subscriber.status}
+                                </Badge>
+                              </HStack>
+                              <Text fontSize="2xs" color={textColor}>
+                                Suscripción: {subscriber.subscriptionDate}
+                              </Text>
+                              <Text fontSize="2xs" color="green.500" fontWeight="medium">
+                                Total: ${subscriber.totalPaid}
+                              </Text>
+                            </VStack>
                           </VStack>
-                        </HStack>
-                      </Td>
-                      <Td>
-                        <HStack spacing={2}>
-                          <Icon as={getPlanIcon(subscriber.plan)} color={`${getPlanColor(subscriber.plan)}.500`} />
-                          <Text fontSize="sm">{subscriber.plan}</Text>
-                        </HStack>
-                      </Td>
-                      <Td>
-                        <HStack spacing={2}>
-                          <Icon as={getRoleIcon(subscriber.role)} color={`${getRoleColor(subscriber.role)}.500`} />
+                        </Td>
+                        <Td display={{ base: "none", md: "table-cell" }}>
+                          <HStack spacing={2}>
+                            <Icon as={getPlanIcon(subscriber.plan)} color={`${getPlanColor(subscriber.plan)}.500`} boxSize={4} />
+                            <Text fontSize={{ base: "xs", md: "sm" }}>{subscriber.plan}</Text>
+                          </HStack>
+                        </Td>
+                        <Td display={{ base: "none", lg: "table-cell" }}>
+                          <HStack spacing={2}>
+                            <Icon as={getRoleIcon(subscriber.role)} color={`${getRoleColor(subscriber.role)}.500`} boxSize={4} />
+                            <Badge 
+                              colorScheme={getRoleColor(subscriber.role)}
+                              variant="subtle"
+                              fontSize={{ base: "2xs", md: "xs" }}
+                            >
+                              {subscriber.role}
+                            </Badge>
+                          </HStack>
+                        </Td>
+                        <Td display={{ base: "none", md: "table-cell" }}>
                           <Badge 
-                            colorScheme={getRoleColor(subscriber.role)}
+                            colorScheme={getStatusColor(subscriber.status)}
                             variant="subtle"
-                            fontSize="xs"
+                            fontSize={{ base: "2xs", md: "xs" }}
                           >
-                            {subscriber.role}
+                            {subscriber.status}
                           </Badge>
-                        </HStack>
-                      </Td>
-                      <Td>
-                        <Badge 
-                          colorScheme={getStatusColor(subscriber.status)}
-                          variant="subtle"
-                          fontSize="xs"
+                        </Td>
+                        <Td 
+                          fontSize={{ base: "xs", md: "sm" }} 
+                          color={textColor}
+                          display={{ base: "none", lg: "table-cell" }}
                         >
-                          {subscriber.status}
-                        </Badge>
-                      </Td>
-                      <Td fontSize="sm" color={textColor}>{subscriber.subscriptionDate}</Td>
-                      <Td fontSize="sm" color={textColor}>
-                        {subscriber.nextBilling || 'N/A'}
-                      </Td>
-                      <Td fontSize="sm" fontWeight="medium" color="green.500">
-                        ${subscriber.totalPaid}
-                      </Td>
-                      <Td>
-                        <HStack spacing={1}>
-                          <IconButton
-                            aria-label="Ver detalles"
-                            icon={<FiEye />}
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => handleViewDetails(subscriber)}
-                          />
-                          <IconButton
-                            aria-label="Editar"
-                            icon={<FiEdit />}
-                            size="sm"
-                            variant="ghost"
-                            colorScheme="blue"
-                            onClick={() => handleEditSubscriber(subscriber)}
-                          />
-                          <IconButton
-                            aria-label="Eliminar"
-                            icon={<FiTrash2 />}
-                            size="sm"
-                            variant="ghost"
-                            colorScheme="red"
-                            onClick={() => handleDeleteSubscriber(subscriber)}
-                          />
-                        </HStack>
-                      </Td>
-                    </Tr>
-                    ))}
-                  </Tbody>
-                </Table>
+                          {subscriber.subscriptionDate}
+                        </Td>
+                        <Td 
+                          fontSize={{ base: "xs", md: "sm" }} 
+                          color={textColor}
+                          display={{ base: "none", xl: "table-cell" }}
+                        >
+                          {subscriber.nextBilling || 'N/A'}
+                        </Td>
+                        <Td 
+                          fontSize={{ base: "xs", md: "sm" }} 
+                          fontWeight="medium" 
+                          color="green.500"
+                          display={{ base: "none", lg: "table-cell" }}
+                        >
+                          ${subscriber.totalPaid}
+                        </Td>
+                        <Td>
+                          <HStack spacing={1}>
+                            <IconButton
+                              aria-label="Ver detalles"
+                              icon={<FiEye />}
+                              size={{ base: "xs", md: "sm" }}
+                              variant="ghost"
+                              onClick={() => handleViewDetails(subscriber)}
+                            />
+                            <IconButton
+                              aria-label="Editar"
+                              icon={<FiEdit />}
+                              size={{ base: "xs", md: "sm" }}
+                              variant="ghost"
+                              colorScheme="blue"
+                              onClick={() => handleEditSubscriber(subscriber)}
+                            />
+                            <IconButton
+                              aria-label="Eliminar"
+                              icon={<FiTrash2 />}
+                              size={{ base: "xs", md: "sm" }}
+                              variant="ghost"
+                              colorScheme="red"
+                              onClick={() => handleDeleteSubscriber(subscriber)}
+                            />
+                          </HStack>
+                        </Td>
+                      </Tr>
+                      ))}
+                    </Tbody>
+                  </Table>
+                </Box>
               )}
             </CardBody>
           </Card>
 
           {/* Modal de detalles del suscriptor */}
-          <Modal isOpen={isDetailModalOpen} onClose={() => setIsDetailModalOpen(false)} size="lg">
+          <Modal 
+            isOpen={isDetailModalOpen} 
+            onClose={() => setIsDetailModalOpen(false)} 
+            size={{ base: "full", md: "lg" }}
+          >
             <ModalOverlay />
-            <ModalContent>
-              <ModalHeader>Detalles del Suscriptor</ModalHeader>
+            <ModalContent mx={{ base: 0, md: 4 }} my={{ base: 0, md: 4 }}>
+              <ModalHeader fontSize={{ base: "md", md: "lg" }}>Detalles del Suscriptor</ModalHeader>
               <ModalCloseButton />
-              <ModalBody>
+              <ModalBody px={{ base: 4, md: 6 }} py={{ base: 4, md: 6 }}>
                 {selectedSubscriber && (
                   <VStack spacing={4} align="stretch">
-                    <HStack spacing={4}>
-                      <Avatar size="lg" name={selectedSubscriber.name} bg="blue.500" />
-                      <VStack align="start" spacing={1}>
-                        <Heading size="md">{selectedSubscriber.name}</Heading>
-                        <Text color={textColor}>{selectedSubscriber.email}</Text>
-                        <HStack spacing={2}>
-                          <Icon as={getPlanIcon(selectedSubscriber.plan)} color={`${getPlanColor(selectedSubscriber.plan)}.500`} />
-                          <Text fontSize="sm" fontWeight="medium">{selectedSubscriber.plan}</Text>
-                        </HStack>
-                        <HStack spacing={2}>
-                          <Icon as={getRoleIcon(selectedSubscriber.role)} color={`${getRoleColor(selectedSubscriber.role)}.500`} />
-                          <Badge 
-                            colorScheme={getRoleColor(selectedSubscriber.role)}
-                            variant="subtle"
-                            fontSize="sm"
-                          >
-                            {selectedSubscriber.role}
-                          </Badge>
+                    <Flex
+                      direction={{ base: "column", sm: "row" }}
+                      align={{ base: "start", sm: "center" }}
+                      gap={4}
+                    >
+                      <Avatar size={{ base: "md", md: "lg" }} name={selectedSubscriber.name} bg="blue.500" />
+                      <VStack align="start" spacing={1} flex={1}>
+                        <Heading size={{ base: "sm", md: "md" }}>{selectedSubscriber.name}</Heading>
+                        <Text color={textColor} fontSize={{ base: "xs", md: "sm" }}>{selectedSubscriber.email}</Text>
+                        <HStack spacing={2} flexWrap="wrap">
+                          <HStack spacing={1}>
+                            <Icon as={getPlanIcon(selectedSubscriber.plan)} color={`${getPlanColor(selectedSubscriber.plan)}.500`} boxSize={4} />
+                            <Text fontSize={{ base: "xs", md: "sm" }} fontWeight="medium">{selectedSubscriber.plan}</Text>
+                          </HStack>
+                          <HStack spacing={1}>
+                            <Icon as={getRoleIcon(selectedSubscriber.role)} color={`${getRoleColor(selectedSubscriber.role)}.500`} boxSize={4} />
+                            <Badge 
+                              colorScheme={getRoleColor(selectedSubscriber.role)}
+                              variant="subtle"
+                              fontSize={{ base: "xs", md: "sm" }}
+                            >
+                              {selectedSubscriber.role}
+                            </Badge>
+                          </HStack>
                         </HStack>
                       </VStack>
-                    </HStack>
+                    </Flex>
                     
                     <Divider />
                     
-                    <Grid templateColumns="repeat(2, 1fr)" gap={4}>
+                    <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={4}>
                       <Box>
-                        <Text fontSize="sm" fontWeight="medium" color={textColor}>Teléfono</Text>
-                        <Text fontSize="sm">{selectedSubscriber.phone}</Text>
+                        <Text fontSize={{ base: "xs", md: "sm" }} fontWeight="medium" color={textColor}>Teléfono</Text>
+                        <Text fontSize={{ base: "xs", md: "sm" }}>{selectedSubscriber.phone}</Text>
                       </Box>
                       <Box>
-                        <Text fontSize="sm" fontWeight="medium" color={textColor}>Estado</Text>
+                        <Text fontSize={{ base: "xs", md: "sm" }} fontWeight="medium" color={textColor}>Estado</Text>
                         <Badge 
                           colorScheme={getStatusColor(selectedSubscriber.status)}
                           variant="subtle"
-                          fontSize="xs"
+                          fontSize={{ base: "xs", md: "xs" }}
                         >
                           {selectedSubscriber.status}
                         </Badge>
                       </Box>
                       <Box>
-                        <Text fontSize="sm" fontWeight="medium" color={textColor}>Fecha de Suscripción</Text>
-                        <Text fontSize="sm">{selectedSubscriber.subscriptionDate}</Text>
+                        <Text fontSize={{ base: "xs", md: "sm" }} fontWeight="medium" color={textColor}>Fecha de Suscripción</Text>
+                        <Text fontSize={{ base: "xs", md: "sm" }}>{selectedSubscriber.subscriptionDate}</Text>
                       </Box>
                       <Box>
-                        <Text fontSize="sm" fontWeight="medium" color={textColor}>Próximo Pago</Text>
-                        <Text fontSize="sm">{selectedSubscriber.nextBilling || 'N/A'}</Text>
+                        <Text fontSize={{ base: "xs", md: "sm" }} fontWeight="medium" color={textColor}>Próximo Pago</Text>
+                        <Text fontSize={{ base: "xs", md: "sm" }}>{selectedSubscriber.nextBilling || 'N/A'}</Text>
                       </Box>
                       <Box>
-                        <Text fontSize="sm" fontWeight="medium" color={textColor}>Total Pagado</Text>
-                        <Text fontSize="sm" fontWeight="medium" color="green.500">${selectedSubscriber.totalPaid}</Text>
+                        <Text fontSize={{ base: "xs", md: "sm" }} fontWeight="medium" color={textColor}>Total Pagado</Text>
+                        <Text fontSize={{ base: "xs", md: "sm" }} fontWeight="medium" color="green.500">${selectedSubscriber.totalPaid}</Text>
                       </Box>
                     </Grid>
                   </VStack>
                 )}
               </ModalBody>
-              <ModalFooter>
-                <Button variant="outline" mr={3} onClick={() => setIsDetailModalOpen(false)}>
-                  Cerrar
-                </Button>
-                <Button colorScheme="blue" onClick={() => {
-                  setIsDetailModalOpen(false)
-                  handleEditSubscriber(selectedSubscriber)
-                }}>
-                  Editar
-                </Button>
+              <ModalFooter px={{ base: 4, md: 6 }} py={{ base: 3, md: 4 }}>
+                <Flex
+                  direction={{ base: "column", sm: "row" }}
+                  gap={2}
+                  w="100%"
+                >
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setIsDetailModalOpen(false)}
+                    flex={1}
+                    size={{ base: "sm", md: "md" }}
+                    fontSize={{ base: "xs", md: "sm" }}
+                  >
+                    Cerrar
+                  </Button>
+                  <Button 
+                    colorScheme="blue" 
+                    onClick={() => {
+                      setIsDetailModalOpen(false)
+                      handleEditSubscriber(selectedSubscriber)
+                    }}
+                    flex={1}
+                    size={{ base: "sm", md: "md" }}
+                    fontSize={{ base: "xs", md: "sm" }}
+                  >
+                    Editar
+                  </Button>
+                </Flex>
               </ModalFooter>
             </ModalContent>
           </Modal>
 
           {/* Modal para editar usuario */}
-          <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} size="lg">
+          <Modal 
+            isOpen={isEditModalOpen} 
+            onClose={() => setIsEditModalOpen(false)} 
+            size={{ base: "full", md: "lg" }}
+          >
             <ModalOverlay />
-            <ModalContent>
-              <ModalHeader>Editar Usuario</ModalHeader>
+            <ModalContent mx={{ base: 0, md: 4 }} my={{ base: 0, md: 4 }}>
+              <ModalHeader fontSize={{ base: "md", md: "lg" }}>Editar Usuario</ModalHeader>
               <ModalCloseButton />
-              <ModalBody>
+              <ModalBody px={{ base: 4, md: 6 }} py={{ base: 4, md: 6 }}>
                 {selectedUserForEdit && (
-                  <VStack spacing={6} align="stretch">
+                  <VStack spacing={{ base: 4, md: 6 }} align="stretch">
                     {/* Información del usuario */}
-                    <HStack spacing={4}>
-                      <Avatar size="lg" name={selectedUserForEdit.name} bg="blue.500" />
-                      <VStack align="start" spacing={1}>
-                        <Heading size="md">{selectedUserForEdit.name}</Heading>
-                        <Text color={textColor}>{selectedUserForEdit.email}</Text>
+                    <Flex
+                      direction={{ base: "column", sm: "row" }}
+                      align={{ base: "start", sm: "center" }}
+                      gap={4}
+                    >
+                      <Avatar size={{ base: "md", md: "lg" }} name={selectedUserForEdit.name} bg="blue.500" />
+                      <VStack align="start" spacing={1} flex={1}>
+                        <Heading size={{ base: "sm", md: "md" }}>{selectedUserForEdit.name}</Heading>
+                        <Text color={textColor} fontSize={{ base: "xs", md: "sm" }}>{selectedUserForEdit.email}</Text>
                         <HStack spacing={2}>
-                          <Icon as={getPlanIcon(selectedUserForEdit.plan)} color={`${getPlanColor(selectedUserForEdit.plan)}.500`} />
-                          <Text fontSize="sm" fontWeight="medium">{selectedUserForEdit.plan}</Text>
+                          <Icon as={getPlanIcon(selectedUserForEdit.plan)} color={`${getPlanColor(selectedUserForEdit.plan)}.500`} boxSize={4} />
+                          <Text fontSize={{ base: "xs", md: "sm" }} fontWeight="medium">{selectedUserForEdit.plan}</Text>
                         </HStack>
                       </VStack>
-                    </HStack>
+                    </Flex>
                     
                     <Divider />
                     
                     {/* Información detallada */}
-                    <Grid templateColumns="repeat(2, 1fr)" gap={4}>
+                    <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={4}>
                       <Box>
-                        <Text fontSize="sm" fontWeight="medium" color={textColor}>Teléfono</Text>
-                        <Text fontSize="sm">{selectedUserForEdit.phone}</Text>
+                        <Text fontSize={{ base: "xs", md: "sm" }} fontWeight="medium" color={textColor}>Teléfono</Text>
+                        <Text fontSize={{ base: "xs", md: "sm" }}>{selectedUserForEdit.phone}</Text>
                       </Box>
                       <Box>
-                        <Text fontSize="sm" fontWeight="medium" color={textColor}>Estado</Text>
+                        <Text fontSize={{ base: "xs", md: "sm" }} fontWeight="medium" color={textColor}>Estado</Text>
                         <Badge 
                           colorScheme={getStatusColor(selectedUserForEdit.status)}
                           variant="subtle"
-                          fontSize="xs"
+                          fontSize={{ base: "xs", md: "xs" }}
                         >
                           {selectedUserForEdit.status}
                         </Badge>
                       </Box>
                       <Box>
-                        <Text fontSize="sm" fontWeight="medium" color={textColor}>Fecha de Suscripción</Text>
-                        <Text fontSize="sm">{selectedUserForEdit.subscriptionDate}</Text>
+                        <Text fontSize={{ base: "xs", md: "sm" }} fontWeight="medium" color={textColor}>Fecha de Suscripción</Text>
+                        <Text fontSize={{ base: "xs", md: "sm" }}>{selectedUserForEdit.subscriptionDate}</Text>
                       </Box>
                       <Box>
-                        <Text fontSize="sm" fontWeight="medium" color={textColor}>Próximo Pago</Text>
-                        <Text fontSize="sm">{selectedUserForEdit.nextBilling || 'N/A'}</Text>
+                        <Text fontSize={{ base: "xs", md: "sm" }} fontWeight="medium" color={textColor}>Próximo Pago</Text>
+                        <Text fontSize={{ base: "xs", md: "sm" }}>{selectedUserForEdit.nextBilling || 'N/A'}</Text>
                       </Box>
                       <Box>
-                        <Text fontSize="sm" fontWeight="medium" color={textColor}>Total Pagado</Text>
-                        <Text fontSize="sm" fontWeight="medium" color="green.500">${selectedUserForEdit.totalPaid}</Text>
+                        <Text fontSize={{ base: "xs", md: "sm" }} fontWeight="medium" color={textColor}>Total Pagado</Text>
+                        <Text fontSize={{ base: "xs", md: "sm" }} fontWeight="medium" color="green.500">${selectedUserForEdit.totalPaid}</Text>
                       </Box>
                     </Grid>
                     
@@ -736,15 +935,16 @@ const SubscribersManagement = () => {
                     
                     {/* Sección para cambiar rol */}
                     <Box>
-                      <Heading size="sm" mb={4}>Cambiar Rol del Usuario</Heading>
+                      <Heading size={{ base: "xs", md: "sm" }} mb={4}>Cambiar Rol del Usuario</Heading>
                       <VStack spacing={4} align="stretch">
                         <FormControl>
-                          <FormLabel>Rol Actual</FormLabel>
+                          <FormLabel fontSize={{ base: "xs", md: "sm" }}>Rol Actual</FormLabel>
                           <HStack spacing={2}>
-                            <Icon as={getRoleIcon(selectedUserForEdit.role)} color={`${getRoleColor(selectedUserForEdit.role)}.500`} />
+                            <Icon as={getRoleIcon(selectedUserForEdit.role)} color={`${getRoleColor(selectedUserForEdit.role)}.500`} boxSize={4} />
                             <Badge 
                               colorScheme={getRoleColor(selectedUserForEdit.role)}
                               variant="subtle"
+                              fontSize={{ base: "xs", md: "sm" }}
                             >
                               {selectedUserForEdit.role}
                             </Badge>
@@ -752,7 +952,7 @@ const SubscribersManagement = () => {
                         </FormControl>
                         
                         <FormControl>
-                          <FormLabel>Nuevo Rol</FormLabel>
+                          <FormLabel fontSize={{ base: "xs", md: "sm" }}>Nuevo Rol</FormLabel>
                           <Select 
                             placeholder="Seleccionar nuevo rol"
                             onChange={(e) => {
@@ -766,6 +966,7 @@ const SubscribersManagement = () => {
                                 }
                               }
                             }}
+                            size={{ base: "sm", md: "md" }}
                           >
                             {availableRoles.map((role) => (
                               <option key={role.id || role.role_id} value={role.role_name}>
@@ -779,8 +980,14 @@ const SubscribersManagement = () => {
                   </VStack>
                 )}
               </ModalBody>
-              <ModalFooter>
-                <Button variant="outline" mr={3} onClick={() => setIsEditModalOpen(false)}>
+              <ModalFooter px={{ base: 4, md: 6 }} py={{ base: 3, md: 4 }}>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setIsEditModalOpen(false)}
+                  size={{ base: "sm", md: "md" }}
+                  fontSize={{ base: "xs", md: "sm" }}
+                  w={{ base: "100%", sm: "auto" }}
+                >
                   Cerrar
                 </Button>
               </ModalFooter>

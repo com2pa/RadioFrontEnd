@@ -846,15 +846,22 @@ const Programs = () => {
 
   if (!hasEditPermission) {
     return (
-      <Box minH="100vh" bg={bgColor} display="flex" alignItems="center" justifyContent="center">
-        <Alert status="error" maxW="md">
+      <Box 
+        minH="100vh" 
+        bg={bgColor} 
+        display="flex" 
+        alignItems="center" 
+        justifyContent="center"
+        px={4}
+      >
+        <Alert status="error" maxW="md" borderRadius="md">
           <AlertIcon />
           <Box>
-            <AlertTitle>Acceso Denegado</AlertTitle>
-            <AlertDescription>
+            <AlertTitle fontSize={{ base: "sm", md: "md" }}>Acceso Denegado</AlertTitle>
+            <AlertDescription fontSize={{ base: "xs", md: "sm" }}>
               No tienes permisos para crear programas. Se requiere rol de editor o superior.
               <br />
-              <Text fontSize="sm" mt={2}>
+              <Text fontSize={{ base: "xs", md: "sm" }} mt={2}>
                 Tu rol actual: {roleInfo.name} (ID: {roleInfo.id})
               </Text>
             </AlertDescription>
@@ -866,41 +873,85 @@ const Programs = () => {
 
   return (
     <Box minH="100vh" bg={bgColor}>
-      <Container maxW="container.xl" py={8}>
-        <VStack spacing={8} align="stretch">
+      <Container maxW="container.xl" py={{ base: 4, md: 6, lg: 8 }} px={{ base: 4, md: 6 }}>
+        <VStack spacing={{ base: 4, md: 6, lg: 8 }} align="stretch">
           {/* Header */}
           <Box>
-            <HStack justify="space-between" align="center" mb={4}>
-              <VStack align="start" spacing={1}>
-                <HStack spacing={4}>
+            <VStack align="stretch" spacing={4}>
+              {/* Título y botón volver */}
+              <VStack align={{ base: "start", md: "start" }} spacing={2}>
+                <Flex
+                  direction={{ base: "column", sm: "row" }}
+                  align={{ base: "start", sm: "center" }}
+                  gap={{ base: 3, md: 4 }}
+                  wrap="wrap"
+                >
                   <Button
                     as={RouterLink}
                     to="/dashboard/admin"
                     leftIcon={<FiArrowLeft />}
                     variant="outline"
-                    size="sm"
+                    size={{ base: "xs", md: "sm" }}
                   >
-                    Volver
+                    <Text display={{ base: "none", sm: "block" }}>Volver</Text>
+                    <Text display={{ base: "block", sm: "none" }}>←</Text>
                   </Button>
-                  <Heading size="lg" color="red.600">
+                  <Heading 
+                    size={{ base: "md", md: "lg", lg: "xl" }} 
+                    color="red.600"
+                  >
                     Programación de Programas
                   </Heading>
-                  <Badge colorScheme="green" variant="solid" fontSize="sm">
+                  <Badge 
+                    colorScheme="green" 
+                    variant="solid" 
+                    fontSize={{ base: "xs", md: "sm" }}
+                  >
                     {roleInfo.name.toUpperCase()}
                   </Badge>
-                </HStack>
-                <Text color={textColor}>
+                </Flex>
+                <Text 
+                  color={textColor}
+                  fontSize={{ base: "sm", md: "md" }}
+                >
                   Visualiza y crea programas en la línea de tiempo
                 </Text>
               </VStack>
-              <HStack spacing={2}>
-                <IconButton aria-label="Abrir menú" icon={<FiMenu />} onClick={onOpen} />
-                <IconButton as={RouterLink} to="/" aria-label="Inicio" icon={<FiHome />} />
-                <Button leftIcon={<FiLogOut />} colorScheme="red" variant="outline" onClick={logout}>
-                  Cerrar sesión
+              
+              {/* Navegación */}
+              <Flex
+                direction={{ base: "row", md: "row" }}
+                justify="flex-end"
+                align="center"
+                gap={2}
+                wrap="wrap"
+              >
+                <IconButton 
+                  aria-label="Abrir menú" 
+                  icon={<FiMenu />} 
+                  onClick={onOpen}
+                  size={{ base: "sm", md: "md" }}
+                />
+                <IconButton 
+                  as={RouterLink} 
+                  to="/" 
+                  aria-label="Inicio" 
+                  icon={<FiHome />}
+                  size={{ base: "sm", md: "md" }}
+                />
+                <Button 
+                  leftIcon={<FiLogOut />} 
+                  colorScheme="red" 
+                  variant="outline" 
+                  onClick={logout}
+                  size={{ base: "sm", md: "md" }}
+                  fontSize={{ base: "xs", md: "sm" }}
+                >
+                  <Text display={{ base: "none", sm: "block" }}>Cerrar sesión</Text>
+                  <Text display={{ base: "block", sm: "none" }}>Salir</Text>
                 </Button>
-              </HStack>
-            </HStack>
+              </Flex>
+            </VStack>
           </Box>
 
           {/* Menú administrativo */}
@@ -912,48 +963,61 @@ const Programs = () => {
 
           {/* Header de la programación semanal */}
           <Card bg={cardBg} boxShadow="lg">
-            <CardHeader bg="red.500" color="white">
-              <VStack align="stretch" spacing={4}>
-                <HStack justify="space-between">
-                  <Heading size="lg">
+            <CardHeader bg="red.500" color="white" p={{ base: 4, md: 6 }}>
+              <VStack align="stretch" spacing={{ base: 3, md: 4 }}>
+                <Flex
+                  direction={{ base: "column", sm: "row" }}
+                  justify="space-between"
+                  align={{ base: "start", sm: "center" }}
+                  gap={3}
+                >
+                  <Heading size={{ base: "md", md: "lg" }}>
                     Programación Semanal de Radio
                   </Heading>
-                  <HStack spacing={2}>
-                    <Button
-                      leftIcon={<FiPlus />}
-                      colorScheme="blue"
-                      size="md"
-                      onClick={() => {
-                        // Establecer fecha actual si no hay fecha seleccionada
-                        const dateToUse = selectedDate || new Date().toISOString().split('T')[0]
-                        // Establecer hora por defecto (primer slot disponible: 5:00 AM)
-                        const defaultTime = '05:00'
-                        setFormData(prev => ({
-                          ...prev,
-                          scheduled_date: dateToUse,
-                          scheduled_time: defaultTime
-                        }))
-                        onModalOpen()
-                      }}
-                    >
-                      + Nuevo Programa
-                    </Button>
-                  </HStack>
-                </HStack>
-                <HStack justify="space-between" flexWrap="wrap" spacing={4}>
-                  <HStack spacing={2}>
-                    <Text fontSize="sm" fontWeight="semibold">
-                      {weekDates[0].dayNumber} - {weekDates[6].dayNumber} de {weekDates[0].month} {new Date(selectedDate).getFullYear()}
-                    </Text>
-                  </HStack>
-                  <HStack spacing={2}>
+                  <Button
+                    leftIcon={<FiPlus />}
+                    colorScheme="blue"
+                    size={{ base: "sm", md: "md" }}
+                    onClick={() => {
+                      // Establecer fecha actual si no hay fecha seleccionada
+                      const dateToUse = selectedDate || new Date().toISOString().split('T')[0]
+                      // Establecer hora por defecto (primer slot disponible: 5:00 AM)
+                      const defaultTime = '05:00'
+                      setFormData(prev => ({
+                        ...prev,
+                        scheduled_date: dateToUse,
+                        scheduled_time: defaultTime
+                      }))
+                      onModalOpen()
+                    }}
+                    fontSize={{ base: "xs", md: "sm" }}
+                  >
+                    <Text display={{ base: "none", sm: "block" }}>+ Nuevo Programa</Text>
+                    <Text display={{ base: "block", sm: "none" }}>+ Nuevo</Text>
+                  </Button>
+                </Flex>
+                <Flex
+                  direction={{ base: "column", md: "row" }}
+                  justify="space-between"
+                  align={{ base: "start", md: "center" }}
+                  gap={3}
+                  flexWrap="wrap"
+                >
+                  <Text 
+                    fontSize={{ base: "xs", md: "sm" }} 
+                    fontWeight="semibold"
+                  >
+                    {weekDates[0].dayNumber} - {weekDates[6].dayNumber} de {weekDates[0].month} {new Date(selectedDate).getFullYear()}
+                  </Text>
+                  <HStack spacing={2} flexWrap="wrap">
                     <Select
                       value={filterType}
                       onChange={(e) => setFilterType(e.target.value)}
-                      size="sm"
+                      size={{ base: "xs", md: "sm" }}
                       bg="white"
                       color="gray.700"
-                      maxW="200px"
+                      maxW={{ base: "full", sm: "200px" }}
+                      fontSize={{ base: "xs", md: "sm" }}
                     >
                       <option value="all">Todos los tipos</option>
                       <option value="tiktok_live">🎵 TikTok Live</option>
@@ -961,55 +1025,90 @@ const Programs = () => {
                       <option value="podcast">🎙️ Podcast</option>
                     </Select>
                     <Button
-                      size="sm"
+                      size={{ base: "xs", md: "sm" }}
                       variant="outline"
                       onClick={() => {
                         const newDate = new Date(selectedDate)
                         newDate.setDate(newDate.getDate() - 7)
                         setSelectedDate(newDate.toISOString().split('T')[0])
                       }}
+                      fontSize={{ base: "xs", md: "sm" }}
                     >
-                      ← Semana Anterior
+                      <Text display={{ base: "none", sm: "block" }}>← Semana Anterior</Text>
+                      <Text display={{ base: "block", sm: "none" }}>←</Text>
                     </Button>
                     <Button
-                      size="sm"
+                      size={{ base: "xs", md: "sm" }}
                       variant="outline"
                       onClick={() => {
                         const newDate = new Date(selectedDate)
                         newDate.setDate(newDate.getDate() + 7)
                         setSelectedDate(newDate.toISOString().split('T')[0])
                       }}
+                      fontSize={{ base: "xs", md: "sm" }}
                     >
-                      Semana Siguiente →
+                      <Text display={{ base: "none", sm: "block" }}>Semana Siguiente →</Text>
+                      <Text display={{ base: "block", sm: "none" }}>→</Text>
                     </Button>
                   </HStack>
-                </HStack>
+                </Flex>
               </VStack>
             </CardHeader>
             <CardBody p={0}>
               {loadingPrograms ? (
                 <Flex justify="center" py={12}>
-                  <Spinner size="xl" color="red.500" />
+                  <VStack spacing={4}>
+                    <Spinner size={{ base: "lg", md: "xl" }} color="red.500" />
+                    <Text 
+                      color={textColor}
+                      fontSize={{ base: "xs", md: "sm" }}
+                    >
+                      Cargando programas...
+                    </Text>
+                  </VStack>
                 </Flex>
               ) : (
-                <Box overflowX="auto">
+                <Box 
+                  overflowX="auto"
+                  overflowY="auto"
+                  maxH={{ base: "70vh", md: "80vh" }}
+                >
                   {/* Grid semanal */}
-                  <Grid templateColumns="120px repeat(7, 1fr)" gap={0} minW="1400px">
+                  <Grid 
+                    templateColumns={{ base: "80px repeat(7, 1fr)", md: "100px repeat(7, 1fr)", lg: "120px repeat(7, 1fr)" }} 
+                    gap={0} 
+                    minW={{ base: "800px", md: "1200px", lg: "1400px" }}
+                  >
                     {/* Columna de horas */}
-                    <Box bg="gray.50" borderRight="2px solid" borderColor="gray.200" position="sticky" left={0} zIndex={10}>
-                      <Box h="60px" borderBottom="1px solid" borderColor="gray.200" />
+                    <Box 
+                      bg="gray.50" 
+                      borderRight="2px solid" 
+                      borderColor="gray.200" 
+                      position="sticky" 
+                      left={0} 
+                      zIndex={10}
+                    >
+                      <Box 
+                        h={{ base: "50px", md: "60px" }} 
+                        borderBottom="1px solid" 
+                        borderColor="gray.200" 
+                      />
                       {timeSlots.map((slot, idx) => (
                         <Box
                           key={idx}
-                          h="60px"
+                          h={{ base: "50px", md: "60px" }}
                           borderBottom="1px solid"
                           borderColor="gray.200"
-                          p={2}
+                          p={{ base: 1, md: 2 }}
                           display="flex"
                           alignItems="center"
                           justifyContent="center"
                         >
-                          <Text fontSize="xs" fontWeight="bold" color="gray.600">
+                          <Text 
+                            fontSize={{ base: "2xs", md: "xs" }} 
+                            fontWeight="bold" 
+                            color="gray.600"
+                          >
                             {slot.time}
                           </Text>
                         </Box>
@@ -1029,26 +1128,36 @@ const Programs = () => {
                         >
                           {/* Header del día */}
                           <Box
-                            h="60px"
+                            h={{ base: "50px", md: "60px" }}
                             bg="gray.100"
                             borderBottom="2px solid"
                             borderColor="gray.300"
-                            p={2}
+                            p={{ base: 1, md: 2 }}
                             textAlign="center"
                             position="sticky"
                             top={0}
                             zIndex={5}
                           >
-                            <Text fontWeight="bold" fontSize="sm" color="gray.700">
+                            <Text 
+                              fontWeight="bold" 
+                              fontSize={{ base: "2xs", md: "xs", lg: "sm" }} 
+                              color="gray.700"
+                            >
                               {day.dayName}
                             </Text>
-                            <Text fontSize="xs" color="gray.500">
+                            <Text 
+                              fontSize={{ base: "2xs", md: "xs" }} 
+                              color="gray.500"
+                            >
                               {day.dayNumber} {day.month}
                             </Text>
                           </Box>
 
                           {/* Contenedor de programas */}
-                          <Box position="relative" minH={`${timeSlots.length * 60}px`}>
+                          <Box 
+                            position="relative" 
+                            minH={{ base: `${timeSlots.length * 50}px`, md: `${timeSlots.length * 60}px` }}
+                          >
                             {/* Renderizar programas */}
                             {dayPrograms.map((program, progIdx) => {
                               const programTime = new Date(program.scheduled_date)
@@ -1057,23 +1166,25 @@ const Programs = () => {
                               const programStartMinutes = programHour * 60 + programMinute
                               const startSlot = timeSlots.findIndex(slot => slot.totalMinutes === programStartMinutes)
                               const durationSlots = Math.ceil((program.duration_minutes || 60) / 30)
-                              const topPosition = startSlot * 60
-                              const height = durationSlots * 60
+                              // Usar 50px para móvil, 60px para desktop (se ajustará con CSS)
+                              const slotHeight = 60 // Altura base, se ajusta con media queries
+                              const topPosition = startSlot * slotHeight
+                              const height = durationSlots * slotHeight
 
                               return (
                                 <Box
                                   key={progIdx}
                                   position="absolute"
                                   top={`${topPosition}px`}
-                                  left="4px"
-                                  right="4px"
+                                  left="2px"
+                                  right="2px"
                                   h={`${height}px`}
                                   bg="white"
                                   borderRadius="md"
                                   boxShadow="sm"
                                   border="2px solid"
                                   borderColor={`${getTypeColor(program.program_type)}.400`}
-                                  p={2}
+                                  p={{ base: 1, md: 2 }}
                                   cursor="pointer"
                                   _hover={{
                                     boxShadow: "md",
@@ -1082,23 +1193,25 @@ const Programs = () => {
                                   transition="all 0.2s"
                                   onClick={() => loadProgramForEdit(program.program_id)}
                                 >
-                                  <VStack align="start" spacing={1} h="100%">
+                                  <VStack align="start" spacing={0.5} h="100%">
                                     <HStack spacing={1} w="100%" justify="space-between">
                                       <HStack spacing={1}>
-                                        <Text fontSize="lg">{getTypeIcon(program.program_type)}</Text>
+                                        <Text fontSize={{ base: "sm", md: "lg" }}>
+                                          {getTypeIcon(program.program_type)}
+                                        </Text>
                                         <Badge
                                           colorScheme={getTypeColor(program.program_type)}
-                                          fontSize="xs"
+                                          fontSize={{ base: "2xs", md: "xs" }}
                                           borderRadius="full"
                                         >
                                           {(program.duration_minutes || 60) / 60}h
                                         </Badge>
                                       </HStack>
-                                      <HStack spacing={1}>
+                                      <HStack spacing={0.5}>
                                         <IconButton
                                           aria-label="Editar programa"
                                           icon={<FiEdit2 />}
-                                          size="xs"
+                                          size={{ base: "2xs", md: "xs" }}
                                           colorScheme="blue"
                                           variant="ghost"
                                           onClick={(e) => {
@@ -1109,7 +1222,7 @@ const Programs = () => {
                                         <IconButton
                                           aria-label="Eliminar programa"
                                           icon={<FiTrash2 />}
-                                          size="xs"
+                                          size={{ base: "2xs", md: "xs" }}
                                           colorScheme="red"
                                           variant="ghost"
                                           onClick={(e) => handleDeleteClick(program, e)}
@@ -1117,14 +1230,19 @@ const Programs = () => {
                                       </HStack>
                                     </HStack>
                                     <Text
-                                      fontSize="xs"
+                                      fontSize={{ base: "2xs", md: "xs" }}
                                       fontWeight="bold"
-                                      noOfLines={2}
+                                      noOfLines={{ base: 1, md: 2 }}
                                       flex={1}
+                                      wordBreak="break-word"
                                     >
                                       {program.program_title}
                                     </Text>
-                                    <Text fontSize="xs" color="gray.500">
+                                    <Text 
+                                      fontSize={{ base: "2xs", md: "xs" }} 
+                                      color="gray.500"
+                                      display={{ base: "none", md: "block" }}
+                                    >
                                       {formatTime(program.scheduled_date)} - {(() => {
                                         const endTime = new Date(program.scheduled_date)
                                         endTime.setMinutes(endTime.getMinutes() + (program.duration_minutes || 60))
@@ -1158,14 +1276,14 @@ const Programs = () => {
                                     key={slotIdx}
                                     position="absolute"
                                     top={`${slotIdx * 60}px`}
-                                    left="4px"
-                                    right="4px"
-                                    h="60px"
+                                    left="2px"
+                                    right="2px"
+                                    h={{ base: "50px", md: "60px" }}
                                     border="2px dashed"
                                     borderColor="green.300"
                                     borderRadius="md"
                                     bg="green.50"
-                                    p={2}
+                                    p={{ base: 1, md: 2 }}
                                     cursor="pointer"
                                     _hover={{
                                       bg: "green.100",
@@ -1193,16 +1311,28 @@ const Programs = () => {
                                     }}
                                   >
                                     <VStack align="start" spacing={0} h="100%" justify="center">
-                                      <Text fontSize="xs" fontWeight="semibold" color="green.600">
+                                      <Text 
+                                        fontSize={{ base: "2xs", md: "xs" }} 
+                                        fontWeight="semibold" 
+                                        color="green.600"
+                                      >
                                         Espacio Libre
                                       </Text>
-                                      <Text fontSize="xs" color="green.500">
+                                      <Text 
+                                        fontSize={{ base: "2xs", md: "xs" }} 
+                                        color="green.500"
+                                        display={{ base: "none", md: "block" }}
+                                      >
                                         {slot.time} - {(() => {
                                           const nextSlot = timeSlots[slotIdx + 1]
                                           return nextSlot ? nextSlot.time : '8:00 PM'
                                         })()}
                                       </Text>
-                                      <Text fontSize="xs" color="green.400">
+                                      <Text 
+                                        fontSize={{ base: "2xs", md: "xs" }} 
+                                        color="green.400"
+                                        display={{ base: "none", md: "block" }}
+                                      >
                                         30 min
                                       </Text>
                                     </VStack>
@@ -1224,26 +1354,48 @@ const Programs = () => {
       </Container>
 
       {/* Modal para crear/editar programa */}
-      <Modal isOpen={isModalOpen} onClose={handleCloseModal} size="xl" scrollBehavior="inside" isCentered>
+      <Modal 
+        isOpen={isModalOpen} 
+        onClose={handleCloseModal} 
+        size={{ base: "full", md: "xl" }} 
+        scrollBehavior="inside" 
+        isCentered
+      >
         <ModalOverlay />
-        <ModalContent maxH="90vh">
-          <ModalHeader bg="red.500" color="white" position="sticky" top={0} zIndex={1}>
+        <ModalContent maxH={{ base: "100vh", md: "90vh" }} mx={{ base: 0, md: 4 }}>
+          <ModalHeader 
+            bg="red.500" 
+            color="white" 
+            position="sticky" 
+            top={0} 
+            zIndex={1}
+            p={{ base: 4, md: 6 }}
+          >
             <HStack spacing={2}>
-              <Icon as={editingProgramId ? FiEdit2 : FiPlus} />
-              <Text>{editingProgramId ? 'Editar Programa' : 'Crear Nuevo Programa'}</Text>
+              <Icon as={editingProgramId ? FiEdit2 : FiPlus} boxSize={{ base: 5, md: 6 }} />
+              <Text fontSize={{ base: "md", md: "lg" }}>
+                {editingProgramId ? 'Editar Programa' : 'Crear Nuevo Programa'}
+              </Text>
             </HStack>
           </ModalHeader>
-          <ModalCloseButton color="white" />
+          <ModalCloseButton color="white" size={{ base: "sm", md: "md" }} />
           <form onSubmit={handleSubmit}>
-            <ModalBody overflowY="auto" maxH="calc(90vh - 140px)">
-              <VStack spacing={4} align="stretch" pt={4}>
+            <ModalBody 
+              overflowY="auto" 
+              maxH={{ base: "calc(100vh - 120px)", md: "calc(90vh - 140px)" }}
+              px={{ base: 4, md: 6 }}
+              pb={{ base: 4, md: 6 }}
+            >
+              <VStack spacing={{ base: 3, md: 4 }} align="stretch" pt={4}>
                 {/* Información del horario seleccionado */}
                 {(selectedTimeSlot || formData.scheduled_date) && (
                   <Alert status="info" borderRadius="md">
                     <AlertIcon />
                     <Box>
-                      <AlertTitle fontSize="sm">Horario Programado</AlertTitle>
-                      <AlertDescription fontSize="sm">
+                      <AlertTitle fontSize={{ base: "xs", md: "sm" }}>
+                        Horario Programado
+                      </AlertTitle>
+                      <AlertDescription fontSize={{ base: "xs", md: "sm" }}>
                         {formData.scheduled_date 
                           ? new Date(formData.scheduled_date).toLocaleDateString('es-ES', { 
                               weekday: 'long', 
@@ -1263,9 +1415,9 @@ const Programs = () => {
                 {!selectedTimeSlot && (
                   <Grid templateColumns={{ base: '1fr', md: '1fr 1fr' }} gap={4}>
                     <FormControl isRequired>
-                      <FormLabel>
+                      <FormLabel fontSize={{ base: "sm", md: "md" }}>
                         <HStack spacing={2}>
-                          <Icon as={FiCalendar} />
+                          <Icon as={FiCalendar} boxSize={{ base: 4, md: 5 }} />
                           <Text>Fecha Programada</Text>
                         </HStack>
                       </FormLabel>
@@ -1276,13 +1428,14 @@ const Programs = () => {
                         type="date"
                         min={new Date().toISOString().split('T')[0]}
                         focusBorderColor="red.500"
+                        size={{ base: "sm", md: "md" }}
                       />
                     </FormControl>
 
                     <FormControl isRequired>
-                      <FormLabel>
+                      <FormLabel fontSize={{ base: "sm", md: "md" }}>
                         <HStack spacing={2}>
-                          <Icon as={FiClock} />
+                          <Icon as={FiClock} boxSize={{ base: 4, md: 5 }} />
                           <Text>Hora Programada</Text>
                         </HStack>
                       </FormLabel>
@@ -1292,8 +1445,9 @@ const Programs = () => {
                         onChange={handleInputChange}
                         type="time"
                         focusBorderColor="red.500"
+                        size={{ base: "sm", md: "md" }}
                       />
-                      <FormHelperText fontSize="xs">
+                      <FormHelperText fontSize={{ base: "xs", md: "sm" }}>
                         Horario permitido: 5:00 AM - 8:00 PM
                       </FormHelperText>
                     </FormControl>
@@ -1302,19 +1456,24 @@ const Programs = () => {
 
                 {/* Título */}
                 <FormControl isRequired>
-                  <FormLabel>Título del Programa</FormLabel>
+                  <FormLabel fontSize={{ base: "sm", md: "md" }}>
+                    Título del Programa
+                  </FormLabel>
                   <Input
                     name="program_title"
                     value={formData.program_title}
                     onChange={handleInputChange}
                     placeholder="Ej: Programa Matutino"
                     focusBorderColor="red.500"
+                    size={{ base: "sm", md: "md" }}
                   />
                 </FormControl>
 
                 {/* Descripción */}
                 <FormControl>
-                  <FormLabel>Descripción</FormLabel>
+                  <FormLabel fontSize={{ base: "sm", md: "md" }}>
+                    Descripción
+                  </FormLabel>
                   <Textarea
                     name="program_description"
                     value={formData.program_description}
@@ -1322,18 +1481,22 @@ const Programs = () => {
                     placeholder="Descripción opcional..."
                     rows={3}
                     focusBorderColor="red.500"
+                    size={{ base: "sm", md: "md" }}
                   />
                 </FormControl>
 
                 {/* Tipo */}
                 <FormControl isRequired>
-                  <FormLabel>Tipo de Programa</FormLabel>
+                  <FormLabel fontSize={{ base: "sm", md: "md" }}>
+                    Tipo de Programa
+                  </FormLabel>
                   <Select
                     name="program_type"
                     value={formData.program_type}
                     onChange={handleInputChange}
                     placeholder="Selecciona el tipo"
                     focusBorderColor="red.500"
+                    size={{ base: "sm", md: "md" }}
                   >
                     <option value="tiktok_live">🎵 TikTok Live</option>
                     <option value="instagram_live">📷 Instagram Live</option>
@@ -1344,7 +1507,9 @@ const Programs = () => {
                 {/* URL de TikTok Live */}
                 {formData.program_type === 'tiktok_live' && (
                   <FormControl isRequired>
-                    <FormLabel>URL de TikTok Live</FormLabel>
+                    <FormLabel fontSize={{ base: "sm", md: "md" }}>
+                      URL de TikTok Live
+                    </FormLabel>
                     <Input
                       name="tiktok_live_url"
                       value={formData.tiktok_live_url}
@@ -1352,6 +1517,7 @@ const Programs = () => {
                       placeholder="https://www.tiktok.com/@usuario/live"
                       type="url"
                       focusBorderColor="red.500"
+                      size={{ base: "sm", md: "md" }}
                     />
                   </FormControl>
                 )}
@@ -1359,7 +1525,9 @@ const Programs = () => {
                 {/* URL de Instagram Live */}
                 {formData.program_type === 'instagram_live' && (
                   <FormControl isRequired>
-                    <FormLabel>URL de Instagram Live</FormLabel>
+                    <FormLabel fontSize={{ base: "sm", md: "md" }}>
+                      URL de Instagram Live
+                    </FormLabel>
                     <Input
                       name="instagram_live_url"
                       value={formData.instagram_live_url}
@@ -1367,6 +1535,7 @@ const Programs = () => {
                       placeholder="https://www.instagram.com/usuario/live"
                       type="url"
                       focusBorderColor="red.500"
+                      size={{ base: "sm", md: "md" }}
                     />
                   </FormControl>
                 )}
@@ -1374,7 +1543,9 @@ const Programs = () => {
                 {/* Podcast */}
                 {formData.program_type === 'podcast' && (
                   <FormControl isRequired>
-                    <FormLabel>Podcast</FormLabel>
+                    <FormLabel fontSize={{ base: "sm", md: "md" }}>
+                      Podcast
+                    </FormLabel>
                     <Select
                       name="podcast_id"
                       value={formData.podcast_id}
@@ -1382,6 +1553,7 @@ const Programs = () => {
                       placeholder="Selecciona un podcast"
                       isDisabled={loadingPodcasts}
                       focusBorderColor="red.500"
+                      size={{ base: "sm", md: "md" }}
                     >
                       {podcasts.map((podcast) => (
                         <option key={podcast.podcast_id} value={podcast.podcast_id}>
@@ -1394,7 +1566,9 @@ const Programs = () => {
 
                 {/* Duración */}
                 <FormControl isRequired>
-                  <FormLabel>Duración (minutos)</FormLabel>
+                  <FormLabel fontSize={{ base: "sm", md: "md" }}>
+                    Duración (minutos)
+                  </FormLabel>
                   <Input
                     name="duration_minutes"
                     value={formData.duration_minutes}
@@ -1404,30 +1578,42 @@ const Programs = () => {
                     max={120}
                     step={15}
                     focusBorderColor="red.500"
+                    size={{ base: "sm", md: "md" }}
                   />
-                  <FormHelperText>Entre 60 y 120 minutos</FormHelperText>
+                  <FormHelperText fontSize={{ base: "xs", md: "sm" }}>
+                    Entre 60 y 120 minutos
+                  </FormHelperText>
                 </FormControl>
 
                 {/* Imagen del Programa */}
                 <FormControl>
-                  <FormLabel>Imagen del Programa</FormLabel>
+                  <FormLabel fontSize={{ base: "sm", md: "md" }}>
+                    Imagen del Programa
+                  </FormLabel>
                   <Input
                     type="file"
                     accept="image/jpeg,image/png,image/jpg,image/webp"
                     onChange={handleImageChange}
                     p={1}
                     focusBorderColor="red.500"
+                    size={{ base: "sm", md: "md" }}
                   />
-                  <FormHelperText>
+                  <FormHelperText fontSize={{ base: "xs", md: "sm" }}>
                     Selecciona una imagen para el programa (JPG, PNG, WEBP)
                   </FormHelperText>
                   {formData.program_image && (
                     <Box mt={2}>
-                      <HStack spacing={2}>
-                        <Badge colorScheme="green" fontSize="xs">
+                      <HStack spacing={2} flexWrap="wrap">
+                        <Badge 
+                          colorScheme="green" 
+                          fontSize={{ base: "2xs", md: "xs" }}
+                        >
                           {formData.program_image.isExisting ? '✓ Imagen actual' : '✓ Imagen seleccionada'}
                         </Badge>
-                        <Text fontSize="xs" color="gray.500">
+                        <Text 
+                          fontSize={{ base: "2xs", md: "xs" }} 
+                          color="gray.500"
+                        >
                           {formData.program_image.name}
                         </Text>
                       </HStack>
@@ -1436,7 +1622,7 @@ const Programs = () => {
                           <Image
                             src={URL.createObjectURL(formData.program_image)}
                             alt="Vista previa"
-                            maxH="100px"
+                            maxH={{ base: "80px", md: "100px" }}
                             borderRadius="md"
                             border="1px solid"
                             borderColor="gray.200"
@@ -1445,7 +1631,11 @@ const Programs = () => {
                       )}
                       {formData.program_image.isExisting && !(formData.program_image instanceof File) && (
                         <Box mt={2}>
-                          <Text fontSize="xs" color="gray.500" fontStyle="italic">
+                          <Text 
+                            fontSize={{ base: "2xs", md: "xs" }} 
+                            color="gray.500" 
+                            fontStyle="italic"
+                          >
                             La imagen actual se mantendrá. Selecciona una nueva imagen para reemplazarla.
                           </Text>
                         </Box>
@@ -1456,9 +1646,9 @@ const Programs = () => {
 
                 {/* Usuarios - Locutores */}
                 <FormControl isRequired>
-                  <FormLabel>
+                  <FormLabel fontSize={{ base: "sm", md: "md" }}>
                     <HStack spacing={2}>
-                      <Icon as={FiUsers} />
+                      <Icon as={FiUsers} boxSize={{ base: 4, md: 5 }} />
                       <Text>Locutores del Programa</Text>
                     </HStack>
                   </FormLabel>
@@ -1466,30 +1656,41 @@ const Programs = () => {
                     border="2px solid"
                     borderColor="gray.200"
                     borderRadius="lg"
-                    p={4}
-                    maxH="250px"
+                    p={{ base: 3, md: 4 }}
+                    maxH={{ base: "200px", md: "250px" }}
                     overflowY="auto"
                     bg="gray.50"
                     _dark={{ bg: "gray.700" }}
                   >
                     {loadingUsers ? (
                       <Flex justify="center" py={4}>
-                        <Spinner size="md" color="red.500" />
+                        <VStack spacing={2}>
+                          <Spinner size={{ base: "sm", md: "md" }} color="red.500" />
+                          <Text 
+                            fontSize={{ base: "xs", md: "sm" }}
+                            color={textColor}
+                          >
+                            Cargando locutores...
+                          </Text>
+                        </VStack>
                       </Flex>
                     ) : users.length === 0 ? (
                       <Box textAlign="center" py={4}>
-                        <Text color="orange.500" fontSize="sm">
+                        <Text 
+                          color="orange.500" 
+                          fontSize={{ base: "xs", md: "sm" }}
+                        >
                           No hay usuarios con rol de locutor disponibles
                         </Text>
                       </Box>
                     ) : (
-                      <VStack spacing={3} align="stretch">
+                      <VStack spacing={{ base: 2, md: 3 }} align="stretch">
                         {users.map((user) => {
                           const isSelected = formData.program_users?.includes(user.user_id)
                           return (
                             <Box
                               key={user.user_id}
-                              p={3}
+                              p={{ base: 2, md: 3 }}
                               borderRadius="md"
                               border="2px solid"
                               borderColor={isSelected ? "red.400" : "gray.300"}
@@ -1508,34 +1709,51 @@ const Programs = () => {
                                 borderColor: isSelected ? "red.400" : "gray.600"
                               }}
                             >
-                              <HStack spacing={3}>
+                              <HStack spacing={{ base: 2, md: 3 }}>
                                 <Checkbox
                                   isChecked={isSelected}
                                   onChange={() => handleUserSelection(user.user_id)}
                                   value={user.user_id}
                                   colorScheme="red"
-                                  size="lg"
+                                  size={{ base: "md", md: "lg" }}
                                 />
                                 <Avatar
-                                  size="md"
+                                  size={{ base: "sm", md: "md" }}
                                   name={`${user.user_name || user.name} ${user.user_lastname || user.lastname}`}
                                   bg="red.500"
                                 />
                                 <VStack align="start" spacing={0} flex={1}>
-                                  <HStack spacing={2}>
-                                    <Text fontSize="sm" fontWeight="bold" noOfLines={1}>
+                                  <HStack spacing={2} flexWrap="wrap">
+                                    <Text 
+                                      fontSize={{ base: "xs", md: "sm" }} 
+                                      fontWeight="bold" 
+                                      noOfLines={1}
+                                    >
                                       {user.user_name || user.name} {user.user_lastname || user.lastname}
                                     </Text>
                                     {isSelected && (
-                                      <Badge colorScheme="red" fontSize="xs" borderRadius="full">
+                                      <Badge 
+                                        colorScheme="red" 
+                                        fontSize={{ base: "2xs", md: "xs" }} 
+                                        borderRadius="full"
+                                      >
                                         Seleccionado
                                       </Badge>
                                     )}
                                   </HStack>
-                                  <Text fontSize="xs" color="gray.500" noOfLines={1}>
+                                  <Text 
+                                    fontSize={{ base: "2xs", md: "xs" }} 
+                                    color="gray.500" 
+                                    noOfLines={1}
+                                  >
                                     {user.user_email || user.email}
                                   </Text>
-                                  <Badge colorScheme="blue" variant="subtle" fontSize="xs" mt={1}>
+                                  <Badge 
+                                    colorScheme="blue" 
+                                    variant="subtle" 
+                                    fontSize={{ base: "2xs", md: "xs" }} 
+                                    mt={1}
+                                  >
                                     🎙️ Locutor
                                   </Badge>
                                 </VStack>
@@ -1547,31 +1765,52 @@ const Programs = () => {
                     )}
                   </Box>
                   {formData.program_users.length > 0 && (
-                    <HStack mt={2} spacing={2}>
-                      <Badge colorScheme="green" fontSize="sm" px={2} py={1} borderRadius="full">
+                    <HStack mt={2} spacing={2} flexWrap="wrap">
+                      <Badge 
+                        colorScheme="green" 
+                        fontSize={{ base: "xs", md: "sm" }} 
+                        px={2} 
+                        py={1} 
+                        borderRadius="full"
+                      >
                         ✓ {formData.program_users.length} locutor(es) seleccionado(s)
                       </Badge>
                     </HStack>
                   )}
-                  <FormHelperText>
+                  <FormHelperText fontSize={{ base: "xs", md: "sm" }}>
                     Selecciona al menos un locutor para el programa. Mínimo 1 usuario con rol "locutor"
                   </FormHelperText>
                 </FormControl>
               </VStack>
             </ModalBody>
-            <ModalFooter>
-              <Button variant="ghost" mr={3} onClick={handleCloseModal}>
-                Cancelar
-              </Button>
-              <Button
-                type="submit"
-                colorScheme="red"
-                leftIcon={<FiSave />}
-                isLoading={submitting}
-                loadingText={editingProgramId ? "Actualizando..." : "Creando..."}
+            <ModalFooter px={{ base: 4, md: 6 }} pb={{ base: 4, md: 6 }}>
+              <Flex
+                direction={{ base: "column", sm: "row" }}
+                w="full"
+                gap={3}
               >
-                {editingProgramId ? 'Actualizar Programa' : 'Crear Programa'}
-              </Button>
+                <Button 
+                  variant="ghost" 
+                  onClick={handleCloseModal}
+                  size={{ base: "sm", md: "md" }}
+                  fontSize={{ base: "xs", md: "sm" }}
+                  flex={1}
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  type="submit"
+                  colorScheme="red"
+                  leftIcon={<FiSave />}
+                  isLoading={submitting}
+                  loadingText={editingProgramId ? "Actualizando..." : "Creando..."}
+                  size={{ base: "sm", md: "md" }}
+                  fontSize={{ base: "xs", md: "sm" }}
+                  flex={1}
+                >
+                  {editingProgramId ? 'Actualizar Programa' : 'Crear Programa'}
+                </Button>
+              </Flex>
             </ModalFooter>
           </form>
         </ModalContent>
@@ -1585,35 +1824,58 @@ const Programs = () => {
         isCentered
       >
         <AlertDialogOverlay>
-          <AlertDialogContent>
-            <AlertDialogHeader fontSize="lg" fontWeight="bold" color="red.500">
+          <AlertDialogContent mx={{ base: 4, md: 0 }} maxW={{ base: "full", md: "md" }}>
+            <AlertDialogHeader 
+              fontSize={{ base: "md", md: "lg" }} 
+              fontWeight="bold" 
+              color="red.500"
+              pb={{ base: 3, md: 4 }}
+            >
               Eliminar Programa
             </AlertDialogHeader>
 
-            <AlertDialogBody>
-              ¿Estás seguro de que deseas eliminar el programa{' '}
-              <Text as="span" fontWeight="bold">
-                "{programToDelete?.program_title}"
+            <AlertDialogBody px={{ base: 4, md: 6 }} pb={{ base: 4, md: 6 }}>
+              <Text fontSize={{ base: "sm", md: "md" }}>
+                ¿Estás seguro de que deseas eliminar el programa{' '}
+                <Text as="span" fontWeight="bold">
+                  "{programToDelete?.program_title}"
+                </Text>
+                ?
               </Text>
-              ?
               <br />
-              <br />
-              Esta acción no se puede deshacer.
+              <Text fontSize={{ base: "xs", md: "sm" }} color="gray.600">
+                Esta acción no se puede deshacer.
+              </Text>
             </AlertDialogBody>
 
-            <AlertDialogFooter>
-              <Button ref={cancelRef} onClick={onDeleteDialogClose} isDisabled={deleting}>
-                Cancelar
-              </Button>
-              <Button
-                colorScheme="red"
-                onClick={handleDeleteProgram}
-                ml={3}
-                isLoading={deleting}
-                loadingText="Eliminando..."
+            <AlertDialogFooter px={{ base: 4, md: 6 }} pb={{ base: 4, md: 6 }}>
+              <Flex
+                direction={{ base: "column", sm: "row" }}
+                w="full"
+                gap={3}
               >
-                Eliminar
-              </Button>
+                <Button 
+                  ref={cancelRef} 
+                  onClick={onDeleteDialogClose} 
+                  isDisabled={deleting}
+                  size={{ base: "sm", md: "md" }}
+                  fontSize={{ base: "xs", md: "sm" }}
+                  flex={1}
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  colorScheme="red"
+                  onClick={handleDeleteProgram}
+                  isLoading={deleting}
+                  loadingText="Eliminando..."
+                  size={{ base: "sm", md: "md" }}
+                  fontSize={{ base: "xs", md: "sm" }}
+                  flex={1}
+                >
+                  Eliminar
+                </Button>
+              </Flex>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialogOverlay>

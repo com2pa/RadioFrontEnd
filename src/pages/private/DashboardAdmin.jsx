@@ -91,34 +91,76 @@ const DashboardAdmin = () => {
 
   return (
     <Box minH="100vh" bg={bgColor}>
-      <Container maxW="container.xl" py={8}>
-        <VStack spacing={8} align="stretch">
+      <Container maxW="container.xl" py={{ base: 4, md: 6, lg: 8 }} px={{ base: 4, md: 6 }}>
+        <VStack spacing={{ base: 4, md: 6, lg: 8 }} align="stretch">
           {/* Header del Dashboard */}
           <Box>
-            <HStack justify="space-between" align="center" mb={4}>
-              <VStack align="start" spacing={1}>
-                <Heading size="lg" color="blue.600">
+            <VStack align="stretch" spacing={4}>
+              {/* Título y subtítulo */}
+              <VStack align={{ base: "start", md: "start" }} spacing={1}>
+                <Heading 
+                  size={{ base: "md", md: "lg", lg: "xl" }} 
+                  color="blue.600"
+                >
                   Panel de Administración
                 </Heading>
-                <Text color={textColor}>
+                <Text 
+                  color={textColor}
+                  fontSize={{ base: "sm", md: "md" }}
+                >
                   Gestión completa del sistema Radio FM
                 </Text>
               </VStack>
-              <HStack spacing={2}>
-                <IconButton aria-label="Abrir menú" icon={<FiMenu />} onClick={onOpen} />
-                <IconButton as={RouterLink} to="/" aria-label="Inicio" icon={<FiHome />} />
-                <Button leftIcon={<FiLogOut />} colorScheme="red" variant="outline" onClick={logout}>
-                  Cerrar sesión
-                </Button>
-                <HStack spacing={4}>
+              
+              {/* Navegación y perfil - Responsive */}
+              <Flex
+                direction={{ base: "column", md: "row" }}
+                justify="space-between"
+                align={{ base: "stretch", md: "center" }}
+                gap={4}
+                wrap="wrap"
+              >
+                {/* Botones de navegación */}
+                <HStack spacing={2} flexWrap="wrap">
+                  <IconButton 
+                    aria-label="Abrir menú" 
+                    icon={<FiMenu />} 
+                    onClick={onOpen}
+                    size={{ base: "sm", md: "md" }}
+                  />
+                  <IconButton 
+                    as={RouterLink} 
+                    to="/" 
+                    aria-label="Inicio" 
+                    icon={<FiHome />}
+                    size={{ base: "sm", md: "md" }}
+                  />
+                  <Button 
+                    leftIcon={<FiLogOut />} 
+                    colorScheme="red" 
+                    variant="outline" 
+                    onClick={logout}
+                    size={{ base: "sm", md: "md" }}
+                    fontSize={{ base: "xs", md: "sm" }}
+                  >
+                    <Text display={{ base: "none", sm: "block" }}>Cerrar sesión</Text>
+                    <Text display={{ base: "block", sm: "none" }}>Salir</Text>
+                  </Button>
+                </HStack>
+                
+                {/* Perfil de usuario */}
+                <HStack spacing={3}>
                   <Avatar 
-                    size="md" 
+                    size={{ base: "sm", md: "md" }} 
                     name={auth?.user_name || auth?.name || 'Usuario'} 
                     bg="red.500" 
                   />
-                  <VStack align="start" spacing={0}>
-                    <HStack spacing={2}>
-                      <Text fontWeight="medium">
+                  <VStack align="start" spacing={0} display={{ base: "none", sm: "flex" }}>
+                    <HStack spacing={2} flexWrap="wrap">
+                      <Text 
+                        fontWeight="medium"
+                        fontSize={{ base: "sm", md: "md" }}
+                      >
                         {auth?.user_name || auth?.name || 'Usuario'}
                       </Text>
                       <Badge 
@@ -129,13 +171,32 @@ const DashboardAdmin = () => {
                         {roleInfo.name.toUpperCase()}
                       </Badge>
                     </HStack>
-                    <Text fontSize="sm" color={textColor}>
+                    <Text 
+                      fontSize={{ base: "xs", md: "sm" }} 
+                      color={textColor}
+                    >
                       {auth?.user_email || auth?.email || 'usuario@radiofm.com'}
                     </Text>
                   </VStack>
+                  {/* Versión compacta para móvil */}
+                  <VStack align="start" spacing={0} display={{ base: "flex", sm: "none" }}>
+                    <Text 
+                      fontWeight="medium"
+                      fontSize="xs"
+                    >
+                      {auth?.user_name || auth?.name || 'Usuario'}
+                    </Text>
+                    <Badge 
+                      colorScheme="red" 
+                      variant="solid" 
+                      fontSize="2xs"
+                    >
+                      {roleInfo.name.toUpperCase()}
+                    </Badge>
+                  </VStack>
                 </HStack>
-              </HStack>
-            </HStack>
+              </Flex>
+            </VStack>
           </Box>
 
           {/* Menú administrativo reutilizable */}
@@ -154,11 +215,20 @@ const DashboardAdmin = () => {
                   status={alert.type}
                   borderRadius="md"
                   variant="left-accent"
+                  py={{ base: 3, md: 4 }}
                 >
                   <AlertIcon />
-                  <Box>
-                    <AlertTitle fontSize="sm">{alert.message}</AlertTitle>
-                    <AlertDescription fontSize="xs" color={textColor}>
+                  <Box flex="1">
+                    <AlertTitle 
+                      fontSize={{ base: "xs", md: "sm" }}
+                      mb={1}
+                    >
+                      {alert.message}
+                    </AlertTitle>
+                    <AlertDescription 
+                      fontSize={{ base: "2xs", md: "xs" }} 
+                      color={textColor}
+                    >
                       {alert.time}
                     </AlertDescription>
                   </Box>
@@ -168,14 +238,26 @@ const DashboardAdmin = () => {
           )}
 
           {/* Estadísticas principales */}
-          <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' }} gap={6}>
+          <Grid 
+            templateColumns={{ 
+              base: '1fr', 
+              sm: 'repeat(2, 1fr)', 
+              lg: 'repeat(4, 1fr)' 
+            }} 
+            gap={{ base: 4, md: 5, lg: 6 }}
+          >
             <GridItem>
-              <Card bg={cardBg} boxShadow="md">
-                <CardBody>
+              <Card bg={cardBg} boxShadow="md" h="100%">
+                <CardBody p={{ base: 4, md: 6 }}>
                   <Stat>
-                    <StatLabel>Total Usuarios</StatLabel>
-                    <StatNumber color="blue.500">{adminStats.totalUsers.toLocaleString()}</StatNumber>
-                    <StatHelpText>
+                    <StatLabel fontSize={{ base: "xs", md: "sm" }}>Total Usuarios</StatLabel>
+                    <StatNumber 
+                      color="blue.500"
+                      fontSize={{ base: "xl", md: "2xl", lg: "3xl" }}
+                    >
+                      {adminStats.totalUsers.toLocaleString()}
+                    </StatNumber>
+                    <StatHelpText fontSize={{ base: "xs", md: "sm" }}>
                       <StatArrow type="increase" />
                       +{adminStats.monthlyGrowth}% este mes
                     </StatHelpText>
@@ -185,13 +267,23 @@ const DashboardAdmin = () => {
             </GridItem>
             
             <GridItem>
-              <Card bg={cardBg} boxShadow="md">
-                <CardBody>
+              <Card bg={cardBg} boxShadow="md" h="100%">
+                <CardBody p={{ base: 4, md: 6 }}>
                   <Stat>
-                    <StatLabel>Usuarios Activos</StatLabel>
-                    <StatNumber color="green.500">{adminStats.activeUsers.toLocaleString()}</StatNumber>
-                    <StatHelpText>
-                      <Progress value={(adminStats.activeUsers/adminStats.totalUsers)*100} size="sm" colorScheme="green" />
+                    <StatLabel fontSize={{ base: "xs", md: "sm" }}>Usuarios Activos</StatLabel>
+                    <StatNumber 
+                      color="green.500"
+                      fontSize={{ base: "xl", md: "2xl", lg: "3xl" }}
+                    >
+                      {adminStats.activeUsers.toLocaleString()}
+                    </StatNumber>
+                    <StatHelpText fontSize={{ base: "xs", md: "sm" }}>
+                      <Progress 
+                        value={(adminStats.activeUsers/adminStats.totalUsers)*100} 
+                        size="sm" 
+                        colorScheme="green"
+                        borderRadius="full"
+                      />
                     </StatHelpText>
                   </Stat>
                 </CardBody>
@@ -199,12 +291,17 @@ const DashboardAdmin = () => {
             </GridItem>
             
             <GridItem>
-              <Card bg={cardBg} boxShadow="md">
-                <CardBody>
+              <Card bg={cardBg} boxShadow="md" h="100%">
+                <CardBody p={{ base: 4, md: 6 }}>
                   <Stat>
-                    <StatLabel>Programas Totales</StatLabel>
-                    <StatNumber color="purple.500">{adminStats.totalPrograms}</StatNumber>
-                    <StatHelpText>
+                    <StatLabel fontSize={{ base: "xs", md: "sm" }}>Programas Totales</StatLabel>
+                    <StatNumber 
+                      color="purple.500"
+                      fontSize={{ base: "xl", md: "2xl", lg: "3xl" }}
+                    >
+                      {adminStats.totalPrograms}
+                    </StatNumber>
+                    <StatHelpText fontSize={{ base: "xs", md: "sm" }}>
                       <StatArrow type="increase" />
                       +3 esta semana
                     </StatHelpText>
@@ -214,13 +311,18 @@ const DashboardAdmin = () => {
             </GridItem>
             
             <GridItem>
-              <Card bg={cardBg} boxShadow="md">
-                <CardBody>
+              <Card bg={cardBg} boxShadow="md" h="100%">
+                <CardBody p={{ base: 4, md: 6 }}>
                   <Stat>
-                    <StatLabel>En Vivo</StatLabel>
-                    <StatNumber color="red.500">{adminStats.livePrograms}</StatNumber>
-                    <StatHelpText>
-                      <Icon as={FiRadio} color="red.500" />
+                    <StatLabel fontSize={{ base: "xs", md: "sm" }}>En Vivo</StatLabel>
+                    <StatNumber 
+                      color="red.500"
+                      fontSize={{ base: "xl", md: "2xl", lg: "3xl" }}
+                    >
+                      {adminStats.livePrograms}
+                    </StatNumber>
+                    <StatHelpText fontSize={{ base: "xs", md: "sm" }}>
+                      <Icon as={FiRadio} color="red.500" mr={1} />
                       Programas activos
                     </StatHelpText>
                   </Stat>
@@ -229,50 +331,96 @@ const DashboardAdmin = () => {
             </GridItem>
           </Grid>
 
-          <Grid templateColumns={{ base: '1fr', lg: '2fr 1fr' }} gap={8}>
+          <Grid 
+            templateColumns={{ base: '1fr', lg: '2fr 1fr' }} 
+            gap={{ base: 4, md: 6, lg: 8 }}
+          >
             {/* Usuarios Recientes */}
             <GridItem>
               <Card bg={cardBg} boxShadow="md">
-                <CardHeader>
-                  <HStack justify="space-between">
-                    <Heading size="md">Usuarios Recientes</Heading>
-                    <Button size="sm" variant="outline" colorScheme="blue">
+                <CardHeader pb={{ base: 3, md: 4 }}>
+                  <Flex
+                    direction={{ base: "column", sm: "row" }}
+                    justify="space-between"
+                    align={{ base: "start", sm: "center" }}
+                    gap={3}
+                  >
+                    <Heading 
+                      size={{ base: "sm", md: "md" }}
+                    >
+                      Usuarios Recientes
+                    </Heading>
+                    <Button 
+                      size={{ base: "xs", md: "sm" }} 
+                      variant="outline" 
+                      colorScheme="blue"
+                    >
                       Ver Todos
                     </Button>
-                  </HStack>
+                  </Flex>
                 </CardHeader>
-                <CardBody pt={0}>
-                  <Table size="sm">
-                    <Thead>
-                      <Tr>
-                        <Th>Usuario</Th>
-                        <Th>Fecha</Th>
-                        <Th>Estado</Th>
-                      </Tr>
-                    </Thead>
-                    <Tbody>
-                      {recentUsers.map((user) => (
-                        <Tr key={user.id}>
-                          <Td>
-                            <VStack align="start" spacing={0}>
-                              <Text fontWeight="medium" fontSize="sm">{user.name}</Text>
-                              <Text fontSize="xs" color={textColor}>{user.email}</Text>
-                            </VStack>
-                          </Td>
-                          <Td fontSize="sm" color={textColor}>{user.joinDate}</Td>
-                          <Td>
-                            <Badge 
-                              colorScheme={user.status === 'Activo' ? 'green' : 'gray'}
-                              variant="subtle"
-                              fontSize="xs"
-                            >
-                              {user.status}
-                            </Badge>
-                          </Td>
+                <CardBody pt={0} px={{ base: 3, md: 6 }} pb={{ base: 3, md: 6 }}>
+                  {/* Tabla responsive - scroll horizontal en móvil */}
+                  <Box overflowX="auto">
+                    <Table size={{ base: "xs", md: "sm" }} variant="simple">
+                      <Thead>
+                        <Tr>
+                          <Th fontSize={{ base: "xs", md: "sm" }}>Usuario</Th>
+                          <Th fontSize={{ base: "xs", md: "sm" }} display={{ base: "none", sm: "table-cell" }}>
+                            Fecha
+                          </Th>
+                          <Th fontSize={{ base: "xs", md: "sm" }}>Estado</Th>
                         </Tr>
-                      ))}
-                    </Tbody>
-                  </Table>
+                      </Thead>
+                      <Tbody>
+                        {recentUsers.map((user) => (
+                          <Tr key={user.id}>
+                            <Td>
+                              <VStack align="start" spacing={0}>
+                                <Text 
+                                  fontWeight="medium" 
+                                  fontSize={{ base: "xs", md: "sm" }}
+                                >
+                                  {user.name}
+                                </Text>
+                                <Text 
+                                  fontSize={{ base: "2xs", md: "xs" }} 
+                                  color={textColor}
+                                >
+                                  {user.email}
+                                </Text>
+                                {/* Mostrar fecha en móvil debajo del email */}
+                                <Text 
+                                  fontSize="2xs" 
+                                  color={textColor}
+                                  display={{ base: "block", sm: "none" }}
+                                  mt={1}
+                                >
+                                  {user.joinDate}
+                                </Text>
+                              </VStack>
+                            </Td>
+                            <Td 
+                              fontSize={{ base: "xs", md: "sm" }} 
+                              color={textColor}
+                              display={{ base: "none", sm: "table-cell" }}
+                            >
+                              {user.joinDate}
+                            </Td>
+                            <Td>
+                              <Badge 
+                                colorScheme={user.status === 'Activo' ? 'green' : 'gray'}
+                                variant="subtle"
+                                fontSize={{ base: "2xs", md: "xs" }}
+                              >
+                                {user.status}
+                              </Badge>
+                            </Td>
+                          </Tr>
+                        ))}
+                      </Tbody>
+                    </Table>
+                  </Box>
                 </CardBody>
               </Card>
             </GridItem>
@@ -280,11 +428,11 @@ const DashboardAdmin = () => {
             {/* Acciones Rápidas */}
             <GridItem>
               <Card bg={cardBg} boxShadow="md">
-                <CardHeader>
-                  <Heading size="md">Acciones Rápidas</Heading>
+                <CardHeader pb={{ base: 3, md: 4 }}>
+                  <Heading size={{ base: "sm", md: "md" }}>Acciones Rápidas</Heading>
                 </CardHeader>
-                <CardBody pt={0}>
-                  <VStack spacing={3} align="stretch">
+                <CardBody pt={0} px={{ base: 3, md: 6 }} pb={{ base: 3, md: 6 }}>
+                  <VStack spacing={{ base: 2, md: 3 }} align="stretch">
                     {quickActions.map((action, index) => (
                       <Button
                         key={index}
@@ -292,7 +440,8 @@ const DashboardAdmin = () => {
                         variant="outline"
                         colorScheme={action.color}
                         justifyContent="start"
-                        h="50px"
+                        h={{ base: "44px", md: "50px" }}
+                        fontSize={{ base: "xs", md: "sm" }}
                         _hover={{ transform: 'translateY(-1px)', boxShadow: 'md' }}
                         transition="all 0.2s"
                       >
@@ -306,34 +455,82 @@ const DashboardAdmin = () => {
           </Grid>
 
           {/* Métricas del Sistema */}
-          <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap={6}>
+          <Grid 
+            templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} 
+            gap={{ base: 4, md: 5, lg: 6 }}
+          >
             <GridItem>
               <Card bg={cardBg} boxShadow="md">
-                <CardHeader>
-                  <Heading size="md">Rendimiento del Sistema</Heading>
+                <CardHeader pb={{ base: 3, md: 4 }}>
+                  <Heading size={{ base: "sm", md: "md" }}>Rendimiento del Sistema</Heading>
                 </CardHeader>
-                <CardBody pt={0}>
-                  <VStack spacing={4} align="stretch">
+                <CardBody pt={0} px={{ base: 4, md: 6 }} pb={{ base: 4, md: 6 }}>
+                  <VStack spacing={{ base: 3, md: 4 }} align="stretch">
                     <Box>
                       <HStack justify="space-between" mb={2}>
-                        <Text fontSize="sm" fontWeight="medium">Uso de CPU</Text>
-                        <Text fontSize="sm" color={textColor}>65%</Text>
+                        <Text 
+                          fontSize={{ base: "xs", md: "sm" }} 
+                          fontWeight="medium"
+                        >
+                          Uso de CPU
+                        </Text>
+                        <Text 
+                          fontSize={{ base: "xs", md: "sm" }} 
+                          color={textColor}
+                        >
+                          65%
+                        </Text>
                       </HStack>
-                      <Progress value={65} colorScheme="green" size="sm" />
+                      <Progress 
+                        value={65} 
+                        colorScheme="green" 
+                        size={{ base: "xs", md: "sm" }}
+                        borderRadius="full"
+                      />
                     </Box>
                     <Box>
                       <HStack justify="space-between" mb={2}>
-                        <Text fontSize="sm" fontWeight="medium">Memoria</Text>
-                        <Text fontSize="sm" color={textColor}>78%</Text>
+                        <Text 
+                          fontSize={{ base: "xs", md: "sm" }} 
+                          fontWeight="medium"
+                        >
+                          Memoria
+                        </Text>
+                        <Text 
+                          fontSize={{ base: "xs", md: "sm" }} 
+                          color={textColor}
+                        >
+                          78%
+                        </Text>
                       </HStack>
-                      <Progress value={78} colorScheme="yellow" size="sm" />
+                      <Progress 
+                        value={78} 
+                        colorScheme="yellow" 
+                        size={{ base: "xs", md: "sm" }}
+                        borderRadius="full"
+                      />
                     </Box>
                     <Box>
                       <HStack justify="space-between" mb={2}>
-                        <Text fontSize="sm" fontWeight="medium">Almacenamiento</Text>
-                        <Text fontSize="sm" color={textColor}>45%</Text>
+                        <Text 
+                          fontSize={{ base: "xs", md: "sm" }} 
+                          fontWeight="medium"
+                        >
+                          Almacenamiento
+                        </Text>
+                        <Text 
+                          fontSize={{ base: "xs", md: "sm" }} 
+                          color={textColor}
+                        >
+                          45%
+                        </Text>
                       </HStack>
-                      <Progress value={45} colorScheme="blue" size="sm" />
+                      <Progress 
+                        value={45} 
+                        colorScheme="blue" 
+                        size={{ base: "xs", md: "sm" }}
+                        borderRadius="full"
+                      />
                     </Box>
                   </VStack>
                 </CardBody>
@@ -342,27 +539,52 @@ const DashboardAdmin = () => {
 
             <GridItem>
               <Card bg={cardBg} boxShadow="md">
-                <CardHeader>
-                  <Heading size="md">Ingresos</Heading>
+                <CardHeader pb={{ base: 3, md: 4 }}>
+                  <Heading size={{ base: "sm", md: "md" }}>Ingresos</Heading>
                 </CardHeader>
-                <CardBody pt={0}>
-                  <VStack spacing={4} align="stretch">
+                <CardBody pt={0} px={{ base: 4, md: 6 }} pb={{ base: 4, md: 6 }}>
+                  <VStack spacing={{ base: 3, md: 4 }} align="stretch">
                     <Stat>
-                      <StatLabel>Este Mes</StatLabel>
-                      <StatNumber color="green.500">${adminStats.totalRevenue.toLocaleString()}</StatNumber>
-                      <StatHelpText>
+                      <StatLabel fontSize={{ base: "xs", md: "sm" }}>Este Mes</StatLabel>
+                      <StatNumber 
+                        color="green.500"
+                        fontSize={{ base: "xl", md: "2xl", lg: "3xl" }}
+                      >
+                        ${adminStats.totalRevenue.toLocaleString()}
+                      </StatNumber>
+                      <StatHelpText fontSize={{ base: "xs", md: "sm" }}>
                         <StatArrow type="increase" />
                         +15% vs mes anterior
                       </StatHelpText>
                     </Stat>
                     <Divider />
                     <HStack justify="space-between">
-                      <Text fontSize="sm" color={textColor}>Suscriptores Premium</Text>
-                      <Text fontSize="sm" fontWeight="medium">850</Text>
+                      <Text 
+                        fontSize={{ base: "xs", md: "sm" }} 
+                        color={textColor}
+                      >
+                        Suscriptores Premium
+                      </Text>
+                      <Text 
+                        fontSize={{ base: "xs", md: "sm" }} 
+                        fontWeight="medium"
+                      >
+                        850
+                      </Text>
                     </HStack>
                     <HStack justify="space-between">
-                      <Text fontSize="sm" color={textColor}>Suscriptores Básicos</Text>
-                      <Text fontSize="sm" fontWeight="medium">400</Text>
+                      <Text 
+                        fontSize={{ base: "xs", md: "sm" }} 
+                        color={textColor}
+                      >
+                        Suscriptores Básicos
+                      </Text>
+                      <Text 
+                        fontSize={{ base: "xs", md: "sm" }} 
+                        fontWeight="medium"
+                      >
+                        400
+                      </Text>
                     </HStack>
                   </VStack>
                 </CardBody>

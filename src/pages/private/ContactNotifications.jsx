@@ -434,51 +434,85 @@ const ContactNotifications = () => {
 
   return (
     <Box minH="100vh" bg={bgColor}>
-      <Container maxW="container.xl" py={8}>
-        <VStack spacing={8} align="stretch">
+      <Container maxW="container.xl" py={{ base: 4, md: 6, lg: 8 }} px={{ base: 4, md: 6 }}>
+        <VStack spacing={{ base: 4, md: 6, lg: 8 }} align="stretch">
           {/* Header del Dashboard */}
           <Box>
-            <HStack justify="space-between" align="center" mb={4}>
-              <VStack align="start" spacing={1}>
-                <Heading size="lg" color="blue.600">
+            <VStack align="stretch" spacing={4}>
+              {/* Título */}
+              <VStack align={{ base: "start", md: "start" }} spacing={2}>
+                <Heading 
+                  size={{ base: "md", md: "lg", lg: "xl" }} 
+                  color="blue.600"
+                >
                   Mensajes de Contacto
                 </Heading>
-                <Text color={textColor}>
+                <Text 
+                  color={textColor}
+                  fontSize={{ base: "sm", md: "md" }}
+                >
                   Gestiona los mensajes enviados desde el formulario de contacto
                 </Text>
               </VStack>
-              <HStack spacing={2}>
-                <IconButton aria-label="Abrir menú" icon={<FiMenu />} onClick={onMenuOpen} />
-                <IconButton as={RouterLink} to="/" aria-label="Inicio" icon={<FiHome />} />
-                <Button leftIcon={<FiLogOut />} colorScheme="red" variant="outline" onClick={logout}>
-                  Cerrar sesión
+              
+              {/* Navegación */}
+              <Flex
+                direction={{ base: "row", md: "row" }}
+                justify="flex-end"
+                align="center"
+                gap={2}
+                wrap="wrap"
+              >
+                <IconButton 
+                  aria-label="Abrir menú" 
+                  icon={<FiMenu />} 
+                  onClick={onMenuOpen}
+                  size={{ base: "sm", md: "md" }}
+                />
+                <IconButton 
+                  as={RouterLink} 
+                  to="/" 
+                  aria-label="Inicio" 
+                  icon={<FiHome />}
+                  size={{ base: "sm", md: "md" }}
+                />
+                <Button 
+                  leftIcon={<FiLogOut />} 
+                  colorScheme="red" 
+                  variant="outline" 
+                  onClick={logout}
+                  size={{ base: "sm", md: "md" }}
+                  fontSize={{ base: "xs", md: "sm" }}
+                >
+                  <Text display={{ base: "none", sm: "block" }}>Cerrar sesión</Text>
+                  <Text display={{ base: "block", sm: "none" }}>Salir</Text>
                 </Button>
-                <HStack spacing={4}>
+                <HStack spacing={2} display={{ base: "none", lg: "flex" }}>
                   <Avatar 
-                    size="md" 
+                    size={{ base: "sm", md: "md" }} 
                     name={auth?.user_name || auth?.name || 'Usuario'} 
                     bg="red.500" 
                   />
-                  <VStack align="start" spacing={0}>
+                  <VStack align="start" spacing={0} display={{ base: "none", xl: "flex" }}>
                     <HStack spacing={2}>
-                      <Text fontWeight="medium">
+                      <Text fontWeight="medium" fontSize={{ base: "xs", md: "sm" }}>
                         {auth?.user_name || auth?.name || 'Usuario'}
                       </Text>
                       <Badge 
                         colorScheme="red" 
                         variant="solid" 
-                        fontSize="xs"
+                        fontSize={{ base: "2xs", md: "xs" }}
                       >
                         {roleInfo.name.toUpperCase()}
                       </Badge>
                     </HStack>
-                    <Text fontSize="sm" color={textColor}>
+                    <Text fontSize={{ base: "2xs", md: "sm" }} color={textColor}>
                       {auth?.user_email || auth?.email || 'usuario@radiofm.com'}
                     </Text>
                   </VStack>
                 </HStack>
-              </HStack>
-            </HStack>
+              </Flex>
+            </VStack>
           </Box>
 
           {/* Menú administrativo reutilizable */}
@@ -490,8 +524,14 @@ const ContactNotifications = () => {
 
           {/* Estado de conexión y contadores */}
           <Box>
-            <HStack justify="space-between" align="center" mb={4}>
-              <HStack spacing={3}>
+            <Flex
+              direction={{ base: "column", sm: "row" }}
+              justify="space-between"
+              align={{ base: "start", sm: "center" }}
+              gap={3}
+              mb={4}
+            >
+              <HStack spacing={2} flexWrap="wrap">
                 {/* Estado de conexión WebSocket */}
                 <Badge 
                   colorScheme={
@@ -500,6 +540,7 @@ const ContactNotifications = () => {
                     connectionStatus === 'disabled' ? 'gray' : 'yellow'
                   }
                   variant="subtle"
+                  fontSize={{ base: "xs", md: "sm" }}
                 >
                   {connectionStatus === 'connected' ? 'Conectado' : 
                    connectionStatus === 'error' ? 'Error' : 
@@ -509,10 +550,11 @@ const ContactNotifications = () => {
                 {/* Botones de control WebSocket */}
                 {connectionStatus === 'error' && (
                   <Button
-                    size="xs"
+                    size={{ base: "xs", md: "sm" }}
                     colorScheme="blue"
                     variant="outline"
                     onClick={connectWebSocket}
+                    fontSize={{ base: "2xs", md: "xs" }}
                   >
                     Reconectar
                   </Button>
@@ -520,122 +562,157 @@ const ContactNotifications = () => {
                 
                 {connectionStatus === 'disabled' && (
                   <Button
-                    size="xs"
+                    size={{ base: "xs", md: "sm" }}
                     colorScheme="green"
                     variant="outline"
                     onClick={connectWebSocket}
+                    fontSize={{ base: "2xs", md: "xs" }}
                   >
-                    Conectar WebSocket
+                    Conectar
                   </Button>
                 )}
                 
-                
                 {/* Contador de mensajes no leídos */}
                 {unreadCount > 0 && (
-                  <Badge colorScheme="red" variant="solid">
+                  <Badge 
+                    colorScheme="red" 
+                    variant="solid"
+                    fontSize={{ base: "xs", md: "sm" }}
+                  >
                     {unreadCount} no leídos
                   </Badge>
                 )}
               </HStack>
-            </HStack>
+            </Flex>
 
             {/* Filtros y búsqueda */}
             <Card bg={cardBg} boxShadow="sm">
-              <CardBody>
-                <HStack spacing={4} flexWrap="wrap">
-                  <InputGroup maxW="300px">
-                    <InputLeftElement>
-                      <FiSearch color="gray.400" />
-                    </InputLeftElement>
-                    <Input
-                      placeholder="Buscar mensajes..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                  </InputGroup>
+              <CardBody px={{ base: 4, md: 6 }} py={{ base: 4, md: 6 }}>
+                <VStack spacing={3} align="stretch">
+                  <HStack spacing={3} flexWrap="wrap">
+                    <InputGroup flex={{ base: "1 1 100%", sm: "1 1 auto" }} minW={{ base: "100%", sm: "200px" }}>
+                      <InputLeftElement>
+                        <FiSearch color="gray.400" />
+                      </InputLeftElement>
+                      <Input
+                        placeholder="Buscar mensajes..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        size={{ base: "sm", md: "md" }}
+                      />
+                    </InputGroup>
+                    
+                    <Select
+                      value={filterStatus}
+                      onChange={(e) => setFilterStatus(e.target.value)}
+                      maxW={{ base: "100%", sm: "200px" }}
+                      size={{ base: "sm", md: "md" }}
+                    >
+                      <option value="all">Todos</option>
+                      <option value="unread">No leídos</option>
+                      <option value="read">Leídos</option>
+                    </Select>
+                  </HStack>
                   
-                  <Select
-                    value={filterStatus}
-                    onChange={(e) => setFilterStatus(e.target.value)}
-                    maxW="200px"
-                  >
-                    <option value="all">Todos</option>
-                    <option value="unread">No leídos</option>
-                    <option value="read">Leídos</option>
-                  </Select>
-                  
-                  <Button
-                    leftIcon={<FiFilter />}
-                    variant="outline"
-                    onClick={() => {
-                      // console.log('🔄 Actualizando mensajes manualmente...')
-                      setHasTriedToLoad(false)
-                      fetchMessages()
-                    }}
-                    isLoading={loading}
-                  >
-                    Actualizar
-                  </Button>
-                  
-                  <Button
-                    leftIcon={<FiMail />}
-                    colorScheme="blue"
-                    variant="solid"
-                    onClick={() => {
-                      // console.log('🔄 Recargando mensajes desde el servidor...')
-                      setHasTriedToLoad(false)
-                      fetchMessages()
-                    }}
-                    isLoading={loading}
-                  >
-                    Recargar Mensajes
-                  </Button>
-                </HStack>
+                  <HStack spacing={2} flexWrap="wrap">
+                    <Button
+                      leftIcon={<FiFilter />}
+                      variant="outline"
+                      onClick={() => {
+                        setHasTriedToLoad(false)
+                        fetchMessages()
+                      }}
+                      isLoading={loading}
+                      size={{ base: "sm", md: "md" }}
+                      fontSize={{ base: "xs", md: "sm" }}
+                      flex={{ base: "1 1 100%", sm: "0 1 auto" }}
+                    >
+                      Actualizar
+                    </Button>
+                    
+                    <Button
+                      leftIcon={<FiMail />}
+                      colorScheme="blue"
+                      variant="solid"
+                      onClick={() => {
+                        setHasTriedToLoad(false)
+                        fetchMessages()
+                      }}
+                      isLoading={loading}
+                      size={{ base: "sm", md: "md" }}
+                      fontSize={{ base: "xs", md: "sm" }}
+                      flex={{ base: "1 1 100%", sm: "0 1 auto" }}
+                    >
+                      <Text display={{ base: "none", sm: "block" }}>Recargar Mensajes</Text>
+                      <Text display={{ base: "block", sm: "none" }}>Recargar</Text>
+                    </Button>
+                  </HStack>
+                </VStack>
               </CardBody>
             </Card>
           </Box>
 
           {/* Lista de mensajes */}
           <Card bg={cardBg} boxShadow="lg">
-            <CardHeader>
-              <Heading size="md">
+            <CardHeader px={{ base: 4, md: 6 }} pb={{ base: 3, md: 4 }}>
+              <Heading size={{ base: "sm", md: "md" }}>
                 Mensajes ({filteredMessages.length})
               </Heading>
             </CardHeader>
-            <CardBody p={0}>
+            <CardBody p={0} px={{ base: 3, md: 0 }}>
               {loading ? (
                 <Box p={8} textAlign="center">
-                  <Spinner size="lg" color="blue.500" />
-                  <Text mt={4} color={textColor}>
-                    Cargando mensajes...
-                  </Text>
+                  <VStack spacing={4}>
+                    <Spinner size={{ base: "md", md: "lg" }} color="blue.500" />
+                    <Text 
+                      mt={4} 
+                      color={textColor}
+                      fontSize={{ base: "xs", md: "sm" }}
+                    >
+                      Cargando mensajes...
+                    </Text>
+                  </VStack>
                 </Box>
               ) : filteredMessages.length === 0 ? (
                 <Box p={8} textAlign="center">
                   <FiMail size={48} color="gray" />
-                  <Text mt={4} color={textColor} fontSize="lg">
+                  <Text 
+                    mt={4} 
+                    color={textColor} 
+                    fontSize={{ base: "sm", md: "lg" }}
+                  >
                     {messages.length === 0 
                       ? 'No hay mensajes de contacto aún' 
                       : 'No hay mensajes que coincidan con los filtros'
                     }
                   </Text>
                   {messages.length === 0 && (
-                    <Text mt={2} color={textColor} fontSize="sm">
+                    <Text 
+                      mt={2} 
+                      color={textColor} 
+                      fontSize={{ base: "xs", md: "sm" }}
+                    >
                       Los mensajes enviados desde el formulario de contacto aparecerán aquí
                     </Text>
                   )}
                 </Box>
               ) : (
-                <TableContainer>
-                  <Table variant="simple">
+                <Box overflowX="auto">
+                  <Table variant="simple" size={{ base: "xs", md: "sm" }}>
                     <Thead>
                       <Tr>
-                        <Th>Estado</Th>
-                        <Th>Nombre</Th>
-                        <Th>Teléfono</Th>
-                        <Th>Mensaje</Th>
-                        <Th>Fecha</Th>
-                        <Th>Acciones</Th>
+                        <Th fontSize={{ base: "xs", md: "sm" }}>Estado</Th>
+                        <Th fontSize={{ base: "xs", md: "sm" }}>Nombre</Th>
+                        <Th fontSize={{ base: "xs", md: "sm" }} display={{ base: "none", md: "table-cell" }}>
+                          Teléfono
+                        </Th>
+                        <Th fontSize={{ base: "xs", md: "sm" }} display={{ base: "none", lg: "table-cell" }}>
+                          Mensaje
+                        </Th>
+                        <Th fontSize={{ base: "xs", md: "sm" }} display={{ base: "none", xl: "table-cell" }}>
+                          Fecha
+                        </Th>
+                        <Th fontSize={{ base: "xs", md: "sm" }}>Acciones</Th>
                       </Tr>
                     </Thead>
                     <Tbody>
@@ -645,48 +722,82 @@ const ContactNotifications = () => {
                             <Badge 
                               colorScheme={message.status === 'unread' ? 'red' : 'green'}
                               variant="subtle"
+                              fontSize={{ base: "2xs", md: "xs" }}
                             >
                               {message.status === 'unread' ? 'No leído' : 'Leído'}
                             </Badge>
                           </Td>
                           <Td>
-                            <HStack spacing={3}>
-                              <Avatar size="sm" name={`${message.contact_name} ${message.contact_lastname}`} />
-                              <VStack align="start" spacing={0}>
-                                <Text fontWeight="medium">
-                                  {message.contact_name} {message.contact_lastname}
+                            <VStack align="start" spacing={1}>
+                              <HStack spacing={2}>
+                                <Avatar size={{ base: "xs", md: "sm" }} name={`${message.contact_name} ${message.contact_lastname}`} />
+                                <VStack align="start" spacing={0}>
+                                  <Text 
+                                    fontWeight="medium"
+                                    fontSize={{ base: "xs", md: "sm" }}
+                                    wordBreak="break-word"
+                                  >
+                                    {message.contact_name} {message.contact_lastname}
+                                  </Text>
+                                </VStack>
+                              </HStack>
+                              {/* Mostrar información adicional en móvil */}
+                              <VStack align="start" spacing={1} mt={1} display={{ base: "flex", md: "none" }}>
+                                <Text 
+                                  fontSize="2xs" 
+                                  color={textColor}
+                                  fontFamily="mono"
+                                >
+                                  📞 {message.contact_phone || 'No disponible'}
                                 </Text>
+                                <Text 
+                                  fontSize="2xs" 
+                                  color={textColor}
+                                  noOfLines={2}
+                                >
+                                  {message.contact_message}
+                                </Text>
+                                <HStack spacing={1}>
+                                  <FiClock size={12} />
+                                  <Text fontSize="2xs" color={textColor}>
+                                    {formatDate(message.timestamp)}
+                                  </Text>
+                                </HStack>
                               </VStack>
-                            </HStack>
+                            </VStack>
                           </Td>
-                          <Td>
+                          <Td display={{ base: "none", md: "table-cell" }}>
                             <Text 
-                              fontSize="sm" 
+                              fontSize={{ base: "xs", md: "sm" }} 
                               color={textColor}
                               fontFamily="mono"
                             >
                               {message.contact_phone || 'No disponible'}
                             </Text>
                           </Td>
-                          <Td>
+                          <Td display={{ base: "none", lg: "table-cell" }}>
                             <Text 
                               noOfLines={2} 
                               maxW="300px"
                               color={textColor}
+                              fontSize={{ base: "xs", md: "sm" }}
                             >
                               {message.contact_message}
                             </Text>
                           </Td>
-                          <Td>
+                          <Td display={{ base: "none", xl: "table-cell" }}>
                             <HStack spacing={2}>
                               <FiClock size={14} />
-                              <Text fontSize="sm" color={textColor}>
+                              <Text 
+                                fontSize={{ base: "xs", md: "sm" }} 
+                                color={textColor}
+                              >
                                 {formatDate(message.timestamp)}
                               </Text>
                             </HStack>
                           </Td>
                           <Td>
-                            <HStack spacing={2}>
+                            <HStack spacing={1}>
                               <Tooltip 
                                 label="Ver detalles del mensaje (solo lectura)"
                                 hasArrow
@@ -694,7 +805,7 @@ const ContactNotifications = () => {
                               >
                                 <IconButton
                                   icon={<FiEye />}
-                                  size="sm"
+                                  size={{ base: "xs", md: "sm" }}
                                   variant="ghost"
                                   colorScheme="blue"
                                   onClick={() => viewMessage(message)}
@@ -706,7 +817,7 @@ const ContactNotifications = () => {
                                 <Tooltip label="Marcar como leído">
                                   <IconButton
                                     icon={<FiCheck />}
-                                    size="sm"
+                                    size={{ base: "xs", md: "sm" }}
                                     variant="ghost"
                                     colorScheme="green"
                                     onClick={() => markAsRead(message.id)}
@@ -717,7 +828,7 @@ const ContactNotifications = () => {
                               <Tooltip label="Eliminar">
                                 <IconButton
                                   icon={<FiTrash2 />}
-                                  size="sm"
+                                  size={{ base: "xs", md: "sm" }}
                                   variant="ghost"
                                   colorScheme="red"
                                   onClick={() => deleteMessage(message.id)}
@@ -729,7 +840,7 @@ const ContactNotifications = () => {
                       ))}
                     </Tbody>
                   </Table>
-                </TableContainer>
+                </Box>
               )}
             </CardBody>
           </Card>
@@ -737,15 +848,23 @@ const ContactNotifications = () => {
       </Container>
 
       {/* Modal para ver detalles del mensaje */}
-      <Modal isOpen={isOpen} onClose={onClose} size="lg">
+      <Modal 
+        isOpen={isOpen} 
+        onClose={onClose} 
+        size={{ base: "full", md: "lg" }}
+      >
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>
-            <HStack spacing={3}>
+        <ModalContent mx={{ base: 0, md: 4 }} my={{ base: 0, md: 4 }}>
+          <ModalHeader fontSize={{ base: "md", md: "lg" }}>
+            <HStack spacing={3} flexWrap="wrap">
               <FiMessageSquare />
               <VStack align="start" spacing={0}>
-              <Text>Detalles del Mensaje</Text>
-                <Text fontSize="sm" color="gray.500" fontWeight="normal">
+                <Text fontSize={{ base: "sm", md: "md" }}>Detalles del Mensaje</Text>
+                <Text 
+                  fontSize={{ base: "xs", md: "sm" }} 
+                  color="gray.500" 
+                  fontWeight="normal"
+                >
                   Solo lectura - Para marcar como leído usa el botón correspondiente
                 </Text>
               </VStack>
@@ -754,57 +873,88 @@ const ContactNotifications = () => {
           <ModalCloseButton />
           
           {selectedMessage && (
-           
-            <ModalBody>
+            <ModalBody px={{ base: 4, md: 6 }} py={{ base: 4, md: 6 }}>
               <VStack spacing={4} align="stretch">
                 {/* Información del remitente */}
                 <Card bg="gray.50">
-                  <CardBody>
-                    <HStack spacing={4}>
+                  <CardBody px={{ base: 3, md: 4 }} py={{ base: 3, md: 4 }}>
+                    <Flex
+                      direction={{ base: "column", sm: "row" }}
+                      align={{ base: "start", sm: "center" }}
+                      gap={4}
+                    >
                       <Avatar 
-                        size="lg" 
+                        size={{ base: "md", md: "lg" }} 
                         name={`${selectedMessage.contact_name} ${selectedMessage.contact_lastname}`} 
                       />
-                      <VStack align="start" spacing={1}>
-                        <Text fontSize="lg" fontWeight="bold">
+                      <VStack align="start" spacing={1} flex={1}>
+                        <Text 
+                          fontSize={{ base: "sm", md: "lg" }} 
+                          fontWeight="bold"
+                          wordBreak="break-word"
+                        >
                           {selectedMessage.contact_name} {selectedMessage.contact_lastname}
                         </Text>
-                        <Text fontSize="sm" color={textColor}>
+                        <Text 
+                          fontSize={{ base: "xs", md: "sm" }} 
+                          color={textColor}
+                          wordBreak="break-word"
+                        >
                           📧 {selectedMessage.contact_email}
                         </Text>
                         {selectedMessage.contact_phone && (
-                          <Text fontSize="sm" color={textColor} fontFamily="mono">
+                          <Text 
+                            fontSize={{ base: "xs", md: "sm" }} 
+                            color={textColor} 
+                            fontFamily="mono"
+                          >
                             📞 {selectedMessage.contact_phone}
                           </Text>
                         )}
-                        <HStack spacing={2}>
-                          <FiClock size={14} />
-                          <Text fontSize="sm" color={textColor}>
-                            {formatDate(selectedMessage.timestamp)}
-                          </Text>
+                        <HStack spacing={2} flexWrap="wrap">
+                          <HStack spacing={1}>
+                            <FiClock size={12} />
+                            <Text 
+                              fontSize={{ base: "xs", md: "sm" }} 
+                              color={textColor}
+                            >
+                              {formatDate(selectedMessage.timestamp)}
+                            </Text>
+                          </HStack>
+                          <Badge 
+                            colorScheme={selectedMessage.status === 'unread' ? 'red' : 'green'}
+                            variant="subtle"
+                            fontSize={{ base: "xs", md: "sm" }}
+                          >
+                            {selectedMessage.status === 'unread' ? 'No leído' : 'Leído'}
+                          </Badge>
                         </HStack>
-                        <Badge 
-                          colorScheme={selectedMessage.status === 'unread' ? 'red' : 'green'}
-                          variant="subtle"
-                        >
-                          {selectedMessage.status === 'unread' ? 'No leído' : 'Leído'}
-                        </Badge>
                       </VStack>
-                    </HStack>
+                    </Flex>
                   </CardBody>
                 </Card>
 
                 {/* Mensaje */}
                 <Box>
-                  <Text fontWeight="semibold" mb={2}>Mensaje:</Text>
+                  <Text 
+                    fontWeight="semibold" 
+                    mb={2}
+                    fontSize={{ base: "xs", md: "sm" }}
+                  >
+                    Mensaje:
+                  </Text>
                   <Box 
-                    p={4} 
+                    p={{ base: 3, md: 4 }} 
                     bg="gray.50" 
                     borderRadius="md"
                     borderLeft="4px solid"
                     borderLeftColor="blue.500"
                   >
-                    <Text whiteSpace="pre-wrap">
+                    <Text 
+                      whiteSpace="pre-wrap"
+                      fontSize={{ base: "xs", md: "sm" }}
+                      wordBreak="break-word"
+                    >
                       {selectedMessage.contact_message}
                     </Text>
                   </Box>
@@ -813,30 +963,49 @@ const ContactNotifications = () => {
             </ModalBody>
           )}
           
-          <ModalFooter>
-            <Button variant="ghost" mr={3} onClick={onClose}>
-              Cerrar
-            </Button>
-            {selectedMessage && selectedMessage.status === 'unread' && (
+          <ModalFooter px={{ base: 4, md: 6 }} py={{ base: 3, md: 4 }}>
+            <Flex
+              direction={{ base: "column", sm: "row" }}
+              gap={2}
+              w="100%"
+            >
               <Button 
-                colorScheme="green" 
-                leftIcon={<FiCheck />}
-                onClick={() => {
-                  markAsRead(selectedMessage.id)
-                  onClose()
-                }}
-                variant="solid"
-                size="md"
+                variant="ghost" 
+                onClick={onClose}
+                flex={1}
+                size={{ base: "sm", md: "md" }}
+                fontSize={{ base: "xs", md: "sm" }}
               >
-                Marcar como Leído
+                Cerrar
               </Button>
-            )}
-            
-            {selectedMessage && selectedMessage.status === 'read' && (
-              <Text fontSize="sm" color="green.600" fontWeight="medium">
-                ✓ Mensaje ya leído
-              </Text>
-            )}
+              {selectedMessage && selectedMessage.status === 'unread' && (
+                <Button 
+                  colorScheme="green" 
+                  leftIcon={<FiCheck />}
+                  onClick={() => {
+                    markAsRead(selectedMessage.id)
+                    onClose()
+                  }}
+                  variant="solid"
+                  flex={1}
+                  size={{ base: "sm", md: "md" }}
+                  fontSize={{ base: "xs", md: "sm" }}
+                >
+                  Marcar como Leído
+                </Button>
+              )}
+              
+              {selectedMessage && selectedMessage.status === 'read' && (
+                <Text 
+                  fontSize={{ base: "xs", md: "sm" }} 
+                  color="green.600" 
+                  fontWeight="medium"
+                  alignSelf="center"
+                >
+                  ✓ Mensaje ya leído
+                </Text>
+              )}
+            </Flex>
           </ModalFooter>
         </ModalContent>
       </Modal>

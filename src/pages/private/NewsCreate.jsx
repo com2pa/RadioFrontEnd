@@ -36,7 +36,8 @@ import {
   ModalHeader,
   ModalFooter,
   ModalBody,
-  ModalCloseButton
+  ModalCloseButton,
+  Flex
 } from '@chakra-ui/react'
 import { FiSave, FiUpload, FiImage, FiMenu, FiHome, FiLogOut, FiArrowLeft, FiEye, FiExternalLink, FiEdit, FiTrash2, FiToggleLeft, FiToggleRight } from 'react-icons/fi'
 import { useAuth } from '../../hooks/useAuth'
@@ -514,12 +515,14 @@ const NewsCreate = () => {
     if (!showPreview) return null
 
     return (
-      <Card bg={cardBg} boxShadow="md" mt={4}>
-        <CardHeader>
-          <Heading size="md">Vista Previa de la Noticia</Heading>
+      <Card bg={cardBg} boxShadow="md" mt={{ base: 4, md: 6 }}>
+        <CardHeader pb={{ base: 3, md: 4 }}>
+          <Heading size={{ base: "sm", md: "md" }}>
+            Vista Previa de la Noticia
+          </Heading>
         </CardHeader>
-        <CardBody>
-          <VStack spacing={4} align="stretch">
+        <CardBody px={{ base: 4, md: 6 }} pb={{ base: 4, md: 6 }}>
+          <VStack spacing={{ base: 3, md: 4 }} align="stretch">
             {formData.news_image && (
               <AspectRatio ratio={16/9} borderRadius="md" overflow="hidden">
                 <Image
@@ -531,12 +534,19 @@ const NewsCreate = () => {
             )}
             
             <VStack align="start" spacing={2}>
-              <Heading size="lg" color="red.600">
+              <Heading 
+                size={{ base: "md", md: "lg" }} 
+                color="red.600"
+              >
                 {formData.news_title || "Título de la noticia"}
               </Heading>
               
               {formData.news_subtitle && (
-                <Text fontSize="lg" color={textColor} fontStyle="italic">
+                <Text 
+                  fontSize={{ base: "md", md: "lg" }} 
+                  color={textColor} 
+                  fontStyle="italic"
+                >
                   {formData.news_subtitle}
                 </Text>
               )}
@@ -545,11 +555,16 @@ const NewsCreate = () => {
                 <Badge 
                   colorScheme={formData.news_status ? 'green' : 'gray'} 
                   variant="solid"
+                  fontSize={{ base: "xs", md: "sm" }}
                 >
                   {formData.news_status ? 'Publicada' : 'Borrador'}
                 </Badge>
                 {formData.subcategory_id && (
-                  <Badge colorScheme="blue" variant="outline">
+                  <Badge 
+                    colorScheme="blue" 
+                    variant="outline"
+                    fontSize={{ base: "xs", md: "sm" }}
+                  >
                     Subcategoría: {subcategories.find(s => s.subcategory_id == formData.subcategory_id)?.subcategory_name || formData.subcategory_id}
                   </Badge>
                 )}
@@ -558,10 +573,17 @@ const NewsCreate = () => {
             
             {formData.news_content && (
               <Box>
-                <Text fontSize="sm" fontWeight="medium" mb={2}>Contenido:</Text>
+                <Text 
+                  fontSize={{ base: "xs", md: "sm" }} 
+                  fontWeight="medium" 
+                  mb={2}
+                >
+                  Contenido:
+                </Text>
                 <Text 
                   whiteSpace="pre-wrap" 
                   lineHeight="tall"
+                  fontSize={{ base: "sm", md: "md" }}
                   dangerouslySetInnerHTML={{ 
                     __html: formData.news_content.replace(/\n/g, '<br>') 
                   }}
@@ -576,15 +598,22 @@ const NewsCreate = () => {
 
   if (!hasEditPermission) {
     return (
-      <Box minH="100vh" bg={bgColor} display="flex" alignItems="center" justifyContent="center">
-        <Alert status="error" maxW="md">
+      <Box 
+        minH="100vh" 
+        bg={bgColor} 
+        display="flex" 
+        alignItems="center" 
+        justifyContent="center"
+        px={4}
+      >
+        <Alert status="error" maxW="md" borderRadius="md">
           <AlertIcon />
           <Box>
-            <AlertTitle>Acceso Denegado</AlertTitle>
-            <AlertDescription>
+            <AlertTitle fontSize={{ base: "sm", md: "md" }}>Acceso Denegado</AlertTitle>
+            <AlertDescription fontSize={{ base: "xs", md: "sm" }}>
               No tienes permisos para crear noticias. Se requiere rol de editor o superior.
               <br />
-              <Text fontSize="sm" mt={2}>
+              <Text fontSize={{ base: "xs", md: "sm" }} mt={2}>
                 Tu rol actual: {roleInfo.name} (ID: {roleInfo.id})
               </Text>
             </AlertDescription>
@@ -596,41 +625,85 @@ const NewsCreate = () => {
 
   return (
     <Box minH="100vh" bg={bgColor}>
-      <Container maxW="container.xl" py={8}>
-        <VStack spacing={8} align="stretch">
+      <Container maxW="container.xl" py={{ base: 4, md: 6, lg: 8 }} px={{ base: 4, md: 6 }}>
+        <VStack spacing={{ base: 4, md: 6, lg: 8 }} align="stretch">
           {/* Header del Dashboard */}
           <Box>
-            <HStack justify="space-between" align="center" mb={4}>
-              <VStack align="start" spacing={1}>
-                <HStack spacing={4}>
+            <VStack align="stretch" spacing={4}>
+              {/* Título y botón volver */}
+              <VStack align={{ base: "start", md: "start" }} spacing={2}>
+                <Flex
+                  direction={{ base: "column", sm: "row" }}
+                  align={{ base: "start", sm: "center" }}
+                  gap={{ base: 3, md: 4 }}
+                  wrap="wrap"
+                >
                   <Button
                     as={RouterLink}
                     to="/dashboard/admin"
                     leftIcon={<FiArrowLeft />}
                     variant="outline"
-                    size="sm"
+                    size={{ base: "xs", md: "sm" }}
                   >
-                    Volver
+                    <Text display={{ base: "none", sm: "block" }}>Volver</Text>
+                    <Text display={{ base: "block", sm: "none" }}>←</Text>
                   </Button>
-                  <Heading size="lg" color="red.600">
+                  <Heading 
+                    size={{ base: "md", md: "lg", lg: "xl" }} 
+                    color="red.600"
+                  >
                     Crear Nueva Noticia
                   </Heading>
-                  <Badge colorScheme="green" variant="solid" fontSize="sm">
+                  <Badge 
+                    colorScheme="green" 
+                    variant="solid" 
+                    fontSize={{ base: "xs", md: "sm" }}
+                  >
                     {roleInfo.name.toUpperCase()} (ID: {roleInfo.id})
                   </Badge>
-                </HStack>
-                <Text color={textColor}>
+                </Flex>
+                <Text 
+                  color={textColor}
+                  fontSize={{ base: "sm", md: "md" }}
+                >
                   Crear y publicar noticias para el sitio web
                 </Text>
               </VStack>
-              <HStack spacing={2}>
-                <IconButton aria-label="Abrir menú" icon={<FiMenu />} onClick={onOpen} />
-                <IconButton as={RouterLink} to="/" aria-label="Inicio" icon={<FiHome />} />
-                <Button leftIcon={<FiLogOut />} colorScheme="red" variant="outline" onClick={logout}>
-                  Cerrar sesión
+              
+              {/* Navegación */}
+              <Flex
+                direction={{ base: "row", md: "row" }}
+                justify="flex-end"
+                align="center"
+                gap={2}
+                wrap="wrap"
+              >
+                <IconButton 
+                  aria-label="Abrir menú" 
+                  icon={<FiMenu />} 
+                  onClick={onOpen}
+                  size={{ base: "sm", md: "md" }}
+                />
+                <IconButton 
+                  as={RouterLink} 
+                  to="/" 
+                  aria-label="Inicio" 
+                  icon={<FiHome />}
+                  size={{ base: "sm", md: "md" }}
+                />
+                <Button 
+                  leftIcon={<FiLogOut />} 
+                  colorScheme="red" 
+                  variant="outline" 
+                  onClick={logout}
+                  size={{ base: "sm", md: "md" }}
+                  fontSize={{ base: "xs", md: "sm" }}
+                >
+                  <Text display={{ base: "none", sm: "block" }}>Cerrar sesión</Text>
+                  <Text display={{ base: "block", sm: "none" }}>Salir</Text>
                 </Button>
-              </HStack>
-            </HStack>
+              </Flex>
+            </VStack>
           </Box>
 
           {/* Menú administrativo reutilizable */}
@@ -641,79 +714,99 @@ const NewsCreate = () => {
           />
 
           {/* Contenido principal - Grid con formulario y listado */}
-          <Grid templateColumns={{ base: "1fr", lg: "1fr 1fr" }} gap={6}>
+          <Grid 
+            templateColumns={{ base: "1fr", lg: "1fr 1fr" }} 
+            gap={{ base: 4, md: 5, lg: 6 }}
+          >
             {/* Formulario de creación */}
             <Card bg={cardBg} boxShadow="md">
-              <CardHeader>
-                <HStack justify="space-between" align="center">
-                  <Heading size="md">
+              <CardHeader pb={{ base: 3, md: 4 }}>
+                <Flex
+                  direction={{ base: "column", sm: "row" }}
+                  justify="space-between"
+                  align={{ base: "start", sm: "center" }}
+                  gap={3}
+                >
+                  <Heading size={{ base: "sm", md: "md" }}>
                     {isEditing ? 'Editar Noticia' : 'Crear Nueva Noticia'}
                   </Heading>
                   {isEditing && (
                     <Button
-                      size="sm"
+                      size={{ base: "xs", md: "sm" }}
                       variant="outline"
                       onClick={resetForm}
+                      fontSize={{ base: "xs", md: "sm" }}
                     >
                       Cancelar Edición
                     </Button>
                   )}
-                </HStack>
+                </Flex>
               </CardHeader>
-              <CardBody>
+              <CardBody px={{ base: 4, md: 6 }} pb={{ base: 4, md: 6 }}>
               <form onSubmit={handleSubmit}>
-                <VStack spacing={6} align="stretch">
+                <VStack spacing={{ base: 4, md: 5, lg: 6 }} align="stretch">
                   {/* Título */}
                   <FormControl isRequired>
-                    <FormLabel>Título de la Noticia</FormLabel>
+                    <FormLabel fontSize={{ base: "sm", md: "md" }}>
+                      Título de la Noticia
+                    </FormLabel>
                     <Input
                       name="news_title"
                       value={formData.news_title}
                       onChange={handleInputChange}
                       placeholder="Ej: Nueva tecnología revoluciona la industria"
-                      size="lg"
+                      size={{ base: "md", md: "lg" }}
                     />
                   </FormControl>
 
                   {/* Subtítulo */}
                   <FormControl>
-                    <FormLabel>Subtítulo</FormLabel>
+                    <FormLabel fontSize={{ base: "sm", md: "md" }}>
+                      Subtítulo
+                    </FormLabel>
                     <Input
                       name="news_subtitle"
                       value={formData.news_subtitle}
                       onChange={handleInputChange}
                       placeholder="Subtítulo opcional de la noticia"
+                      size={{ base: "sm", md: "md" }}
                     />
-                    <FormHelperText>
+                    <FormHelperText fontSize={{ base: "xs", md: "sm" }}>
                       Subtítulo que aparecerá debajo del título principal
                     </FormHelperText>
                   </FormControl>
 
                   {/* Contenido */}
                   <FormControl isRequired>
-                    <FormLabel>Contenido de la Noticia</FormLabel>
+                    <FormLabel fontSize={{ base: "sm", md: "md" }}>
+                      Contenido de la Noticia
+                    </FormLabel>
                     <Textarea
                       name="news_content"
                       value={formData.news_content}
                       onChange={handleInputChange}
                       placeholder="Escribe el contenido de la noticia aquí... Puede ser extenso o corto según necesites."
-                      rows={12}
+                      rows={{ base: 8, md: 10, lg: 12 }}
                       resize="vertical"
+                      size={{ base: "sm", md: "md" }}
                     />
-                    <FormHelperText>
+                    <FormHelperText fontSize={{ base: "xs", md: "sm" }}>
                       Puedes escribir contenido extenso o corto. Usa saltos de línea para formatear el texto.
                     </FormHelperText>
                   </FormControl>
 
                   {/* Subcategoría */}
                   <FormControl isRequired>
-                    <FormLabel>Subcategoría</FormLabel>
+                    <FormLabel fontSize={{ base: "sm", md: "md" }}>
+                      Subcategoría
+                    </FormLabel>
                     <Select
                       name="subcategory_id"
                       value={formData.subcategory_id}
                       onChange={handleInputChange}
                       placeholder="Selecciona una subcategoría"
                       isDisabled={loadingSubcategories}
+                      size={{ base: "sm", md: "md" }}
                     >
                       {subcategories.map((subcat) => (
                         <option key={subcat.subcategory_id} value={subcat.subcategory_id}>
@@ -721,21 +814,24 @@ const NewsCreate = () => {
                         </option>
                       ))}
                     </Select>
-                    <FormHelperText>
+                    <FormHelperText fontSize={{ base: "xs", md: "sm" }}>
                       Selecciona la subcategoría a la que pertenece esta noticia
                     </FormHelperText>
                   </FormControl>
 
                   {/* Subir Imagen */}
                   <FormControl isRequired={!isEditing}>
-                    <FormLabel>Imagen de la Noticia</FormLabel>
+                    <FormLabel fontSize={{ base: "sm", md: "md" }}>
+                      Imagen de la Noticia
+                    </FormLabel>
                     <Input
                       type="file"
                       accept="image/jpeg,image/png,image/jpg"
                       onChange={handleImageChange}
                       p={1}
+                      size={{ base: "sm", md: "md" }}
                     />
-                    <FormHelperText>
+                    <FormHelperText fontSize={{ base: "xs", md: "sm" }}>
                       {isEditing 
                         ? 'Selecciona una nueva imagen para reemplazar la actual (opcional)'
                         : 'Selecciona una imagen para la noticia (JPG, PNG)'
@@ -743,14 +839,20 @@ const NewsCreate = () => {
                     </FormHelperText>
                     {formData.news_image && (
                       <Box mt={2}>
-                        <Text fontSize="sm" color="green.500">
+                        <Text 
+                          fontSize={{ base: "xs", md: "sm" }} 
+                          color="green.500"
+                        >
                           ✓ Imagen seleccionada: {formData.news_image.name}
                         </Text>
                       </Box>
                     )}
                     {isEditing && !formData.news_image && (
                       <Box mt={2}>
-                        <Text fontSize="sm" color="blue.500">
+                        <Text 
+                          fontSize={{ base: "xs", md: "sm" }} 
+                          color="blue.500"
+                        >
                           ℹ️ Si no seleccionas una nueva imagen, se mantendrá la imagen actual
                         </Text>
                       </Box>
@@ -759,47 +861,54 @@ const NewsCreate = () => {
 
                   {/* Status de la Noticia */}
                   <FormControl>
-                    <FormLabel>Estado de la Noticia</FormLabel>
+                    <FormLabel fontSize={{ base: "sm", md: "md" }}>
+                      Estado de la Noticia
+                    </FormLabel>
                     <Select
                       name="news_status"
                       value={formData.news_status}
                       onChange={handleInputChange}
+                      size={{ base: "sm", md: "md" }}
                     >
                       <option value={true}>Publicada</option>
                       <option value={false}>Borrador</option>
                     </Select>
-                    <FormHelperText>
+                    <FormHelperText fontSize={{ base: "xs", md: "sm" }}>
                       Selecciona si la noticia será un borrador o se publicará inmediatamente
                     </FormHelperText>
                   </FormControl>
 
                   {/* Botones de acción */}
-                  <HStack spacing={4} justify="space-between">
-                    <HStack spacing={2}>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        leftIcon={<FiEye />}
-                        onClick={togglePreview}
-                        isDisabled={!formData.news_title}
-                      >
-                        {showPreview ? 'Ocultar' : 'Mostrar'} Vista Previa
-                      </Button>
-                    </HStack>
+                  <Flex
+                    direction={{ base: "column", sm: "row" }}
+                    justify="space-between"
+                    align={{ base: "stretch", sm: "center" }}
+                    gap={3}
+                  >
+                    <Button
+                      size={{ base: "sm", md: "md" }}
+                      variant="outline"
+                      leftIcon={<FiEye />}
+                      onClick={togglePreview}
+                      isDisabled={!formData.news_title}
+                      fontSize={{ base: "xs", md: "sm" }}
+                    >
+                      {showPreview ? 'Ocultar' : 'Mostrar'} Vista Previa
+                    </Button>
                     
-                    <HStack spacing={3}>
-                      <Button
-                        type="submit"
-                        leftIcon={<FiSave />}
-                        colorScheme="red"
-                        size="lg"
-                        isLoading={submitting}
-                        loadingText={isEditing ? "Actualizando..." : "Creando..."}
-                      >
-                        {isEditing ? 'Actualizar Noticia' : 'Crear Noticia'}
-                      </Button>
-                    </HStack>
-                  </HStack>
+                    <Button
+                      type="submit"
+                      leftIcon={<FiSave />}
+                      colorScheme="red"
+                      size={{ base: "md", md: "lg" }}
+                      isLoading={submitting}
+                      loadingText={isEditing ? "Actualizando..." : "Creando..."}
+                      fontSize={{ base: "sm", md: "md" }}
+                      flex={{ base: 1, sm: "none" }}
+                    >
+                      {isEditing ? 'Actualizar Noticia' : 'Crear Noticia'}
+                    </Button>
+                  </Flex>
                 </VStack>
               </form>
             </CardBody>
@@ -807,27 +916,34 @@ const NewsCreate = () => {
 
           {/* Listado de noticias */}
           <Card bg={cardBg} boxShadow="md">
-            <CardHeader>
-              <HStack justify="space-between" align="center">
-                <VStack align="start" spacing={1}>
-                  <Heading size="md">
+            <CardHeader pb={{ base: 3, md: 4 }}>
+              <Flex
+                direction={{ base: "column", sm: "row" }}
+                justify="space-between"
+                align={{ base: "start", sm: "center" }}
+                gap={3}
+              >
+                <VStack align="start" spacing={2}>
+                  <Heading size={{ base: "sm", md: "md" }}>
                     {showAllNews ? 'Todas las Noticias' : 'Mis Noticias'}
                   </Heading>
                   {hasAdminPermission && (
-                    <HStack spacing={2}>
+                    <HStack spacing={2} flexWrap="wrap">
                       <Button
-                        size="xs"
+                        size={{ base: "2xs", md: "xs" }}
                         variant={!showAllNews ? "solid" : "outline"}
                         colorScheme="blue"
                         onClick={() => setShowAllNews(false)}
+                        fontSize={{ base: "xs", md: "sm" }}
                       >
                         Mis Noticias
                       </Button>
                       <Button
-                        size="xs"
+                        size={{ base: "2xs", md: "xs" }}
                         variant={showAllNews ? "solid" : "outline"}
                         colorScheme="purple"
                         onClick={() => setShowAllNews(true)}
+                        fontSize={{ base: "xs", md: "sm" }}
                       >
                         Todas las Noticias
                       </Button>
@@ -835,31 +951,44 @@ const NewsCreate = () => {
                   )}
                 </VStack>
                 <Button
-                  size="sm"
+                  size={{ base: "sm", md: "md" }}
                   variant="outline"
                   onClick={refreshCurrentNews}
                   isLoading={getCurrentLoading()}
                   loadingText="Cargando..."
+                  fontSize={{ base: "xs", md: "sm" }}
                 >
                   Actualizar
                 </Button>
-              </HStack>
+              </Flex>
             </CardHeader>
-            <CardBody>
+            <CardBody px={{ base: 3, md: 6 }} pb={{ base: 3, md: 6 }}>
               {getCurrentLoading() ? (
                 <VStack spacing={4} py={8}>
-                  <Spinner size="lg" color="blue.500" />
-                  <Text>Cargando {showAllNews ? 'todas las' : 'mis'} noticias...</Text>
+                  <Spinner size={{ base: "md", md: "lg" }} color="blue.500" />
+                  <Text 
+                    fontSize={{ base: "xs", md: "sm" }}
+                  >
+                    Cargando {showAllNews ? 'todas las' : 'mis'} noticias...
+                  </Text>
                 </VStack>
               ) : !Array.isArray(getCurrentNews()) || getCurrentNews().length === 0 ? (
                 <VStack spacing={4} py={8}>
-                  <Text color={textColor} textAlign="center">
+                  <Text 
+                    color={textColor} 
+                    textAlign="center"
+                    fontSize={{ base: "xs", md: "sm" }}
+                  >
                     {showAllNews 
                       ? 'No hay noticias en el sistema.' 
                       : 'No tienes noticias creadas aún.'
                     }
                   </Text>
-                  <Text fontSize="sm" color={textColor} textAlign="center">
+                  <Text 
+                    fontSize={{ base: "xs", md: "sm" }} 
+                    color={textColor} 
+                    textAlign="center"
+                  >
                     {showAllNews 
                       ? 'Las noticias aparecerán aquí cuando los usuarios las creen.'
                       : 'Crea tu primera noticia usando el formulario de la izquierda.'
@@ -867,82 +996,124 @@ const NewsCreate = () => {
                   </Text>
                 </VStack>
               ) : (
-                <VStack spacing={4} align="stretch" maxH="600px" overflowY="auto">
+                <VStack 
+                  spacing={{ base: 3, md: 4 }} 
+                  align="stretch" 
+                  maxH={{ base: "500px", md: "600px" }} 
+                  overflowY="auto"
+                >
                   {Array.isArray(getCurrentNews()) && getCurrentNews().map((news) => (
                     <Box
                       key={news.news_id}
-                      p={4}
+                      p={{ base: 3, md: 4 }}
                       border="1px solid"
                       borderColor="gray.200"
                       borderRadius="md"
                       bg="gray.50"
                     >
                       <VStack align="start" spacing={2}>
-                        <HStack justify="space-between" w="full">
-                          <VStack align="start" spacing={1}>
-                            <Heading size="sm" color="blue.600" noOfLines={1}>
+                        <Flex
+                          direction={{ base: "column", sm: "row" }}
+                          justify="space-between"
+                          align={{ base: "start", sm: "center" }}
+                          w="full"
+                          gap={2}
+                        >
+                          <VStack align="start" spacing={1} flex={1}>
+                            <Heading 
+                              size={{ base: "xs", md: "sm" }} 
+                              color="blue.600" 
+                              noOfLines={2}
+                            >
                               {news.news_title}
                             </Heading>
                             {showAllNews && news.user_name && (
-                              <Text fontSize="xs" color="gray.500">
+                              <Text 
+                                fontSize={{ base: "2xs", md: "xs" }} 
+                                color="gray.500"
+                              >
                                 Por: {news.user_name}
                               </Text>
                             )}
                           </VStack>
-                          <VStack align="end" spacing={1}>
+                          <VStack align={{ base: "start", sm: "end" }} spacing={1}>
                             <Badge
                               colorScheme={news.news_status ? "green" : "red"}
                               variant="solid"
-                              fontSize="xs"
+                              fontSize={{ base: "2xs", md: "xs" }}
                             >
                               {news.news_status ? "Activa" : "Inactiva"}
                             </Badge>
                             {showAllNews && news.user_id === auth?.user_id && (
-                              <Badge colorScheme="blue" variant="outline" fontSize="xs">
+                              <Badge 
+                                colorScheme="blue" 
+                                variant="outline" 
+                                fontSize={{ base: "2xs", md: "xs" }}
+                              >
                                 Tu noticia
                               </Badge>
                             )}
                           </VStack>
-                        </HStack>
+                        </Flex>
                         
                         {news.news_subtitle && (
-                          <Text fontSize="sm" color={textColor} noOfLines={2}>
+                          <Text 
+                            fontSize={{ base: "xs", md: "sm" }} 
+                            color={textColor} 
+                            noOfLines={2}
+                          >
                             {news.news_subtitle}
                           </Text>
                         )}
                         
-                        <HStack justify="space-between" w="full" fontSize="xs" color="gray.500">
+                        <Flex
+                          direction={{ base: "column", sm: "row" }}
+                          justify="space-between"
+                          align={{ base: "start", sm: "center" }}
+                          w="full"
+                          fontSize={{ base: "2xs", md: "xs" }}
+                          color="gray.500"
+                          gap={1}
+                        >
                           <Text>
                             {news.subcategory_name && `Categoría: ${news.subcategory_name}`}
                           </Text>
                           <Text>
                             {new Date(news.news_created_at).toLocaleDateString()}
                           </Text>
-                        </HStack>
+                        </Flex>
                         
                         {/* Botones de acción */}
-                        <HStack spacing={2} w="full" justify="flex-end">
+                        <Flex
+                          direction={{ base: "column", sm: "row" }}
+                          w="full"
+                          justify="flex-end"
+                          gap={2}
+                          flexWrap="wrap"
+                        >
                           {/* Solo mostrar botones de acción para noticias propias o si es admin */}
                           {(!showAllNews || news.user_id === auth?.user_id || hasAdminPermission) && (
                             <>
                               <Button
-                                size="xs"
+                                size={{ base: "2xs", md: "xs" }}
                                 variant="outline"
                                 colorScheme="blue"
                                 leftIcon={<FiEdit />}
                                 onClick={() => loadNewsForEdit(news)}
                                 isDisabled={showAllNews && news.user_id !== auth?.user_id && !hasAdminPermission}
+                                fontSize={{ base: "2xs", md: "xs" }}
                               >
                                 Editar
                               </Button>
                               
                               <Button
-                                size="xs"
+                                size={{ base: "2xs", md: "xs" }}
                                 variant="outline"
                                 colorScheme={news.news_status ? "orange" : "green"}
                                 leftIcon={news.news_status ? <FiToggleLeft /> : <FiToggleRight />}
                                 onClick={() => toggleNewsStatus(news.news_id, news.news_status)}
                                 isDisabled={showAllNews && news.user_id !== auth?.user_id && !hasAdminPermission}
+                                fontSize={{ base: "2xs", md: "xs" }}
                               >
                                 {news.news_status ? "Desactivar" : "Activar"}
                               </Button>
@@ -952,16 +1123,17 @@ const NewsCreate = () => {
                           {/* Botón eliminar solo para admin/superAdmin */}
                           {hasAdminPermission && (
                             <Button
-                              size="xs"
+                              size={{ base: "2xs", md: "xs" }}
                               variant="outline"
                               colorScheme="red"
                               leftIcon={<FiTrash2 />}
                               onClick={() => openDeleteModal(news.news_id, news.news_title)}
+                              fontSize={{ base: "2xs", md: "xs" }}
                             >
                               Eliminar
                             </Button>
                           )}
-                        </HStack>
+                        </Flex>
                         
                         {news.news_image ? (
                           <Box w="full">
@@ -969,7 +1141,7 @@ const NewsCreate = () => {
                               src={`http://localhost:3000/uploads/news/${news.news_image}`}
                               alt={news.news_title}
                               borderRadius="md"
-                              maxH="100px"
+                              maxH={{ base: "80px", md: "100px" }}
                               objectFit="cover"
                               w="full"
                               fallbackSrc="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjBmMGYwIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OTk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlbiBubyBkaXNwb25pYmxlPC90ZXh0Pjwvc3ZnPg=="
@@ -983,8 +1155,19 @@ const NewsCreate = () => {
                             />
                           </Box>
                         ) : (
-                          <Box w="full" h="100px" bg="gray.100" borderRadius="md" display="flex" alignItems="center" justifyContent="center">
-                            <Text fontSize="sm" color="gray.500">
+                          <Box 
+                            w="full" 
+                            h={{ base: "80px", md: "100px" }} 
+                            bg="gray.100" 
+                            borderRadius="md" 
+                            display="flex" 
+                            alignItems="center" 
+                            justifyContent="center"
+                          >
+                            <Text 
+                              fontSize={{ base: "xs", md: "sm" }} 
+                              color="gray.500"
+                            >
                               Sin imagen
                             </Text>
                           </Box>
@@ -1006,9 +1189,13 @@ const NewsCreate = () => {
       {/* Modal de Confirmación de Eliminación */}
       <Modal isOpen={deleteModal.isOpen} onClose={closeDeleteModal} isCentered>
         <ModalOverlay bg="blackAlpha.600" backdropFilter="blur(10px)" />
-        <ModalContent mx={4} maxW="md">
-          <ModalHeader>
-            <HStack spacing={3}>
+        <ModalContent mx={{ base: 4, md: 0 }} maxW="md">
+          <ModalHeader pb={{ base: 3, md: 4 }}>
+            <Flex
+              direction={{ base: "column", sm: "row" }}
+              align={{ base: "start", sm: "center" }}
+              gap={3}
+            >
               <Box
                 p={2}
                 borderRadius="full"
@@ -1018,53 +1205,75 @@ const NewsCreate = () => {
                 <FiTrash2 size={20} />
               </Box>
               <VStack align="start" spacing={0}>
-                <Text fontSize="lg" fontWeight="bold">
+                <Text 
+                  fontSize={{ base: "md", md: "lg" }} 
+                  fontWeight="bold"
+                >
                   Confirmar Eliminación
                 </Text>
-                <Text fontSize="sm" color="gray.500">
+                <Text 
+                  fontSize={{ base: "xs", md: "sm" }} 
+                  color="gray.500"
+                >
                   Esta acción no se puede deshacer
                 </Text>
               </VStack>
-            </HStack>
+            </Flex>
           </ModalHeader>
           <ModalCloseButton />
           
-          <ModalBody>
-            <VStack spacing={4} align="stretch">
+          <ModalBody px={{ base: 4, md: 6 }} pb={{ base: 4, md: 6 }}>
+            <VStack spacing={{ base: 3, md: 4 }} align="stretch">
               <Alert status="warning" borderRadius="md">
                 <AlertIcon />
                 <VStack align="start" spacing={1}>
-                  <AlertTitle fontSize="sm">¡Atención!</AlertTitle>
-                  <AlertDescription fontSize="sm">
+                  <AlertTitle fontSize={{ base: "xs", md: "sm" }}>
+                    ¡Atención!
+                  </AlertTitle>
+                  <AlertDescription fontSize={{ base: "xs", md: "sm" }}>
                     Estás a punto de eliminar permanentemente la noticia:
                   </AlertDescription>
                 </VStack>
               </Alert>
               
               <Box
-                p={4}
+                p={{ base: 3, md: 4 }}
                 bg="gray.50"
                 borderRadius="md"
                 border="1px solid"
                 borderColor="gray.200"
               >
-                <Text fontWeight="semibold" color="red.600" mb={2}>
+                <Text 
+                  fontWeight="semibold" 
+                  color="red.600" 
+                  mb={2}
+                  fontSize={{ base: "sm", md: "md" }}
+                >
                   "{deleteModal.newsTitle}"
                 </Text>
-                <Text fontSize="sm" color="gray.600">
+                <Text 
+                  fontSize={{ base: "xs", md: "sm" }} 
+                  color="gray.600"
+                >
                   Esta acción eliminará la noticia y todos sus datos asociados de forma permanente.
                 </Text>
               </Box>
             </VStack>
           </ModalBody>
 
-          <ModalFooter>
-            <HStack spacing={3} w="full">
+          <ModalFooter px={{ base: 4, md: 6 }} pb={{ base: 4, md: 6 }}>
+            <Flex
+              direction={{ base: "column", sm: "row" }}
+              w="full"
+              gap={3}
+            >
               <Button
                 variant="outline"
                 onClick={closeDeleteModal}
                 flex={1}
                 isDisabled={deleteModal.isDeleting}
+                size={{ base: "sm", md: "md" }}
+                fontSize={{ base: "xs", md: "sm" }}
               >
                 Cancelar
               </Button>
@@ -1075,10 +1284,12 @@ const NewsCreate = () => {
                 isLoading={deleteModal.isDeleting}
                 loadingText="Eliminando..."
                 leftIcon={<FiTrash2 />}
+                size={{ base: "sm", md: "md" }}
+                fontSize={{ base: "xs", md: "sm" }}
               >
                 Eliminar Noticia
               </Button>
-            </HStack>
+            </Flex>
           </ModalFooter>
         </ModalContent>
       </Modal>

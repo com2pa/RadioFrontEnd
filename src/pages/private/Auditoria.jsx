@@ -293,31 +293,52 @@ const Auditoria = () => {
 
   return (
     <Box bg={bgColor} minH="100vh">
-      <Container maxW="container.xl" py={8}>
-        <VStack spacing={8} align="stretch">
+      <Container maxW="container.xl" py={{ base: 4, md: 6, lg: 8 }} px={{ base: 4, md: 6 }}>
+        <VStack spacing={{ base: 4, md: 6, lg: 8 }} align="stretch">
           {/* Header del Dashboard */}
           <Box>
-            <HStack justify="space-between" align="center" mb={4}>
-              <VStack align="start" spacing={1}>
-                <HStack spacing={4}>
+            <VStack align="stretch" spacing={4}>
+              {/* Título y botón volver */}
+              <VStack align={{ base: "start", md: "start" }} spacing={2}>
+                <Flex
+                  direction={{ base: "column", sm: "row" }}
+                  align={{ base: "start", sm: "center" }}
+                  gap={{ base: 3, md: 4 }}
+                  wrap="wrap"
+                >
                   <Button
                     as={RouterLink}
                     to="/dashboard/admin"
                     leftIcon={<Icon as={FiArrowLeft} />}
                     variant="outline"
-                    size="sm"
+                    size={{ base: "xs", md: "sm" }}
                   >
-                    Volver
+                    <Text display={{ base: "none", sm: "block" }}>Volver</Text>
+                    <Text display={{ base: "block", sm: "none" }}>←</Text>
                   </Button>
-                  <Heading size="lg" color="blue.600">
+                  <Heading 
+                    size={{ base: "md", md: "lg", lg: "xl" }} 
+                    color="blue.600"
+                  >
                     Auditoría
                   </Heading>
-                </HStack>
-                <Text color={textColor}>
+                </Flex>
+                <Text 
+                  color={textColor}
+                  fontSize={{ base: "sm", md: "md" }}
+                >
                   Registro de actividades y acciones del sistema
                 </Text>
               </VStack>
-              <HStack spacing={2}>
+              
+              {/* Navegación */}
+              <Flex
+                direction={{ base: "row", md: "row" }}
+                justify="flex-end"
+                align="center"
+                gap={2}
+                wrap="wrap"
+              >
                 <Tooltip label="Recargar logs">
                   <IconButton
                     icon={<Icon as={FiRefreshCw} />}
@@ -325,15 +346,35 @@ const Auditoria = () => {
                     onClick={() => fetchLogs(currentPage, limit)}
                     isLoading={loading}
                     variant="ghost"
+                    size={{ base: "sm", md: "md" }}
                   />
                 </Tooltip>
-                <IconButton aria-label="Abrir menú" icon={<Icon as={FiMenu} />} onClick={onOpen} />
-                <IconButton as={RouterLink} to="/" aria-label="Inicio" icon={<Icon as={FiHome} />} />
-                <Button leftIcon={<Icon as={FiLogOut} />} colorScheme="red" variant="outline" onClick={logout}>
-                  Cerrar sesión
+                <IconButton 
+                  aria-label="Abrir menú" 
+                  icon={<Icon as={FiMenu} />} 
+                  onClick={onOpen}
+                  size={{ base: "sm", md: "md" }}
+                />
+                <IconButton 
+                  as={RouterLink} 
+                  to="/" 
+                  aria-label="Inicio" 
+                  icon={<Icon as={FiHome} />}
+                  size={{ base: "sm", md: "md" }}
+                />
+                <Button 
+                  leftIcon={<Icon as={FiLogOut} />} 
+                  colorScheme="red" 
+                  variant="outline" 
+                  onClick={logout}
+                  size={{ base: "sm", md: "md" }}
+                  fontSize={{ base: "xs", md: "sm" }}
+                >
+                  <Text display={{ base: "none", sm: "block" }}>Cerrar sesión</Text>
+                  <Text display={{ base: "block", sm: "none" }}>Salir</Text>
                 </Button>
-              </HStack>
-            </HStack>
+              </Flex>
+            </VStack>
           </Box>
 
           {/* Menú administrativo reutilizable */}
@@ -345,11 +386,11 @@ const Auditoria = () => {
 
           {/* Filtros y búsqueda */}
           <Card bg={cardBg}>
-            <CardBody>
+            <CardBody px={{ base: 4, md: 6 }} py={{ base: 4, md: 6 }}>
               <VStack spacing={4} align="stretch">
-                <HStack spacing={4} flexWrap="wrap">
+                <VStack spacing={3} align="stretch">
                   {/* Búsqueda */}
-                  <InputGroup flex={1} minW="200px">
+                  <InputGroup flex={1} minW={{ base: "100%", sm: "200px" }}>
                     <InputLeftElement pointerEvents="none">
                       <Icon as={FiSearch} color="gray.400" />
                     </InputLeftElement>
@@ -357,63 +398,72 @@ const Auditoria = () => {
                       placeholder="Buscar en logs..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
+                      size={{ base: "sm", md: "md" }}
                     />
                   </InputGroup>
 
-                  {/* Filtro por acción */}
-                  <Select
-                    value={filterAction}
-                    onChange={(e) => setFilterAction(e.target.value)}
-                    maxW="200px"
-                  >
-                    <option value="all">Todas las acciones</option>
-                    {uniqueActions.map(action => (
-                      <option key={action} value={action}>
-                        {action}
-                      </option>
-                    ))}
-                  </Select>
+                  <HStack spacing={3} flexWrap="wrap">
+                    {/* Filtro por acción */}
+                    <Select
+                      value={filterAction}
+                      onChange={(e) => setFilterAction(e.target.value)}
+                      maxW={{ base: "100%", sm: "200px" }}
+                      flex={{ base: "1 1 100%", sm: "0 1 auto" }}
+                      size={{ base: "sm", md: "md" }}
+                    >
+                      <option value="all">Todas las acciones</option>
+                      {uniqueActions.map(action => (
+                        <option key={action} value={action}>
+                          {action}
+                        </option>
+                      ))}
+                    </Select>
 
-                  {/* Filtro por usuario */}
-                  <Select
-                    value={filterUser}
-                    onChange={(e) => setFilterUser(e.target.value)}
-                    maxW="200px"
-                  >
-                    <option value="all">Todos los usuarios</option>
-                    {users.map(user => (
-                      <option key={user} value={user}>
-                        {user}
-                      </option>
-                    ))}
-                  </Select>
+                    {/* Filtro por usuario */}
+                    <Select
+                      value={filterUser}
+                      onChange={(e) => setFilterUser(e.target.value)}
+                      maxW={{ base: "100%", sm: "200px" }}
+                      flex={{ base: "1 1 100%", sm: "0 1 auto" }}
+                      size={{ base: "sm", md: "md" }}
+                    >
+                      <option value="all">Todos los usuarios</option>
+                      {users.map(user => (
+                        <option key={user} value={user}>
+                          {user}
+                        </option>
+                      ))}
+                    </Select>
 
-                  {/* Selector de items por página */}
-                  <Select
-                    value={limit}
-                    onChange={(e) => {
-                      const newLimit = parseInt(e.target.value)
-                      setLimit(newLimit)
-                      setCurrentPage(1)
-                    }}
-                    maxW="150px"
-                  >
-                    <option value="10">10 por página</option>
-                    <option value="20">20 por página</option>
-                    <option value="50">50 por página</option>
-                    <option value="100">100 por página</option>
-                  </Select>
-                </HStack>
+                    {/* Selector de items por página */}
+                    <Select
+                      value={limit}
+                      onChange={(e) => {
+                        const newLimit = parseInt(e.target.value)
+                        setLimit(newLimit)
+                        setCurrentPage(1)
+                      }}
+                      maxW={{ base: "100%", sm: "150px" }}
+                      flex={{ base: "1 1 100%", sm: "0 1 auto" }}
+                      size={{ base: "sm", md: "md" }}
+                    >
+                      <option value="10">10 por página</option>
+                      <option value="20">20 por página</option>
+                      <option value="50">50 por página</option>
+                      <option value="100">100 por página</option>
+                    </Select>
+                  </HStack>
+                </VStack>
 
                 {/* Resumen */}
                 <HStack spacing={4} flexWrap="wrap">
-                  <Text fontSize="sm" color={textColor}>
+                  <Text fontSize={{ base: "xs", md: "sm" }} color={textColor}>
                     Total de logs: <strong>{total}</strong>
                   </Text>
-                  <Text fontSize="sm" color={textColor}>
+                  <Text fontSize={{ base: "xs", md: "sm" }} color={textColor}>
                     Mostrando: <strong>{logs.length}</strong> de <strong>{total}</strong>
                   </Text>
-                  <Text fontSize="sm" color={textColor}>
+                  <Text fontSize={{ base: "xs", md: "sm" }} color={textColor}>
                     Página <strong>{currentPage}</strong> de <strong>{totalPages}</strong>
                   </Text>
                 </HStack>
@@ -423,110 +473,142 @@ const Auditoria = () => {
 
           {/* Tabla de logs */}
           <Card bg={cardBg}>
-            <CardHeader>
+            <CardHeader px={{ base: 4, md: 6 }} pb={{ base: 3, md: 4 }}>
               <HStack spacing={2}>
-                <Icon as={FiFileText} />
-                <Heading size="md">Logs de Auditoría</Heading>
+                <Icon as={FiFileText} boxSize={{ base: 4, md: 5 }} />
+                <Heading size={{ base: "sm", md: "md" }}>Logs de Auditoría</Heading>
               </HStack>
             </CardHeader>
-            <CardBody>
+            <CardBody px={{ base: 3, md: 6 }} pb={{ base: 3, md: 6 }}>
               {loading ? (
                 <Flex justify="center" align="center" py={8}>
-                  <Spinner size="xl" />
+                  <VStack spacing={4}>
+                    <Spinner size={{ base: "md", md: "xl" }} />
+                    <Text 
+                      color={textColor}
+                      fontSize={{ base: "xs", md: "sm" }}
+                    >
+                      Cargando logs...
+                    </Text>
+                  </VStack>
                 </Flex>
               ) : filteredLogs.length === 0 ? (
                 <Alert status="info">
                   <AlertIcon />
-                  <AlertTitle>No hay logs disponibles</AlertTitle>
-                  <AlertDescription>
-                    {searchTerm || filterAction !== 'all' || filterUser !== 'all'
-                      ? 'No se encontraron logs con los filtros aplicados'
-                      : 'No hay registros de auditoría en el sistema'}
-                  </AlertDescription>
+                  <Box>
+                    <AlertTitle fontSize={{ base: "xs", md: "sm" }}>No hay logs disponibles</AlertTitle>
+                    <AlertDescription fontSize={{ base: "xs", md: "sm" }}>
+                      {searchTerm || filterAction !== 'all' || filterUser !== 'all'
+                        ? 'No se encontraron logs con los filtros aplicados'
+                        : 'No hay registros de auditoría en el sistema'}
+                    </AlertDescription>
+                  </Box>
                 </Alert>
               ) : (
-                <TableContainer>
-                  <Table variant="simple" size="sm">
+                <Box overflowX="auto">
+                  <Table variant="simple" size={{ base: "xs", md: "sm" }}>
                     <Thead>
                       <Tr>
-                        <Th>Fecha/Hora</Th>
-                        <Th>Usuario</Th>
-                        <Th>Acción</Th>
-                        <Th>Descripción</Th>
-                        <Th>IP</Th>
+                        <Th fontSize={{ base: "xs", md: "sm" }}>Fecha/Hora</Th>
+                        <Th fontSize={{ base: "xs", md: "sm" }}>Usuario</Th>
+                        <Th fontSize={{ base: "xs", md: "sm" }} display={{ base: "none", md: "table-cell" }}>
+                          Acción
+                        </Th>
+                        <Th fontSize={{ base: "xs", md: "sm" }} display={{ base: "none", lg: "table-cell" }}>
+                          Descripción
+                        </Th>
+                        <Th fontSize={{ base: "xs", md: "sm" }} display={{ base: "none", xl: "table-cell" }}>
+                          IP
+                        </Th>
                       </Tr>
                     </Thead>
                     <Tbody>
                       {filteredLogs.map((log, index) => (
                         <Tr key={log.log_id || log.id || index}>
                           <Td>
-                            <HStack spacing={2}>
-                              <Icon as={FiClock} color="gray.400" />
-                              <VStack align="start" spacing={0}>
-                                <Text fontSize="sm" fontWeight="medium">
+                            <VStack align="start" spacing={0}>
+                              <HStack spacing={1}>
+                                <Icon as={FiClock} color="gray.400" boxSize={3} />
+                                <Text fontSize={{ base: "xs", md: "sm" }} fontWeight="medium">
                                   {formatDate(log.created_at || log.timestamp || log.date)}
                                 </Text>
-                                <Text fontSize="xs" color="gray.500">
-                                  {new Date(log.created_at || log.timestamp || log.date).toLocaleTimeString('es-ES', {
-                                    hour: '2-digit',
-                                    minute: '2-digit',
-                                    second: '2-digit'
-                                  })}
-                                </Text>
-                              </VStack>
-                            </HStack>
-                          </Td>
-                          <Td>
-                            <HStack spacing={2}>
-                              <Icon as={FiUser} color="gray.400" />
-                              <VStack align="start" spacing={0}>
-                                {log.user_display ? (
-                                  <Text fontSize="sm" fontWeight="medium">
-                                    {log.user_display}
-                                  </Text>
-                                ) : (
-                                  <>
-                                    <Text fontSize="sm" fontWeight="medium">
-                                      {log.user_name 
-                                        ? (log.user_lastname ? `${log.user_name} ${log.user_lastname}` : log.user_name)
-                                        : (log.user_email || `Usuario ID: ${log.user_id || 'N/A'}` || 'Usuario desconocido')}
-                                    </Text>
-                                    {log.user_email && log.user_name && (
-                                      <Text fontSize="xs" color="gray.500">
-                                        {log.user_email}
-                                      </Text>
-                                    )}
-                                    {log.user_id && !log.user_name && !log.user_email && (
-                                      <Text fontSize="xs" color="gray.500">
-                                        ID: {log.user_id}
-                                      </Text>
-                                    )}
-                                  </>
-                                )}
-                              </VStack>
-                            </HStack>
+                              </HStack>
+                              <Text fontSize="2xs" color="gray.500" display={{ base: "block", md: "none" }}>
+                                {new Date(log.created_at || log.timestamp || log.date).toLocaleTimeString('es-ES', {
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                  second: '2-digit'
+                                })}
+                              </Text>
+                            </VStack>
                           </Td>
                           <Td>
                             <VStack align="start" spacing={1}>
-                              <Badge colorScheme={getActionColor(log.action)} fontSize="xs">
+                              <HStack spacing={1}>
+                                <Icon as={FiUser} color="gray.400" boxSize={3} />
+                                <VStack align="start" spacing={0}>
+                                  {log.user_display ? (
+                                    <Text fontSize={{ base: "xs", md: "sm" }} fontWeight="medium" wordBreak="break-word">
+                                      {log.user_display}
+                                    </Text>
+                                  ) : (
+                                    <>
+                                      <Text fontSize={{ base: "xs", md: "sm" }} fontWeight="medium" wordBreak="break-word">
+                                        {log.user_name 
+                                          ? (log.user_lastname ? `${log.user_name} ${log.user_lastname}` : log.user_name)
+                                          : (log.user_email || `Usuario ID: ${log.user_id || 'N/A'}` || 'Usuario desconocido')}
+                                      </Text>
+                                      {log.user_email && log.user_name && (
+                                        <Text fontSize="2xs" color="gray.500" wordBreak="break-word">
+                                          {log.user_email}
+                                        </Text>
+                                      )}
+                                      {log.user_id && !log.user_name && !log.user_email && (
+                                        <Text fontSize="2xs" color="gray.500">
+                                          ID: {log.user_id}
+                                        </Text>
+                                      )}
+                                    </>
+                                  )}
+                                </VStack>
+                              </HStack>
+                              {/* Mostrar información adicional en móvil */}
+                              <VStack align="start" spacing={1} mt={1} display={{ base: "flex", md: "none" }}>
+                                <Badge colorScheme={getActionColor(log.action)} fontSize="2xs">
+                                  {log.action || 'N/A'}
+                                </Badge>
+                                {log.description && (
+                                  <Text fontSize="2xs" color="gray.500" noOfLines={2}>
+                                    {log.description}
+                                  </Text>
+                                )}
+                                <Text fontSize="2xs" color="gray.500" fontFamily="mono">
+                                  IP: {log.ip_address || log.ip || 'N/A'}
+                                </Text>
+                              </VStack>
+                            </VStack>
+                          </Td>
+                          <Td display={{ base: "none", md: "table-cell" }}>
+                            <VStack align="start" spacing={1}>
+                              <Badge colorScheme={getActionColor(log.action)} fontSize={{ base: "2xs", md: "xs" }}>
                                 {log.action || 'N/A'}
                               </Badge>
                               {log.entity_type && (
-                                <Text fontSize="xs" color="gray.500">
+                                <Text fontSize={{ base: "2xs", md: "xs" }} color="gray.500">
                                   {log.entity_type}
                                   {log.entity_id && ` #${log.entity_id}`}
                                 </Text>
                               )}
                             </VStack>
                           </Td>
-                          <Td>
+                          <Td display={{ base: "none", lg: "table-cell" }}>
                             <VStack align="start" spacing={1}>
                               {log.description ? (
-                                <Text fontSize="sm" color="gray.700" fontWeight="medium">
+                                <Text fontSize={{ base: "xs", md: "sm" }} color="gray.700" fontWeight="medium" wordBreak="break-word">
                                   {log.description}
                                 </Text>
                               ) : (
-                                <Text fontSize="sm" color="gray.500" fontStyle="italic">
+                                <Text fontSize={{ base: "xs", md: "sm" }} color="gray.500" fontStyle="italic">
                                   Sin descripción disponible
                                 </Text>
                               )}
@@ -536,20 +618,20 @@ const Auditoria = () => {
                                   placement="left"
                                   hasArrow
                                 >
-                                  <Text fontSize="xs" color="gray.400" fontStyle="italic" cursor="help">
+                                  <Text fontSize="2xs" color="gray.400" fontStyle="italic" cursor="help">
                                     Ver detalles técnicos
                                   </Text>
                                 </Tooltip>
                               )}
                               {log.user_agent && (
-                                <Text fontSize="xs" color="gray.400" noOfLines={1} title={log.user_agent}>
+                                <Text fontSize="2xs" color="gray.400" noOfLines={1} title={log.user_agent}>
                                   {log.user_agent.length > 50 ? `${log.user_agent.substring(0, 50)}...` : log.user_agent}
                                 </Text>
                               )}
                             </VStack>
                           </Td>
-                          <Td>
-                            <Text fontSize="xs" color="gray.500" fontFamily="mono">
+                          <Td display={{ base: "none", xl: "table-cell" }}>
+                            <Text fontSize={{ base: "2xs", md: "xs" }} color="gray.500" fontFamily="mono">
                               {log.ip_address || log.ip || 'N/A'}
                             </Text>
                           </Td>
@@ -557,70 +639,90 @@ const Auditoria = () => {
                       ))}
                     </Tbody>
                   </Table>
-                </TableContainer>
+                </Box>
               )}
             </CardBody>
             
             {/* Controles de paginación */}
             {!loading && totalPages > 1 && (
-              <Box borderTop="1px solid" borderColor={cardBg === 'white' ? 'gray.200' : 'gray.700'} p={4}>
-                <HStack justify="space-between" align="center" flexWrap="wrap" spacing={4}>
-                  <HStack spacing={2}>
-                    <Button
-                      size="sm"
-                      leftIcon={<Icon as={FiChevronLeft} />}
-                      onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                      isDisabled={currentPage === 1 || loading}
-                      variant="outline"
-                    >
-                      Anterior
-                    </Button>
-                    
-                    {/* Números de página */}
-                    <HStack spacing={1}>
-                      {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                        let pageNum
-                        if (totalPages <= 5) {
-                          pageNum = i + 1
-                        } else if (currentPage <= 3) {
-                          pageNum = i + 1
-                        } else if (currentPage >= totalPages - 2) {
-                          pageNum = totalPages - 4 + i
-                        } else {
-                          pageNum = currentPage - 2 + i
-                        }
-                        
-                        return (
-                          <Button
-                            key={pageNum}
-                            size="sm"
-                            onClick={() => setCurrentPage(pageNum)}
-                            colorScheme={currentPage === pageNum ? 'blue' : 'gray'}
-                            variant={currentPage === pageNum ? 'solid' : 'outline'}
-                            minW="40px"
-                            isDisabled={loading}
-                          >
-                            {pageNum}
-                          </Button>
-                        )
-                      })}
+              <Box 
+                borderTop="1px solid" 
+                borderColor={cardBg === 'white' ? 'gray.200' : 'gray.700'} 
+                p={{ base: 3, md: 4 }}
+              >
+                <VStack spacing={3} align="stretch">
+                  <Flex
+                    direction={{ base: "column", sm: "row" }}
+                    justify="space-between"
+                    align={{ base: "stretch", sm: "center" }}
+                    gap={3}
+                  >
+                    <HStack spacing={2} flexWrap="wrap" justify={{ base: "center", sm: "flex-start" }}>
+                      <Button
+                        size={{ base: "xs", md: "sm" }}
+                        leftIcon={<Icon as={FiChevronLeft} />}
+                        onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                        isDisabled={currentPage === 1 || loading}
+                        variant="outline"
+                        fontSize={{ base: "xs", md: "sm" }}
+                      >
+                        <Text display={{ base: "none", sm: "block" }}>Anterior</Text>
+                        <Text display={{ base: "block", sm: "none" }}>Ant</Text>
+                      </Button>
+                      
+                      {/* Números de página */}
+                      <HStack spacing={1} flexWrap="wrap" justify="center">
+                        {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                          let pageNum
+                          if (totalPages <= 5) {
+                            pageNum = i + 1
+                          } else if (currentPage <= 3) {
+                            pageNum = i + 1
+                          } else if (currentPage >= totalPages - 2) {
+                            pageNum = totalPages - 4 + i
+                          } else {
+                            pageNum = currentPage - 2 + i
+                          }
+                          
+                          return (
+                            <Button
+                              key={pageNum}
+                              size={{ base: "xs", md: "sm" }}
+                              onClick={() => setCurrentPage(pageNum)}
+                              colorScheme={currentPage === pageNum ? 'blue' : 'gray'}
+                              variant={currentPage === pageNum ? 'solid' : 'outline'}
+                              minW={{ base: "32px", md: "40px" }}
+                              isDisabled={loading}
+                              fontSize={{ base: "xs", md: "sm" }}
+                            >
+                              {pageNum}
+                            </Button>
+                          )
+                        })}
+                      </HStack>
+                      
+                      <Button
+                        size={{ base: "xs", md: "sm" }}
+                        rightIcon={<Icon as={FiChevronRight} />}
+                        onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                        isDisabled={currentPage === totalPages || loading}
+                        variant="outline"
+                        fontSize={{ base: "xs", md: "sm" }}
+                      >
+                        <Text display={{ base: "none", sm: "block" }}>Siguiente</Text>
+                        <Text display={{ base: "block", sm: "none" }}>Sig</Text>
+                      </Button>
                     </HStack>
                     
-                    <Button
-                      size="sm"
-                      rightIcon={<Icon as={FiChevronRight} />}
-                      onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                      isDisabled={currentPage === totalPages || loading}
-                      variant="outline"
+                    <Text 
+                      fontSize={{ base: "xs", md: "sm" }} 
+                      color={textColor}
+                      textAlign={{ base: "center", sm: "right" }}
                     >
-                      Siguiente
-                    </Button>
-                  </HStack>
-                  
-                  <Text fontSize="sm" color={textColor}>
-                    Página {currentPage} de {totalPages} ({total} registros totales)
-                  </Text>
-                </HStack>
+                      Página {currentPage} de {totalPages} ({total} registros totales)
+                    </Text>
+                  </Flex>
+                </VStack>
               </Box>
             )}
           </Card>

@@ -35,7 +35,9 @@ import {
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
-  useDisclosure
+  useDisclosure,
+  Flex,
+  Spinner
 } from '@chakra-ui/react'
 import { FiSave, FiEdit, FiTrash2, FiPlus, FiEye, FiEyeOff, FiMenu, FiHome, FiLogOut, FiArrowLeft } from 'react-icons/fi'
 import { useAuth } from '../../hooks/useAuth'
@@ -109,12 +111,19 @@ const MenuManagement = () => {
   // Verificar permisos de administrador
   if (!auth || (auth.role !== 'admin' && auth.role !== 'superAdmin')) {
     return (
-      <Box minH="100vh" bg={bgColor} display="flex" alignItems="center" justifyContent="center">
-        <Alert status="error" maxW="md">
+      <Box 
+        minH="100vh" 
+        bg={bgColor} 
+        display="flex" 
+        alignItems="center" 
+        justifyContent="center"
+        px={4}
+      >
+        <Alert status="error" maxW="md" borderRadius="md">
           <AlertIcon />
           <Box>
-            <AlertTitle>Acceso Denegado</AlertTitle>
-            <AlertDescription>
+            <AlertTitle fontSize={{ base: "sm", md: "md" }}>Acceso Denegado</AlertTitle>
+            <AlertDescription fontSize={{ base: "xs", md: "sm" }}>
               No tienes permisos para acceder a esta página.
             </AlertDescription>
           </Box>
@@ -313,38 +322,78 @@ const MenuManagement = () => {
 
   return (
     <Box minH="100vh" bg={bgColor}>
-      <Container maxW="container.xl" py={8}>
-        <VStack spacing={8} align="stretch">
+      <Container maxW="container.xl" py={{ base: 4, md: 6, lg: 8 }} px={{ base: 4, md: 6 }}>
+        <VStack spacing={{ base: 4, md: 6, lg: 8 }} align="stretch">
           {/* Header del Dashboard */}
           <Box>
-            <HStack justify="space-between" align="center" mb={4}>
-              <VStack align="start" spacing={1}>
-                <HStack spacing={4}>
+            <VStack align="stretch" spacing={4}>
+              {/* Título y botón volver */}
+              <VStack align={{ base: "start", md: "start" }} spacing={2}>
+                <Flex
+                  direction={{ base: "column", sm: "row" }}
+                  align={{ base: "start", sm: "center" }}
+                  gap={{ base: 3, md: 4 }}
+                  wrap="wrap"
+                >
                   <Button
                     as={RouterLink}
                     to="/dashboard/admin"
                     leftIcon={<FiArrowLeft />}
                     variant="outline"
-                    size="sm"
+                    size={{ base: "xs", md: "sm" }}
                   >
-                    Volver
+                    <Text display={{ base: "none", sm: "block" }}>Volver</Text>
+                    <Text display={{ base: "block", sm: "none" }}>←</Text>
                   </Button>
-                  <Heading size="lg" color="blue.600">
+                  <Heading 
+                    size={{ base: "md", md: "lg", lg: "xl" }} 
+                    color="blue.600"
+                  >
                     Gestión de Menús
                   </Heading>
-                </HStack>
-                <Text color={textColor}>
+                </Flex>
+                <Text 
+                  color={textColor}
+                  fontSize={{ base: "sm", md: "md" }}
+                >
                   Crear y administrar elementos del menú del sistema
                 </Text>
               </VStack>
-              <HStack spacing={2}>
-                <IconButton aria-label="Abrir menú" icon={<FiMenu />} onClick={onOpen} />
-                <IconButton as={RouterLink} to="/" aria-label="Inicio" icon={<FiHome />} />
-                <Button leftIcon={<FiLogOut />} colorScheme="red" variant="outline" onClick={logout}>
-                  Cerrar sesión
+              
+              {/* Navegación */}
+              <Flex
+                direction={{ base: "row", md: "row" }}
+                justify="flex-end"
+                align="center"
+                gap={2}
+                wrap="wrap"
+              >
+                <IconButton 
+                  aria-label="Abrir menú" 
+                  icon={<FiMenu />} 
+                  onClick={onOpen}
+                  size={{ base: "sm", md: "md" }}
+                />
+                <IconButton 
+                  as={RouterLink} 
+                  to="/" 
+                  aria-label="Inicio" 
+                  icon={<FiHome />}
+                  size={{ base: "sm", md: "md" }}
+                />
+                <Button 
+                  leftIcon={<FiLogOut />} 
+                  colorScheme="red" 
+                  variant="outline" 
+                  onClick={logout}
+                  size={{ base: "sm", md: "md" }}
+                  fontSize={{ base: "xs", md: "sm" }}
+                >
+                  <Text display={{ base: "none", sm: "block" }}>Cerrar sesión</Text>
+                  <Text display={{ base: "block", sm: "none" }}>Salir</Text>
                 </Button>
-              </HStack>
-            </HStack>
+              </Flex>
+            </VStack>
           </Box>
 
           {/* Menú administrativo reutilizable */}
@@ -355,20 +404,27 @@ const MenuManagement = () => {
           />
 
           {/* Contenido principal */}
-          <Box display={{ base: 'block', lg: 'grid' }} gridTemplateColumns="1fr 1fr" gap={8}>
+          <Box 
+            display={{ base: 'block', lg: 'grid' }} 
+            gridTemplateColumns="1fr 1fr" 
+            gap={{ base: 4, md: 6, lg: 8 }}
+          >
             {/* Formulario */}
             <Card bg={cardBg} boxShadow="md">
-              <CardHeader>
-                <VStack align="stretch" spacing={4}>
-                  <Heading size="md">
+              <CardHeader pb={{ base: 3, md: 4 }}>
+                <VStack align="stretch" spacing={{ base: 3, md: 4 }}>
+                  <Heading size={{ base: "sm", md: "md" }}>
                     {editingId ? 'Editar Elemento del Menú' : 'Crear Nuevo Elemento del Menú'}
                   </Heading>
                   
                   <FormControl>
-                    <FormLabel>Seleccionar tipo de menú a gestionar</FormLabel>
+                    <FormLabel fontSize={{ base: "sm", md: "md" }}>
+                      Seleccionar tipo de menú a gestionar
+                    </FormLabel>
                     <Select
                       value={selectedMenuType}
                       onChange={(e) => handleMenuTypeChange(e.target.value)}
+                      size={{ base: "sm", md: "md" }}
                     >
                       <option value="main">Menú Principal (Público)</option>
                       <option value="user-dashboard">Dashboard de Usuario</option>
@@ -377,35 +433,44 @@ const MenuManagement = () => {
                   </FormControl>
                 </VStack>
               </CardHeader>
-              <CardBody>
+              <CardBody px={{ base: 4, md: 6 }} pb={{ base: 4, md: 6 }}>
                 <form onSubmit={handleSubmit}>
-                  <VStack spacing={4} align="stretch">
+                  <VStack spacing={{ base: 3, md: 4 }} align="stretch">
                     <FormControl isRequired>
-                      <FormLabel>Título del menú</FormLabel>
+                      <FormLabel fontSize={{ base: "sm", md: "md" }}>
+                        Título del menú
+                      </FormLabel>
                       <Input
                         name="title"
                         value={formData.title}
                         onChange={handleInputChange}
                         placeholder="Ej: Dashboard, Usuarios, Configuración"
+                        size={{ base: "sm", md: "md" }}
                       />
                     </FormControl>
 
                     <FormControl isRequired>
-                      <FormLabel>Ruta (path)</FormLabel>
+                      <FormLabel fontSize={{ base: "sm", md: "md" }}>
+                        Ruta (path)
+                      </FormLabel>
                       <Input
                         name="path"
                         value={formData.path}
                         onChange={handleInputChange}
                         placeholder="Ej: /dashboard/admin, /admin/users"
+                        size={{ base: "sm", md: "md" }}
                       />
                     </FormControl>
 
                     <FormControl isRequired>
-                      <FormLabel>Tipo de menú</FormLabel>
+                      <FormLabel fontSize={{ base: "sm", md: "md" }}>
+                        Tipo de menú
+                      </FormLabel>
                       <Select
                         name="menu_type"
                         value={formData.menu_type}
                         onChange={handleInputChange}
+                        size={{ base: "sm", md: "md" }}
                       >
                         <option value="main">Menú Principal (Público)</option>
                         <option value="user-dashboard">Dashboard de Usuario</option>
@@ -414,13 +479,16 @@ const MenuManagement = () => {
                     </FormControl>
 
                     <FormControl>
-                      <FormLabel>Orden de aparición</FormLabel>
+                      <FormLabel fontSize={{ base: "sm", md: "md" }}>
+                        Orden de aparición
+                      </FormLabel>
                       <NumberInput
                         name="order_index"
                         value={formData.order_index}
                         onChange={(value) => setFormData(prev => ({ ...prev, order_index: parseInt(value) || 1 }))}
                         min={1}
                         max={100}
+                        size={{ base: "sm", md: "md" }}
                       >
                         <NumberInputField />
                         <NumberInputStepper>
@@ -431,23 +499,31 @@ const MenuManagement = () => {
                     </FormControl>
 
                     <FormControl>
-                      <FormLabel>Estado</FormLabel>
-                      <HStack>
+                      <FormLabel fontSize={{ base: "sm", md: "md" }}>
+                        Estado
+                      </FormLabel>
+                      <HStack spacing={3}>
                         <Switch
                           name="is_active"
                           isChecked={formData.is_active}
                           onChange={(e) => setFormData(prev => ({ ...prev, is_active: e.target.checked }))}
+                          size={{ base: "sm", md: "md" }}
                         />
-                        <Text fontSize="sm">Activo</Text>
+                        <Text fontSize={{ base: "xs", md: "sm" }}>Activo</Text>
                       </HStack>
                     </FormControl>
 
-                    <HStack spacing={3}>
+                    <Flex
+                      direction={{ base: "column", sm: "row" }}
+                      gap={3}
+                    >
                       <Button
                         type="submit"
                         leftIcon={<FiSave />}
                         colorScheme="blue"
                         flex={1}
+                        size={{ base: "sm", md: "md" }}
+                        fontSize={{ base: "xs", md: "sm" }}
                       >
                         {editingId ? 'Actualizar' : 'Crear'} Elemento
                       </Button>
@@ -456,11 +532,13 @@ const MenuManagement = () => {
                           onClick={handleCancel}
                           variant="outline"
                           flex={1}
+                          size={{ base: "sm", md: "md" }}
+                          fontSize={{ base: "xs", md: "sm" }}
                         >
                           Cancelar
                         </Button>
                       )}
-                    </HStack>
+                    </Flex>
                   </VStack>
                 </form>
               </CardBody>
@@ -468,114 +546,189 @@ const MenuManagement = () => {
 
             {/* Lista de elementos del menú */}
             <Card bg={cardBg} boxShadow="md">
-              <CardHeader>
-                <HStack justify="space-between">
-                  <Heading size="md">Elementos del Menú</Heading>
-                  <Badge colorScheme="blue" variant="subtle">
+              <CardHeader pb={{ base: 3, md: 4 }}>
+                <Flex
+                  direction={{ base: "column", sm: "row" }}
+                  justify="space-between"
+                  align={{ base: "start", sm: "center" }}
+                  gap={3}
+                >
+                  <Heading size={{ base: "sm", md: "md" }}>
+                    Elementos del Menú
+                  </Heading>
+                  <Badge 
+                    colorScheme="blue" 
+                    variant="subtle"
+                    fontSize={{ base: "xs", md: "sm" }}
+                  >
                     {menuItems.length} elementos
                   </Badge>
-                </HStack>
+                </Flex>
               </CardHeader>
-              <CardBody pt={0}>
+              <CardBody pt={0} px={{ base: 3, md: 6 }} pb={{ base: 3, md: 6 }}>
                 {loading ? (
                   <Box display="flex" justifyContent="center" py={8}>
-                    <Text>Cargando menús...</Text>
+                    <VStack spacing={4}>
+                      <Spinner size={{ base: "md", md: "lg" }} color="blue.500" />
+                      <Text 
+                        color={textColor}
+                        fontSize={{ base: "xs", md: "sm" }}
+                      >
+                        Cargando menús...
+                      </Text>
+                    </VStack>
                   </Box>
                 ) : error ? (
                   <Box textAlign="center" py={8}>
-                    <Text color="red.500" mb={4}>{error}</Text>
-                    <Button onClick={() => fetchMenus(selectedMenuType)} colorScheme="blue" variant="outline">
+                    <Text 
+                      color="red.500" 
+                      mb={4}
+                      fontSize={{ base: "xs", md: "sm" }}
+                    >
+                      {error}
+                    </Text>
+                    <Button 
+                      onClick={() => fetchMenus(selectedMenuType)} 
+                      colorScheme="blue" 
+                      variant="outline"
+                      size={{ base: "sm", md: "md" }}
+                      fontSize={{ base: "xs", md: "sm" }}
+                    >
                       Reintentar
                     </Button>
                   </Box>
                 ) : !Array.isArray(menuItems) || menuItems.length === 0 ? (
                   <Box textAlign="center" py={8}>
-                    <Text color={textColor}>No hay elementos de menú para este tipo</Text>
+                    <Text 
+                      color={textColor}
+                      fontSize={{ base: "xs", md: "sm" }}
+                    >
+                      No hay elementos de menú para este tipo
+                    </Text>
                   </Box>
                 ) : (
-                  <Table size="sm">
-                  <Thead>
-                    <Tr>
-                      <Th>Título</Th>
-                      <Th>Ruta</Th>
-                      <Th>Tipo</Th>
-                      <Th>Estado</Th>
-                      <Th>Orden</Th>
-                      <Th>Acciones</Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    {menuItems.map((item) => (
-                      <Tr key={item.id}>
-                        <Td>
-                          <Text fontWeight="medium" fontSize="sm">
-                            {item.title}
-                          </Text>
-                        </Td>
-                        <Td>
-                          <Text fontSize="xs" color={textColor} fontFamily="mono">
-                            {item.path}
-                          </Text>
-                        </Td>
-                        <Td>
-                          <Badge
-                            colorScheme={
-                              item.menu_type === 'main' ? 'blue' :
-                              item.menu_type === 'user-dashboard' ? 'green' : 'purple'
-                            }
-                            variant="subtle"
-                            fontSize="xs"
-                          >
-                            {item.menu_type === 'main' ? 'Principal' :
-                             item.menu_type === 'user-dashboard' ? 'Usuario' : 'Admin'}
-                          </Badge>
-                        </Td>
-                        <Td>
-                          <HStack spacing={2}>
-                            <Badge
-                              colorScheme={item.is_active ? 'green' : 'gray'}
-                              variant="subtle"
-                              fontSize="xs"
-                            >
-                              {item.is_active ? 'Activo' : 'Inactivo'}
-                            </Badge>
-                            <IconButton
-                              aria-label={item.is_active ? 'Ocultar' : 'Mostrar'}
-                              icon={item.is_active ? <FiEyeOff /> : <FiEye />}
-                              size="xs"
-                              variant="ghost"
-                              onClick={() => toggleVisibility(item.id)}
-                            />
-                          </HStack>
-                        </Td>
-                        <Td>
-                          <Text fontSize="sm" color={textColor}>
-                            {item.order_index}
-                          </Text>
-                        </Td>
-                        <Td>
-                          <HStack spacing={1}>
-                            <IconButton
-                              aria-label="Editar elemento"
-                              icon={<FiEdit />}
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => handleEdit(item)}
-                            />
-                            <IconButton
-                              aria-label="Eliminar elemento"
-                              icon={<FiTrash2 />}
-                              size="sm"
-                              variant="ghost"
-                              colorScheme="red"
-                              onClick={() => handleDelete(item.id)}
-                            />
-                          </HStack>
-                        </Td>
-                      </Tr>
-                    ))}
-                  </Tbody>
-                </Table>
+                  <Box overflowX="auto">
+                    <Table size={{ base: "xs", md: "sm" }} variant="simple">
+                      <Thead>
+                        <Tr>
+                          <Th fontSize={{ base: "xs", md: "sm" }}>Título</Th>
+                          <Th fontSize={{ base: "xs", md: "sm" }} display={{ base: "none", md: "table-cell" }}>
+                            Ruta
+                          </Th>
+                          <Th fontSize={{ base: "xs", md: "sm" }}>Tipo</Th>
+                          <Th fontSize={{ base: "xs", md: "sm" }}>Estado</Th>
+                          <Th fontSize={{ base: "xs", md: "sm" }} display={{ base: "none", lg: "table-cell" }}>
+                            Orden
+                          </Th>
+                          <Th fontSize={{ base: "xs", md: "sm" }}>Acciones</Th>
+                        </Tr>
+                      </Thead>
+                      <Tbody>
+                        {menuItems.map((item) => (
+                          <Tr key={item.id}>
+                            <Td>
+                              <VStack align="start" spacing={0}>
+                                <Text 
+                                  fontWeight="medium" 
+                                  fontSize={{ base: "xs", md: "sm" }}
+                                  wordBreak="break-word"
+                                >
+                                  {item.title}
+                                </Text>
+                                {/* Mostrar ruta en móvil debajo del título */}
+                                <Text 
+                                  fontSize="2xs" 
+                                  color={textColor} 
+                                  fontFamily="mono"
+                                  display={{ base: "block", md: "none" }}
+                                  mt={1}
+                                >
+                                  {item.path}
+                                </Text>
+                                {/* Mostrar orden en móvil */}
+                                <Text 
+                                  fontSize="2xs" 
+                                  color={textColor}
+                                  display={{ base: "block", lg: "none" }}
+                                  mt={1}
+                                >
+                                  Orden: {item.order_index}
+                                </Text>
+                              </VStack>
+                            </Td>
+                            <Td display={{ base: "none", md: "table-cell" }}>
+                              <Text 
+                                fontSize={{ base: "2xs", md: "xs" }} 
+                                color={textColor} 
+                                fontFamily="mono"
+                                wordBreak="break-word"
+                              >
+                                {item.path}
+                              </Text>
+                            </Td>
+                            <Td>
+                              <Badge
+                                colorScheme={
+                                  item.menu_type === 'main' ? 'blue' :
+                                  item.menu_type === 'user-dashboard' ? 'green' : 'purple'
+                                }
+                                variant="subtle"
+                                fontSize={{ base: "2xs", md: "xs" }}
+                              >
+                                {item.menu_type === 'main' ? 'Principal' :
+                                 item.menu_type === 'user-dashboard' ? 'Usuario' : 'Admin'}
+                              </Badge>
+                            </Td>
+                            <Td>
+                              <HStack spacing={2} flexWrap="wrap">
+                                <Badge
+                                  colorScheme={item.is_active ? 'green' : 'gray'}
+                                  variant="subtle"
+                                  fontSize={{ base: "2xs", md: "xs" }}
+                                >
+                                  {item.is_active ? 'Activo' : 'Inactivo'}
+                                </Badge>
+                                <IconButton
+                                  aria-label={item.is_active ? 'Ocultar' : 'Mostrar'}
+                                  icon={item.is_active ? <FiEyeOff /> : <FiEye />}
+                                  size={{ base: "2xs", md: "xs" }}
+                                  variant="ghost"
+                                  onClick={() => toggleVisibility(item.id)}
+                                />
+                              </HStack>
+                            </Td>
+                            <Td display={{ base: "none", lg: "table-cell" }}>
+                              <Text 
+                                fontSize={{ base: "xs", md: "sm" }} 
+                                color={textColor}
+                              >
+                                {item.order_index}
+                              </Text>
+                            </Td>
+                            <Td>
+                              <HStack spacing={1}>
+                                <IconButton
+                                  aria-label="Editar elemento"
+                                  icon={<FiEdit />}
+                                  size={{ base: "xs", md: "sm" }}
+                                  variant="ghost"
+                                  onClick={() => handleEdit(item)}
+                                />
+                                <IconButton
+                                  aria-label="Eliminar elemento"
+                                  icon={<FiTrash2 />}
+                                  size={{ base: "xs", md: "sm" }}
+                                  variant="ghost"
+                                  colorScheme="red"
+                                  onClick={() => handleDelete(item.id)}
+                                />
+                              </HStack>
+                            </Td>
+                          </Tr>
+                        ))}
+                      </Tbody>
+                    </Table>
+                  </Box>
                 )}
               </CardBody>
             </Card>

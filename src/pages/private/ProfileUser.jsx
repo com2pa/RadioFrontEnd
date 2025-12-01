@@ -354,8 +354,8 @@ const ProfileUser = () => {
       return (
         <Center minH="60vh">
           <VStack spacing={4}>
-            <Spinner size="xl" color="blue.500" />
-            <Text>Cargando perfil...</Text>
+            <Spinner size={{ base: "lg", md: "xl" }} color="blue.500" />
+            <Text fontSize={{ base: "sm", md: "md" }}>Cargando perfil...</Text>
           </VStack>
         </Center>
       );
@@ -365,8 +365,13 @@ const ProfileUser = () => {
       return (
         <Center minH="60vh">
           <VStack spacing={4}>
-            <Text fontSize="lg" color="gray.500">No se pudo cargar el perfil del usuario</Text>
-            <Button onClick={fetchUserProfile} colorScheme="blue">
+            <Text fontSize={{ base: "sm", md: "lg" }} color="gray.500">No se pudo cargar el perfil del usuario</Text>
+            <Button 
+              onClick={fetchUserProfile} 
+              colorScheme="blue"
+              size={{ base: "sm", md: "md" }}
+              fontSize={{ base: "xs", md: "sm" }}
+            >
               Reintentar
             </Button>
           </VStack>
@@ -375,41 +380,57 @@ const ProfileUser = () => {
     }
 
     return (
-      <Container maxW="6xl" py={8}>
-      <VStack spacing={8} align="stretch">
+      <Container maxW="6xl" py={{ base: 4, md: 6, lg: 8 }} px={{ base: 4, md: 6 }}>
+      <VStack spacing={{ base: 4, md: 6, lg: 8 }} align="stretch">
         {/* Header del perfil */}
         <Card>
-          <CardHeader>
+          <CardHeader px={{ base: 4, md: 6 }} pb={{ base: 3, md: 4 }}>
             <VStack align="start" spacing={2}>
-              <Heading size="lg">Mi Perfil</Heading>
-              <Text color="gray.600">Gestiona tu información personal y configuración de cuenta</Text>
+              <Heading size={{ base: "md", md: "lg", lg: "xl" }}>Mi Perfil</Heading>
+              <Text 
+                color="gray.600"
+                fontSize={{ base: "sm", md: "md" }}
+              >
+                Gestiona tu información personal y configuración de cuenta
+              </Text>
             </VStack>
           </CardHeader>
         </Card>
 
-        <Grid templateColumns={{ base: "1fr", lg: "2fr 1fr" }} gap={8}>
+        <Grid templateColumns={{ base: "1fr", lg: "2fr 1fr" }} gap={{ base: 4, md: 6, lg: 8 }}>
           {/* Información principal */}
           <GridItem>
             <Card>
-              <CardHeader>
-                <Flex justify="space-between" align="center">
-                  <Heading size="md">Información Personal</Heading>
+              <CardHeader px={{ base: 4, md: 6 }} pb={{ base: 3, md: 4 }}>
+                <Flex 
+                  justify="space-between" 
+                  align={{ base: "start", sm: "center" }}
+                  direction={{ base: "column", sm: "row" }}
+                  gap={3}
+                >
+                  <Heading size={{ base: "sm", md: "md" }}>Información Personal</Heading>
                   {!isEditing ? (
                     <Button
                       leftIcon={<EditIcon />}
                       colorScheme="blue"
                       variant="outline"
                       onClick={() => setIsEditing(true)}
+                      size={{ base: "sm", md: "md" }}
+                      fontSize={{ base: "xs", md: "sm" }}
+                      w={{ base: "100%", sm: "auto" }}
                     >
                       Editar Perfil
                     </Button>
                   ) : (
-                    <HStack>
+                    <HStack spacing={2} w={{ base: "100%", sm: "auto" }}>
                       <Button
                         leftIcon={<CheckIcon />}
                         colorScheme="green"
                         onClick={handleUpdateProfile}
                         isLoading={isUpdating}
+                        size={{ base: "sm", md: "md" }}
+                        fontSize={{ base: "xs", md: "sm" }}
+                        flex={1}
                       >
                         Guardar
                       </Button>
@@ -421,6 +442,9 @@ const ProfileUser = () => {
                           setEditProfile(userProfile);
                           setErrors({});
                         }}
+                        size={{ base: "sm", md: "md" }}
+                        fontSize={{ base: "xs", md: "sm" }}
+                        flex={1}
                       >
                         Cancelar
                       </Button>
@@ -428,22 +452,37 @@ const ProfileUser = () => {
                   )}
                 </Flex>
               </CardHeader>
-              <CardBody>
-                <VStack spacing={6} align="stretch">
+              <CardBody px={{ base: 4, md: 6 }} pb={{ base: 4, md: 6 }}>
+                <VStack spacing={{ base: 4, md: 6 }} align="stretch">
                   {/* Avatar y nombre */}
-                  <Flex gap={6} align="center">
+                  <Flex 
+                    gap={{ base: 3, md: 6 }} 
+                    align="center"
+                    direction={{ base: "column", sm: "row" }}
+                  >
                     <Avatar
-                      size="xl"
+                      size={{ base: "lg", md: "xl" }}
                       name={`${userProfile.user_name} ${userProfile.user_lastname}`}
                       bg="blue.500"
                       color="white"
                     />
-                    <VStack align="start" spacing={1}>
-                      <Heading size="md">
+                    <VStack align={{ base: "center", sm: "start" }} spacing={1}>
+                      <Heading size={{ base: "sm", md: "md" }} textAlign={{ base: "center", sm: "left" }}>
                         {userProfile.user_name} {userProfile.user_lastname}
                       </Heading>
-                      <Text color="gray.600">{userProfile.user_email}</Text>
-                      <Badge colorScheme="blue" variant="subtle">
+                      <Text 
+                        color="gray.600"
+                        fontSize={{ base: "xs", md: "sm" }}
+                        textAlign={{ base: "center", sm: "left" }}
+                        wordBreak="break-word"
+                      >
+                        {userProfile.user_email}
+                      </Text>
+                      <Badge 
+                        colorScheme="blue" 
+                        variant="subtle"
+                        fontSize={{ base: "xs", md: "sm" }}
+                      >
                         {userProfile.role_name}
                       </Badge>
                     </VStack>
@@ -452,73 +491,79 @@ const ProfileUser = () => {
                   <Divider />
 
                   {/* Formulario de edición */}
-                  <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={4}>
+                  <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={{ base: 3, md: 4 }}>
                     <FormControl isInvalid={!!errors.user_name}>
-                      <FormLabel>Nombre</FormLabel>
+                      <FormLabel fontSize={{ base: "xs", md: "sm" }}>Nombre</FormLabel>
                       <Input
                         value={editProfile?.user_name ?? ''}
                         onChange={handleNameChange}
                         isDisabled={!isEditing}
                         placeholder="Tu nombre"
+                        size={{ base: "sm", md: "md" }}
                       />
-                      <FormErrorMessage>{errors.user_name}</FormErrorMessage>
+                      <FormErrorMessage fontSize={{ base: "xs", md: "sm" }}>{errors.user_name}</FormErrorMessage>
                     </FormControl>
 
                     <FormControl isInvalid={!!errors.user_lastname}>
-                      <FormLabel>Apellido</FormLabel>
+                      <FormLabel fontSize={{ base: "xs", md: "sm" }}>Apellido</FormLabel>
                       <Input
                         value={editProfile?.user_lastname ?? ''}
                         onChange={handleLastnameChange}
                         isDisabled={!isEditing}
                         placeholder="Tu apellido"
+                        size={{ base: "sm", md: "md" }}
                       />
-                      <FormErrorMessage>{errors.user_lastname}</FormErrorMessage>
+                      <FormErrorMessage fontSize={{ base: "xs", md: "sm" }}>{errors.user_lastname}</FormErrorMessage>
                     </FormControl>
 
                     <FormControl isInvalid={!!errors.user_email}>
-                      <FormLabel>Email</FormLabel>
+                      <FormLabel fontSize={{ base: "xs", md: "sm" }}>Email</FormLabel>
                       <Input
                         type="email"
                         value={editProfile?.user_email ?? ''}
                         onChange={handleEmailChange}
                         isDisabled={!isEditing}
                         placeholder="tu@email.com"
+                        size={{ base: "sm", md: "md" }}
                       />
-                      <FormErrorMessage>{errors.user_email}</FormErrorMessage>
+                      <FormErrorMessage fontSize={{ base: "xs", md: "sm" }}>{errors.user_email}</FormErrorMessage>
                     </FormControl>
 
                     <FormControl isInvalid={!!errors.user_phone}>
-                      <FormLabel>Teléfono</FormLabel>
+                      <FormLabel fontSize={{ base: "xs", md: "sm" }}>Teléfono</FormLabel>
                       <Input
                         value={editProfile?.user_phone ?? ''}
                         onChange={handlePhoneChange}
                         isDisabled={!isEditing}
                         placeholder="+1 234 567 890"
+                        size={{ base: "sm", md: "md" }}
                       />
-                      <FormErrorMessage>{errors.user_phone}</FormErrorMessage>
+                      <FormErrorMessage fontSize={{ base: "xs", md: "sm" }}>{errors.user_phone}</FormErrorMessage>
                     </FormControl>
 
                     <FormControl isInvalid={!!errors.user_age}>
-                      <FormLabel>Edad</FormLabel>
+                      <FormLabel fontSize={{ base: "xs", md: "sm" }}>Edad</FormLabel>
                       <Input
                         type="number"
                         value={editProfile?.user_age ?? ''}
                         onChange={handleAgeChange}
                         isDisabled={!isEditing}
                         placeholder="25"
+                        size={{ base: "sm", md: "md" }}
                       />
-                      <FormErrorMessage>{errors.user_age}</FormErrorMessage>
+                      <FormErrorMessage fontSize={{ base: "xs", md: "sm" }}>{errors.user_age}</FormErrorMessage>
                     </FormControl>
 
                     <FormControl isInvalid={!!errors.user_address}>
-                      <FormLabel>Dirección</FormLabel>
+                      <FormLabel fontSize={{ base: "xs", md: "sm" }}>Dirección</FormLabel>
                       <Input
                         value={editProfile?.user_address ?? ''}
                         onChange={handleAddressChange}
                         isDisabled={!isEditing}
                         placeholder="Tu dirección completa"
+                        size={{ base: "sm", md: "md" }}
                       />
-                      <FormErrorMessage>{errors.user_address}</FormErrorMessage>
+                      <FormErrorMessage fontSize={{ base: "xs", md: "sm" }}>{errors.user_address}</FormErrorMessage>
                     </FormControl>
                   </Grid>
                 </VStack>
@@ -528,36 +573,48 @@ const ProfileUser = () => {
 
           {/* Panel lateral */}
           <GridItem>
-            <VStack spacing={6} align="stretch">
+            <VStack spacing={{ base: 4, md: 6 }} align="stretch">
               {/* Información de la cuenta */}
               <Card>
-                <CardHeader>
-                  <Heading size="md">Información de la Cuenta</Heading>
+                <CardHeader px={{ base: 4, md: 6 }} pb={{ base: 3, md: 4 }}>
+                  <Heading size={{ base: "sm", md: "md" }}>Información de la Cuenta</Heading>
                 </CardHeader>
-                <CardBody>
+                <CardBody px={{ base: 4, md: 6 }} pb={{ base: 4, md: 6 }}>
                   <VStack spacing={4} align="stretch">
                     <Box>
-                      <Text fontSize="sm" color="gray.600">Estado de la cuenta</Text>
-                      <Flex align="center" justify="space-between">
-                        <Text fontWeight="medium">
+                      <Text fontSize={{ base: "xs", md: "sm" }} color="gray.600">Estado de la cuenta</Text>
+                      <Flex align="center" justify="space-between" mt={1}>
+                        <Text 
+                          fontWeight="medium"
+                          fontSize={{ base: "xs", md: "sm" }}
+                        >
                           {userProfile.user_status ? "Activa" : "Inactiva"}
                         </Text>
-                        <Badge colorScheme={userProfile.user_status ? "green" : "red"}>
+                        <Badge 
+                          colorScheme={userProfile.user_status ? "green" : "red"}
+                          fontSize={{ base: "xs", md: "sm" }}
+                        >
                           {userProfile.user_status ? "✓ Activa" : "✗ Inactiva"}
                         </Badge>
                       </Flex>
                     </Box>
 
                     <Box>
-                      <Text fontSize="sm" color="gray.600">Miembro desde</Text>
-                      <Text fontWeight="medium">
+                      <Text fontSize={{ base: "xs", md: "sm" }} color="gray.600">Miembro desde</Text>
+                      <Text 
+                        fontWeight="medium"
+                        fontSize={{ base: "xs", md: "sm" }}
+                      >
                         {formatDate(userProfile.user_created_at)}
                       </Text>
                     </Box>
 
                     <Box>
-                      <Text fontSize="sm" color="gray.600">Última actualización</Text>
-                      <Text fontWeight="medium">
+                      <Text fontSize={{ base: "xs", md: "sm" }} color="gray.600">Última actualización</Text>
+                      <Text 
+                        fontWeight="medium"
+                        fontSize={{ base: "xs", md: "sm" }}
+                      >
                         {formatDate(userProfile.user_updated_at)}
                       </Text>
                     </Box>
@@ -567,10 +624,10 @@ const ProfileUser = () => {
 
               {/* Acciones rápidas */}
               <Card>
-                <CardHeader>
-                  <Heading size="md">Acciones Rápidas</Heading>
+                <CardHeader px={{ base: 4, md: 6 }} pb={{ base: 3, md: 4 }}>
+                  <Heading size={{ base: "sm", md: "md" }}>Acciones Rápidas</Heading>
                 </CardHeader>
-                <CardBody>
+                <CardBody px={{ base: 4, md: 6 }} pb={{ base: 4, md: 6 }}>
                   <VStack spacing={3} align="stretch">
                     <Button
                       as={RouterLink}
@@ -578,6 +635,9 @@ const ProfileUser = () => {
                       leftIcon={<LockIcon />}
                       variant="outline"
                       colorScheme="blue"
+                      size={{ base: "sm", md: "md" }}
+                      fontSize={{ base: "xs", md: "sm" }}
+                      w="100%"
                     >
                       Cambiar Contraseña
                     </Button>
@@ -594,6 +654,9 @@ const ProfileUser = () => {
                           duration: 3000,
                         });
                       }}
+                      size={{ base: "sm", md: "md" }}
+                      fontSize={{ base: "xs", md: "sm" }}
+                      w="100%"
                     >
                       Reenviar Verificación
                     </Button>
@@ -614,55 +677,85 @@ const ProfileUser = () => {
     // Para administradores, usar layout con menú (similar a otras páginas admin)
     return (
       <Box minH="100vh" bg={bgColor}>
-        <Container maxW="container.xl" py={8}>
-          <VStack spacing={8} align="stretch">
+        <Container maxW="container.xl" py={{ base: 4, md: 6, lg: 8 }} px={{ base: 4, md: 6 }}>
+          <VStack spacing={{ base: 4, md: 6, lg: 8 }} align="stretch">
             {/* Header con menú para administradores */}
             <Box>
-              <HStack justify="space-between" align="center" mb={4}>
-                <VStack align="start" spacing={1}>
-                  <HStack spacing={4}>
+              <VStack align="stretch" spacing={4}>
+                {/* Título y botón volver */}
+                <VStack align={{ base: "start", md: "start" }} spacing={2}>
+                  <Flex
+                    direction={{ base: "column", sm: "row" }}
+                    align={{ base: "start", sm: "center" }}
+                    gap={{ base: 3, md: 4 }}
+                    wrap="wrap"
+                  >
                     <Button
                       as={RouterLink}
                       to="/dashboard/admin"
                       leftIcon={<FiArrowLeft />}
                       variant="outline"
-                      size="sm"
+                      size={{ base: "xs", md: "sm" }}
                     >
-                      Volver
+                      <Text display={{ base: "none", sm: "block" }}>Volver</Text>
+                      <Text display={{ base: "block", sm: "none" }}>←</Text>
                     </Button>
-                    <Heading size="lg" color="blue.600">
+                    <Heading 
+                      size={{ base: "md", md: "lg", lg: "xl" }} 
+                      color="blue.600"
+                    >
                       Mi Perfil
                     </Heading>
-                    <Badge colorScheme="blue" variant="solid" fontSize="sm">
+                    <Badge 
+                      colorScheme="blue" 
+                      variant="solid" 
+                      fontSize={{ base: "xs", md: "sm" }}
+                    >
                       {roleInfo.name.toUpperCase()}
                     </Badge>
-                  </HStack>
-                  <Text color={textColor}>
+                  </Flex>
+                  <Text 
+                    color={textColor}
+                    fontSize={{ base: "sm", md: "md" }}
+                  >
                     Gestiona tu información personal y configuración de cuenta
                   </Text>
                 </VStack>
-                <HStack spacing={2}>
+                
+                {/* Navegación */}
+                <Flex
+                  direction={{ base: "row", md: "row" }}
+                  justify="flex-end"
+                  align="center"
+                  gap={2}
+                  wrap="wrap"
+                >
                   <IconButton 
                     aria-label="Abrir menú" 
                     icon={<FiMenu />} 
-                    onClick={onMenuOpen} 
+                    onClick={onMenuOpen}
+                    size={{ base: "sm", md: "md" }}
                   />
                   <IconButton 
                     as={RouterLink} 
                     to="/" 
                     aria-label="Inicio" 
-                    icon={<FiHome />} 
+                    icon={<FiHome />}
+                    size={{ base: "sm", md: "md" }}
                   />
                   <Button 
                     leftIcon={<FiLogOut />} 
                     colorScheme="red" 
                     variant="outline" 
                     onClick={logout}
+                    size={{ base: "sm", md: "md" }}
+                    fontSize={{ base: "xs", md: "sm" }}
                   >
-                    Cerrar sesión
+                    <Text display={{ base: "none", sm: "block" }}>Cerrar sesión</Text>
+                    <Text display={{ base: "block", sm: "none" }}>Salir</Text>
                   </Button>
-                </HStack>
-              </HStack>
+                </Flex>
+              </VStack>
             </Box>
 
             {/* Menú administrativo */}
