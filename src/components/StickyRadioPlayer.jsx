@@ -234,13 +234,13 @@ const StickyRadioPlayer = () => {
       // Mostrar toast solo una vez por error
       setErrorToastShown(prev => {
         if (!prev) {
-          toast({
-            title: 'Error de reproducción',
-            description: errorMessage,
-            status: 'error',
-            duration: 5000,
-            isClosable: true,
-          })
+          // toast({
+          //   title: 'Error de reproducción',
+          //   description: errorMessage,
+          //   status: 'error',
+          //   duration: 5000,
+          //   isClosable: true,
+          // })
           return true
         }
         return prev
@@ -369,13 +369,13 @@ const StickyRadioPlayer = () => {
       }
 
       setError(errorMessage)
-      toast({
-        title: 'Error de reproducción',
-        description: errorMessage,
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      })
+      // toast({
+      //   title: 'Error de reproducción',
+      //   description: errorMessage,
+      //   status: 'error',
+      //   duration: 5000,
+      //   isClosable: true,
+      // })
     }
   }
 
