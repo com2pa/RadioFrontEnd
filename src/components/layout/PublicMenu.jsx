@@ -169,15 +169,27 @@ const PublicMenu = () => {
         zIndex={1000}
         shadow="sm"
       >
-        <Container maxW="container.xl" px={isTablet ? 4 : 6}>
-          <HStack justify="space-between" py={isTablet ? 3 : 4}>
+        <Container maxW="container.xl" px={{ base: 3, sm: 4, md: 5, lg: 6 }}>
+          <HStack 
+            justify="space-between" 
+            align="center"
+            py={{ base: 2, sm: 3, md: 4 }}
+            spacing={{ base: 2, sm: 3, md: 4 }}
+            flexWrap={{ base: "nowrap", lg: "nowrap" }}
+          >
             {/* Logo */}
-            <ChakraLink as={RouterLink} to="/" _hover={{ textDecoration: 'none', opacity: 0.8 }} transition="opacity 0.2s">
-              <HStack spacing={isSmallMobile ? 2 : isTablet ? 2.5 : 3}>
+            <ChakraLink 
+              as={RouterLink} 
+              to="/" 
+              _hover={{ textDecoration: 'none', opacity: 0.8 }} 
+              transition="opacity 0.2s"
+              flexShrink={0}
+            >
+              <HStack spacing={{ base: 1.5, sm: 2, md: 2.5, lg: 3 }}>
                 <Image
                   src="/logo.png"
                   alt="OXÍGENO 88.1 FM TE MUEVE"
-                  height={isSmallMobile ? "40px" : isTablet ? "45px" : "50px"}
+                  height={{ base: "35px", sm: "40px", md: "45px", lg: "50px" }}
                   objectFit="contain"
                   loading="eager"
                 />
@@ -186,9 +198,15 @@ const PublicMenu = () => {
 
             {/* Menú Desktop */}
             {!isMobile && (
-              <HStack spacing={isTablet ? 4 : 8}>
+              <HStack 
+                spacing={{ base: 2, sm: 3, md: 4, lg: 6, xl: 8 }}
+                flex={1}
+                justify="center"
+                display={{ base: "none", md: "flex" }}
+                flexWrap="wrap"
+              >
                 {loading ? (
-                  <Spinner size="sm" color={hoverColor} />
+                  <Spinner size={{ base: "xs", md: "sm" }} color={hoverColor} />
                 ) : (
                   menuItems.map((item) => (
                     <ChakraLink
@@ -197,7 +215,8 @@ const PublicMenu = () => {
                       to={item.href}
                       color={textColor}
                       fontWeight="medium"
-                      fontSize={isTablet ? "sm" : "md"}
+                      fontSize={{ base: "xs", md: "sm", lg: "md" }}
+                      whiteSpace="nowrap"
                       _hover={{ 
                         color: brandRed,
                         textDecoration: 'none'
@@ -212,56 +231,56 @@ const PublicMenu = () => {
             )}
 
             {/* Botones de Acción */}
-            <HStack spacing={isTablet ? 1 : 2}>
+            <HStack 
+              spacing={{ base: 1, sm: 1.5, md: 2 }}
+              flexShrink={0}
+              align="center"
+            >
               {/* Botones que se ocultan en dispositivos muy pequeños */}
               {!isSmallMobile && (
                 <>
-                  {/* Botón de Escuchar */}
-                  <Button
-                    size={isTablet ? "xs" : "sm"}
-                    variant="outline"
-                    leftIcon={<Icon as={FiVolume2} />}
-                    borderColor={brandRed}
-                    color={brandRed}
-                    _hover={{
-                      bg: brandRed,
-                      color: brandWhite,
-                      borderColor: brandRed
-                    }}
-                  >
-                    {isTablet ? "Escuchar" : "Escuchar"}
-                  </Button>
-
                   {/* Menú de Usuario o Botones de Login/Register - Solo cuando NO está autenticado */}
                   {!user && (
-                    <HStack spacing={isTablet ? 1 : 2}>
+                    <HStack spacing={{ base: 1, sm: 1.5, md: 2 }} flexWrap="nowrap">
                       <Button
-                        size={isTablet ? "xs" : "sm"}
+                        size={{ base: "xs", sm: "sm", md: "sm" }}
                         variant="ghost"
-                        leftIcon={<Icon as={FiLogIn} />}
+                        leftIcon={<Icon as={FiLogIn} boxSize={{ base: 3, md: 4 }} />}
                         onClick={handleLogin}
                         _hover={{
                           bg: brandRed + '10',
                           color: brandRed
                         }}
-                        fontSize={isTablet ? "xs" : "sm"}
+                        fontSize={{ base: "2xs", sm: "xs", md: "sm" }}
+                        px={{ base: 2, sm: 3, md: 4 }}
                       >
-                        {isTablet ? "Entrar" : "Iniciar Sesión"}
+                        <Text display={{ base: "none", sm: "block" }}>
+                          {isTablet ? "Entrar" : "Iniciar Sesión"}
+                        </Text>
+                        <Text display={{ base: "block", sm: "none" }}>
+                          Entrar
+                        </Text>
                       </Button>
                       <Button
-                        size={isTablet ? "xs" : "sm"}
+                        size={{ base: "xs", sm: "sm", md: "sm" }}
                         bg={brandRed}
                         color={brandWhite}
-                        leftIcon={<Icon as={FiUserPlus} />}
+                        leftIcon={<Icon as={FiUserPlus} boxSize={{ base: 3, md: 4 }} />}
                         onClick={handleRegister}
-                        fontSize={isTablet ? "xs" : "sm"}
+                        fontSize={{ base: "2xs", sm: "xs", md: "sm" }}
+                        px={{ base: 2, sm: 3, md: 4 }}
                         _hover={{
                           bg: '#C00000',
                           transform: 'translateY(-1px)',
                           boxShadow: 'md'
                         }}
                       >
-                        {isTablet ? "Registro" : "Registrarse"}
+                        <Text display={{ base: "none", sm: "block" }}>
+                          {isTablet ? "Registro" : "Registrarse"}
+                        </Text>
+                        <Text display={{ base: "block", sm: "none" }}>
+                          Reg
+                        </Text>
                       </Button>
                     </HStack>
                   )}
@@ -272,25 +291,46 @@ const PublicMenu = () => {
                       <MenuButton
                         as={Button}
                         variant="ghost"
-                        leftIcon={<Avatar size="xs" name={user.name} />}
-                        size={isTablet ? "xs" : "sm"}
+                        leftIcon={<Avatar size={{ base: "2xs", sm: "xs" }} name={user.name || user.user_name} />}
+                        size={{ base: "xs", sm: "sm", md: "sm" }}
                         _hover={{
                           bg: brandRed + '10',
                           color: brandRed
                         }}
-                        fontSize={isTablet ? "xs" : "sm"}
+                        fontSize={{ base: "2xs", sm: "xs", md: "sm" }}
+                        px={{ base: 2, sm: 3, md: 4 }}
+                        maxW={{ base: "120px", sm: "150px", md: "200px" }}
                       >
-                        {isTablet ? user.name?.split(' ')[0] : user.name}
+                        <Text 
+                          noOfLines={1}
+                          display={{ base: "none", sm: "block" }}
+                        >
+                          {isTablet ? (user.name || user.user_name)?.split(' ')[0] : (user.name || user.user_name)}
+                        </Text>
+                        <Text display={{ base: "block", sm: "none" }}>
+                          {(user.name || user.user_name)?.split(' ')[0]?.substring(0, 8)}
+                        </Text>
                       </MenuButton>
                       <MenuList>
-                        <MenuItem icon={<FiSettings />} onClick={handleDashboard}>
+                        <MenuItem 
+                          icon={<FiSettings />} 
+                          onClick={handleDashboard}
+                          fontSize={{ base: "xs", md: "sm" }}
+                        >
                           Dashboard
                         </MenuItem>
-                        <MenuItem icon={<FiUser />}>
+                        <MenuItem 
+                          icon={<FiUser />}
+                          fontSize={{ base: "xs", md: "sm" }}
+                        >
                           Mi Perfil
                         </MenuItem>
                         <MenuDivider />
-                        <MenuItem icon={<FiLogIn />} onClick={handleLogout}>
+                        <MenuItem 
+                          icon={<FiLogIn />} 
+                          onClick={handleLogout}
+                          fontSize={{ base: "xs", md: "sm" }}
+                        >
                           Cerrar Sesión
                         </MenuItem>
                       </MenuList>
@@ -306,7 +346,7 @@ const PublicMenu = () => {
                   icon={<FiMenu />}
                   variant="ghost"
                   onClick={onOpen}
-                  size="sm"
+                  size={{ base: "sm", sm: "md" }}
                 />
               )}
             </HStack>
@@ -315,47 +355,41 @@ const PublicMenu = () => {
       </Box>
 
       {/* Drawer Móvil */}
-      <Drawer isOpen={isOpen} placement="left" onClose={onClose} size="xs">
+      <Drawer 
+        isOpen={isOpen} 
+        placement="left" 
+        onClose={onClose} 
+        size={{ base: "xs", sm: "sm" }}
+      >
         <DrawerOverlay />
         <DrawerContent>
-          <DrawerCloseButton />
-          <DrawerHeader borderBottomWidth="1px">
+          <DrawerCloseButton size={{ base: "sm", md: "md" }} />
+          <DrawerHeader 
+            borderBottomWidth="1px"
+            px={{ base: 4, md: 6 }}
+            py={{ base: 3, md: 4 }}
+          >
             <HStack>
               <Image
                 src="/logo.png"
                 alt="OXÍGENO 88.1 FM TE MUEVE"
-                height="40px"
+                height={{ base: "35px", sm: "40px" }}
                 objectFit="contain"
               />
             </HStack>
           </DrawerHeader>
           
-          <DrawerBody>
-            <VStack align="stretch" spacing={2} pt={4}>
-              {/* Botón de Escuchar - Siempre visible en el menú móvil */}
-              <Button
-                variant="outline"
-                leftIcon={<Icon as={FiVolume2} />}
-                onClick={onClose}
-                borderColor={brandRed}
-                color={brandRed}
-                _hover={{
-                  bg: brandRed,
-                  color: brandWhite,
-                  borderColor: brandRed
-                }}
-              >
-                Escuchar Radio
-              </Button>
-
-              {/* Separador */}
-              <Box borderTop="1px" borderColor={borderColor} my={2} />
-
+          <DrawerBody px={{ base: 3, md: 4 }} py={{ base: 4, md: 6 }}>
+            <VStack align="stretch" spacing={{ base: 2, md: 3 }} pt={2}>
               {/* Elementos del menú de navegación */}
               {loading ? (
                 <Box textAlign="center" py={4}>
-                  <Spinner size="md" color={hoverColor} />
-                  <Text fontSize="sm" color={textColor} mt={2}>
+                  <Spinner size={{ base: "sm", md: "md" }} color={hoverColor} />
+                  <Text 
+                    fontSize={{ base: "xs", md: "sm" }} 
+                    color={textColor} 
+                    mt={2}
+                  >
                     Cargando menú...
                   </Text>
                 </Box>
@@ -367,8 +401,11 @@ const PublicMenu = () => {
                     to={item.href}
                     justifyContent="start"
                     variant="ghost"
-                    leftIcon={<Icon as={item.icon} />}
+                    leftIcon={<Icon as={item.icon} boxSize={{ base: 4, md: 5 }} />}
                     onClick={onClose}
+                    size={{ base: "sm", md: "md" }}
+                    fontSize={{ base: "xs", md: "sm" }}
+                    py={{ base: 5, md: 6 }}
                   >
                     {item.label}
                   </Button>
@@ -376,67 +413,92 @@ const PublicMenu = () => {
               )}
               
               {/* Separador */}
-              <Box borderTop="1px" borderColor={borderColor} my={2} />
+              <Box borderTop="1px" borderColor={borderColor} my={{ base: 2, md: 3 }} />
               
               {/* Sección de usuario */}
-                {user ? (
-                  <VStack align="stretch" spacing={2}>
-                  <Text fontSize="sm" color={textColor} px={3} fontWeight="medium">
-                      Hola, {user.name}
-                    </Text>
-                    <Button
-                      justifyContent="start"
-                      variant="ghost"
-                      leftIcon={<Icon as={FiSettings} />}
-                      onClick={handleDashboard}
-                    >
-                      Dashboard
-                    </Button>
-                    <Button
-                      justifyContent="start"
-                      variant="ghost"
-                      leftIcon={<Icon as={FiUser} />}
+              {user ? (
+                <VStack align="stretch" spacing={2}>
+                  <Text 
+                    fontSize={{ base: "xs", md: "sm" }} 
+                    color={textColor} 
+                    px={3} 
+                    fontWeight="medium"
+                  >
+                    Hola, {user.name || user.user_name}
+                  </Text>
+                  <Button
+                    justifyContent="start"
+                    variant="ghost"
+                    leftIcon={<Icon as={FiSettings} boxSize={{ base: 4, md: 5 }} />}
+                    onClick={handleDashboard}
+                    size={{ base: "sm", md: "md" }}
+                    fontSize={{ base: "xs", md: "sm" }}
+                    py={{ base: 5, md: 6 }}
+                  >
+                    Dashboard
+                  </Button>
+                  <Button
+                    justifyContent="start"
+                    variant="ghost"
+                    leftIcon={<Icon as={FiUser} boxSize={{ base: 4, md: 5 }} />}
                     onClick={onClose}
-                    >
-                      Mi Perfil
-                    </Button>
-                    <Button
-                      justifyContent="start"
-                      variant="ghost"
-                      leftIcon={<Icon as={FiLogIn} />}
-                      onClick={handleLogout}
+                    size={{ base: "sm", md: "md" }}
+                    fontSize={{ base: "xs", md: "sm" }}
+                    py={{ base: 5, md: 6 }}
+                  >
+                    Mi Perfil
+                  </Button>
+                  <Button
+                    justifyContent="start"
+                    variant="ghost"
+                    leftIcon={<Icon as={FiLogIn} boxSize={{ base: 4, md: 5 }} />}
+                    onClick={handleLogout}
                     colorScheme="red"
-                    >
-                      Cerrar Sesión
-                    </Button>
-                  </VStack>
-                ) : (
-                  <VStack align="stretch" spacing={2}>
-                  <Text fontSize="sm" color={textColor} px={3} fontWeight="medium">
+                    size={{ base: "sm", md: "md" }}
+                    fontSize={{ base: "xs", md: "sm" }}
+                    py={{ base: 5, md: 6 }}
+                  >
+                    Cerrar Sesión
+                  </Button>
+                </VStack>
+              ) : (
+                <VStack align="stretch" spacing={2}>
+                  <Text 
+                    fontSize={{ base: "xs", md: "sm" }} 
+                    color={textColor} 
+                    px={3} 
+                    fontWeight="medium"
+                  >
                     Acceso
                   </Text>
-                    <Button
-                      justifyContent="start"
-                      variant="ghost"
-                      leftIcon={<Icon as={FiLogIn} />}
-                      onClick={handleLogin}
-                    >
-                      Iniciar Sesión
-                    </Button>
-                    <Button
-                      justifyContent="start"
-                      bg={brandRed}
-                      color={brandWhite}
-                      leftIcon={<Icon as={FiUserPlus} />}
-                      onClick={handleRegister}
-                      _hover={{
-                        bg: '#C00000'
-                      }}
-                    >
-                      Registrarse
-                    </Button>
-                  </VStack>
-                )}
+                  <Button
+                    justifyContent="start"
+                    variant="ghost"
+                    leftIcon={<Icon as={FiLogIn} boxSize={{ base: 4, md: 5 }} />}
+                    onClick={handleLogin}
+                    size={{ base: "sm", md: "md" }}
+                    fontSize={{ base: "xs", md: "sm" }}
+                    py={{ base: 5, md: 6 }}
+                  >
+                    Iniciar Sesión
+                  </Button>
+                  <Button
+                    justifyContent="start"
+                    bg={brandRed}
+                    color={brandWhite}
+                    leftIcon={<Icon as={FiUserPlus} boxSize={{ base: 4, md: 5 }} />}
+                    onClick={handleRegister}
+                    _hover={{
+                      bg: '#C00000'
+                    }}
+                    size={{ base: "sm", md: "md" }}
+                    fontSize={{ base: "xs", md: "sm" }}
+                    py={{ base: 5, md: 6 }}
+                  >
+                    Registrarse
+                  </Button>
+                </VStack>
+              )}
             </VStack>
           </DrawerBody>
         </DrawerContent>
