@@ -26,6 +26,7 @@ import {
   FiHeart,
   FiRadio
 } from 'react-icons/fi'
+import { FaTiktok } from 'react-icons/fa'
 
 /**
  * Componente Footer reutilizable para páginas públicas
@@ -69,22 +70,22 @@ const PublicFooter = ({
     { label: 'Aviso Legal', href: '/legal' }
   ],
   socialMedia = {
-    facebook: 'https://facebook.com/radiofm',
-    twitter: 'https://twitter.com/radiofm',
-    instagram: 'https://instagram.com/radiofm',
-    youtube: 'https://youtube.com/radiofm'
+    facebook: ' @oxigenobqto',
+    TikTok: 'TikTok @oxigenotemueve8',
+    instagram: '@oxigenotemueve',
+   
   },
   contactInfo = {
     email: 'contacto@radiofm.com',
-    phone: '+1 (555) 123-4567',
-    address: '123 Radio Street, Ciudad, País'
+    phone: '+58 (412) 0209924 ',
+    address: 'Barquisimeto estado lara'
   },
   bgColor,
   showNewsletter = true,
   showSocialMedia = true,
   showContactInfo = true,
   logo,
-  logoText = 'OXÍ Radio 88.1 FM',
+  logoText = 'Radio Oxígeno 88.1 FM',
   ...props
 }) => {
   // Colores oficiales de OXÍGENO 88.1FM
@@ -250,7 +251,7 @@ const PublicFooter = ({
                     >
                       Síguenos
                     </Text>
-                    <HStack spacing={4}>
+                    <HStack spacing={4} flexWrap="wrap">
                       {socialMedia.facebook && (
                         <Link
                           href={socialMedia.facebook}
@@ -293,6 +294,17 @@ const PublicFooter = ({
                           transition="color 0.2s"
                         >
                           <Icon as={FiYoutube} boxSize={6} />
+                        </Link>
+                      )}
+                      {socialMedia.TikTok && (
+                        <Link
+                          href={socialMedia.TikTok}
+                          isExternal
+                          color={linkColor}
+                          _hover={{ color: linkHoverColor }}
+                          transition="color 0.2s"
+                        >
+                          <Icon as={FaTiktok} boxSize={6} />
                         </Link>
                       )}
                     </HStack>
