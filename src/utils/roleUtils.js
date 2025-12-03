@@ -29,7 +29,7 @@ export const isAdmin = (user) => {
 
 // Obtener el dashboard correcto para un usuario
 export const getDashboardRoute = (user) => {
-  console.log('🧭 [roleUtils] - Getting route for user:', user)
+  // console.log('🧭 [roleUtils] - Getting route for user:', user)
   // Debe coincidir con estructura de rutas: /dashboard/* en Root y rutas hijas en Private
   const route = isAdmin(user) ? '/dashboard/admin' : '/dashboard/user'
   console.log('🧭 [roleUtils] - Determined route:', route)

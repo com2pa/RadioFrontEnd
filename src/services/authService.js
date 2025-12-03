@@ -128,7 +128,7 @@ export const logoutUser = async () => {
     const response = await api.post('/api/logout')
     return response.data
   } catch (error) {
-    console.error('❌ Error al cerrar sesión:', error)
+    // console.log('❌ Error al cerrar sesión:', error)
     // Si falla el endpoint, devolvemos un objeto estándar para permitir logout local
     return { success: false, message: 'logout local' }
   }
