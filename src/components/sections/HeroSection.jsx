@@ -256,79 +256,7 @@ const HeroSection = () => {
       justifyContent="center"
       pb={{ base: "150px", sm: "170px", md: "180px" }}
     >
-      {/* Fondo con gradiente animado EXTREMO */}
-      <Box
-        position="absolute"
-        top={0}
-        left={0}
-        right={0}
-        bottom={0}
-        bgGradient={`linear(135deg, ${brandRed}, ${brandOrange}, ${brandRed})`}
-        backgroundSize="400% 400%"
-        animation={`${gradientShift} 15s ease infinite`}
-        opacity={0.9}
-        zIndex={0}
-      />
-
-      {/* Blobs animados grandes - Efecto 3D */}
-      <Box
-        position="absolute"
-        top="-20%"
-        right="-10%"
-        w={{ base: "400px", md: "600px", lg: "800px" }}
-        h={{ base: "400px", md: "600px", lg: "800px" }}
-        bgGradient={`radial(circle, ${brandRed}80, ${brandOrange}40, transparent)`}
-        filter="blur(80px)"
-        animation={`${blob} 20s ease-in-out infinite`}
-        zIndex={1}
-      />
-      
-      <Box
-        position="absolute"
-        bottom="-15%"
-        left="-10%"
-        w={{ base: "350px", md: "500px", lg: "700px" }}
-        h={{ base: "350px", md: "500px", lg: "700px" }}
-        bgGradient={`radial(circle, ${brandOrange}80, ${brandRed}40, transparent)`}
-        filter="blur(100px)"
-        animation={`${blob} 25s ease-in-out infinite reverse`}
-        zIndex={1}
-      />
-
-      <Box
-        position="absolute"
-        top="30%"
-        left="20%"
-        w={{ base: "200px", md: "300px", lg: "400px" }}
-        h={{ base: "200px", md: "300px", lg: "400px" }}
-        bgGradient={`radial(circle, ${brandRed}60, transparent)`}
-        filter="blur(60px)"
-        animation={`${blob} 18s ease-in-out infinite`}
-        zIndex={1}
-      />
-
-      {/* Partículas flotantes - Reducidas para mejor rendimiento */}
-      {[...Array(8)].map((_, i) => (
-        <Box
-          key={i}
-          position="absolute"
-          top={`${20 + i * 12}%`}
-          left={`${10 + i * 11}%`}
-          w={{ base: `${6 + i * 1.5}px`, md: `${8 + i * 2}px` }}
-          h={{ base: `${6 + i * 1.5}px`, md: `${8 + i * 2}px` }}
-          bg={i % 2 === 0 ? brandRed : brandOrange}
-          borderRadius="full"
-          opacity={{ base: 0.2 + i * 0.03, md: 0.3 + i * 0.05 }}
-          sx={{
-            animation: `${float} ${6 + i * 2}s ease-in-out infinite`,
-            animationDelay: `${i * 0.5}s`,
-            willChange: 'transform'
-          }}
-          zIndex={2}
-          filter={{ base: "blur(0.5px)", md: "blur(1px)" }}
-          display={{ base: i < 4 ? "block" : "none", md: "block" }}
-        />
-      ))}
+      {/* Fondo transparente - sin colores */}
 
       {/* Carousel con slides - Solo programas con imágenes */}
       {carouselSlides.filter(slide => slide.bgImage).length > 0 && (
@@ -357,10 +285,7 @@ const HeroSection = () => {
             h="100%"
             minW="100%"
             flexShrink={0}
-            bgImage={slide.bgImage ? `url(${slide.bgImage})` : undefined}
-            bg={slide.bgImage ? undefined : `linear-gradient(135deg, ${slide.color}, ${slide.color === brandRed ? brandOrange : brandRed})`}
-            bgSize="cover"
-            bgPosition="center"
+            bg="transparent"
             display="flex"
             alignItems="center"
             justifyContent="center"
@@ -374,10 +299,25 @@ const HeroSection = () => {
               bottom: 0,
               bg: slide.bgImage 
                 ? undefined
-                : `linear-gradient(135deg, ${slide.color}90, ${slide.color === brandRed ? brandOrange : brandRed}90)`,
+                : `linear-gradient(135deg, ${slide.color}90, ${slide.color === brandRed ? '#C00000' : brandRed}90)`,
               zIndex: 1
             }}
           >
+            {/* Imagen de fondo - Responsive */}
+            {slide.bgImage && (
+              <Image
+                src={slide.bgImage}
+                alt={slide.title || "Programa"}
+                position="absolute"
+                top={0}
+                left={0}
+                w="100%"
+                h="100%"
+                objectFit={{ base: "contain", md: "cover", lg: "cover" }}
+                objectPosition="center"
+                zIndex={0}
+              />
+            )}
             {/* Overlay con efecto glassmorphism - solo si no hay imagen */}
             {!slide.bgImage && (
               <Box
@@ -388,6 +328,25 @@ const HeroSection = () => {
                 bottom={0}
                 bg="rgba(255, 255, 255, 0.05)"
                 backdropFilter="blur(20px)"
+                zIndex={2}
+              />
+            )}
+
+            {/* Overlay responsive para mejorar legibilidad cuando hay imagen */}
+            {slide.bgImage && (
+              <Box
+                position="absolute"
+                top={0}
+                left={0}
+                right={0}
+                bottom={0}
+                bgGradient={{
+                  base: "linear(to-b, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0.8) 100%)",
+                  sm: "linear(to-b, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.7) 100%)",
+                  md: "linear(to-b, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.6) 100%)",
+                  lg: "linear(to-b, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.5) 100%)",
+                  xl: "linear(to-b, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.4) 100%)"
+                }}
                 zIndex={2}
               />
             )}
@@ -490,7 +449,7 @@ const HeroSection = () => {
                 >
                 {/* Badge con efecto GLOW extremo */}
                 <Badge 
-                  bgGradient={`linear(135deg, ${brandRed}, ${brandOrange})`}
+                  bgGradient={`linear(135deg, ${brandRed}, #C00000)`}
                   color={brandWhite}
                   fontSize={{ base: "2xs", sm: "xs", md: "sm", lg: "md" }}
                   px={{ base: 2, sm: 2.5, md: 3, lg: 4, xl: 5 }}
@@ -503,7 +462,7 @@ const HeroSection = () => {
                     animation: `${glow} 2s ease-in-out infinite, ${pulse} 3s ease-in-out infinite`,
                     willChange: 'transform, box-shadow'
                   }}
-                  boxShadow={`0 0 30px ${brandRed}, 0 0 60px ${brandOrange}40`}
+                  boxShadow={`0 0 30px ${brandRed}, 0 0 60px #C0000040`}
                   border={{ base: "1px solid", md: "2px solid" }}
                   borderColor="rgba(255, 255, 255, 0.3)"
                   backdropFilter="blur(10px)"
@@ -538,14 +497,14 @@ const HeroSection = () => {
                     as="span"
                     position="relative"
                     zIndex={2}
-                    bgGradient={`linear(to-r, ${brandWhite}, ${brandOrange}, ${brandWhite})`}
+                    bgGradient={`linear(to-r, ${brandWhite}, #FF6B6B, ${brandWhite})`}
                     bgClip="text"
                     backgroundSize="200% auto"
                     sx={{
                       animation: `${gradientShift} 3s ease infinite`,
                       willChange: 'background-position'
                     }}
-                    textShadow={`0 0 15px ${brandRed}40, 0 0 30px ${brandOrange}30`}
+                    textShadow={`0 0 15px ${brandRed}40, 0 0 30px #FF6B6B30`}
                     display="inline-block"
                   >
                     {slide.title}
