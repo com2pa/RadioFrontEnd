@@ -7,22 +7,26 @@ export const useAuthRedirect = () => {
   const { auth } = useAuth()
   const navigate = useNavigate()
 
-  const redirectToDashboard = () => {
-    // console.log('🔄 [useAuthRedirect] - Starting redirect...')
-    // console.log('🔄 [useAuthRedirect] - Current auth state:', auth)
+  const redirectToDashboard = (userData = null) => {
+    // Si se proporcionan datos del usuario directamente, usarlos
+    // De lo contrario, usar el estado de auth del contexto
+    const user = userData || auth
     
-    if (auth) {
-      // console.log('🔄 [useAuthRedirect] - Auth exists, getting dashboard route...')
-      const dashboardRoute = getDashboardRoute(auth)
-      // console.log('🎯 [useAuthRedirect] - Redirecting to:', dashboardRoute)
-      // console.log('🎯 [useAuthRedirect] - User role:', auth.role)
-      // console.log('🎯 [useAuthRedirect] - User role_id:', auth.role_id)
-      
+    if (user) {
+      const dashboardRoute = getDashboardRoute(user)
       navigate(dashboardRoute, { replace: true })
     } else {
-      // console.log('❌ [useAuthRedirect] - No auth data available for redirect')
-      // console.log('❌ [useAuthRedirect] - localStorage token:', localStorage.getItem('authToken'))
-      // console.log('❌ [useAuthRedirect] - localStorage user:', localStorage.getItem('user'))
+      // Si no hay datos, intentar leer del localStorage como fallback
+      const userFromStorage = localStorage.getItem('user')
+      if (userFromStorage) {
+        try {
+          const parsedUser = JSON.parse(userFromStorage)
+          const dashboardRoute = getDashboardRoute(parsedUser)
+          navigate(dashboardRoute, { replace: true })
+        } catch (error) {
+          // console.error('Error parsing user from localStorage:', error)
+        }
+      }
     }
   }
 

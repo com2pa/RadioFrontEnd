@@ -11,12 +11,15 @@ import {
 } from '@chakra-ui/react'
 import { Link as RouterLink } from 'react-router-dom'
 import { useAuthRedirect } from '../../hooks/useAuthRedirect'
+import { getDashboardRoute } from '../../utils/roleUtils'
+import { useNavigate } from 'react-router-dom'
 import LoginForm from '../../components/forms/LoginForm'
 import PublicLayout from '../../components/layout/PublicLayout'
 import PageWithFooter from '../../components/layout/PageWithFooter'
 
 const Login = () => {
   const { redirectToDashboard } = useAuthRedirect()
+  const navigate = useNavigate()
   // Colores oficiales de OXÍGENO 88.1FM
   const brandRed = '#E50000'
   const brandDarkGray = '#333333'
@@ -26,9 +29,37 @@ const Login = () => {
   const bgColor = useColorModeValue(brandLightGray + '40', brandDarkGray)
   const textColor = useColorModeValue(brandDarkGray, brandLightGray)
 
-  const handleLoginSuccess = () => {
-    // Redirección automática basada en rol del usuario
-    redirectToDashboard()
+  const handleLoginSuccess = (response) => {
+    // Extraer datos del usuario del response
+    if (response && response.user) {
+      // Mapear los datos del usuario para la redirección
+      const userData = {
+        id: response.user.id,
+        name: response.user.name,
+        email: response.user.email,
+        role_id: response.user.role, // role_id viene del backend
+        role: getRoleName(response.user.role) // Convertir a string
+      }
+      
+      // Redirección directa usando los datos del login
+      const dashboardRoute = getDashboardRoute(userData)
+      navigate(dashboardRoute, { replace: true })
+    } else {
+      // Fallback: usar el hook de redirección
+      redirectToDashboard()
+    }
+  }
+
+  // Función auxiliar para convertir role_id a nombre de rol
+  const getRoleName = (roleId) => {
+    const roleMap = {
+      7: 'superAdmin',
+      6: 'admin', 
+      5: 'edit',
+      4: 'view',
+      3: 'user'
+    }
+    return roleMap[roleId] || 'user'
   }
 
   const handleLoginError = () => {

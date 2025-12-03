@@ -319,13 +319,13 @@ const PublicMenu = () => {
                         >
                           Dashboard
                         </MenuItem>
-                        <MenuItem 
+                        {/* <MenuItem 
                           icon={<FiUser />}
                           fontSize={{ base: "xs", md: "sm" }}
                         >
                           Mi Perfil
-                        </MenuItem>
-                        <MenuDivider />
+                        </MenuItem> */}
+                        {/* <MenuDivider /> */}
                         <MenuItem 
                           icon={<FiLogIn />} 
                           onClick={handleLogout}
