@@ -19,17 +19,18 @@ import {
 import { FiSend } from 'react-icons/fi'
 import PublicLayout from '../../components/layout/PublicLayout'
 import PageWithFooter from '../../components/layout/PageWithFooter'
+import SEO from '../../components/SEO'
 import { validateField } from '../../utils/validations'
 
 const Contact = () => {
   // Colores oficiales de OXÍGENO 88.1FM
   const brandRed = '#E50000'      // Rojo Vibrante
   const brandDarkGray = '#333333' // Gris Oscuro
+  const brandBlack = '#000000'    // Negro
   const brandWhite = '#FFFFFF'    // Blanco Puro
   const brandLightGray = '#CCCCCC' // Gris Claro
-  const brandOrange = '#FFA500'   // Naranja Vibrante
 
-  const bgColor = useColorModeValue(brandLightGray + '40', brandDarkGray)
+  const bgColor = useColorModeValue(brandWhite, brandDarkGray)
   const toast = useToast()
 
   // Estados del formulario
@@ -182,11 +183,11 @@ const Contact = () => {
           value={formData[field]}
           onChange={(e) => handleChange(field, e.target.value)}
           placeholder={placeholder}
-          borderColor={isValid ? brandOrange : hasError ? brandRed : brandLightGray}
-          _hover={{ borderColor: isValid ? brandOrange : hasError ? brandRed : brandDarkGray }}
+          borderColor={isValid ? brandLightGray : hasError ? brandRed : brandLightGray}
+          _hover={{ borderColor: isValid ? brandDarkGray : hasError ? brandRed : brandDarkGray }}
           _focus={{
-            borderColor: isValid ? brandOrange : hasError ? brandRed : brandRed,
-            boxShadow: isValid ? `0 0 0 1px ${brandOrange}` : hasError ? `0 0 0 1px ${brandRed}` : `0 0 0 1px ${brandRed}`
+            borderColor: isValid ? brandRed : hasError ? brandRed : brandRed,
+            boxShadow: isValid ? `0 0 0 1px ${brandRed}` : hasError ? `0 0 0 1px ${brandRed}` : `0 0 0 1px ${brandRed}`
           }}
           bg={brandWhite}
           size="md"
@@ -197,7 +198,7 @@ const Contact = () => {
           </FormHelperText>
         )}
         {isValid && (
-          <FormHelperText color={brandOrange} fontSize="xs">
+          <FormHelperText color={brandDarkGray} fontSize="xs">
             ✓ Campo válido
           </FormHelperText>
         )}
@@ -221,11 +222,11 @@ const Contact = () => {
           placeholder={placeholder}
           rows={6}
           resize="vertical"
-          borderColor={isValid ? brandOrange : hasError ? brandRed : brandLightGray}
-          _hover={{ borderColor: isValid ? brandOrange : hasError ? brandRed : brandDarkGray }}
+          borderColor={isValid ? brandLightGray : hasError ? brandRed : brandLightGray}
+          _hover={{ borderColor: isValid ? brandDarkGray : hasError ? brandRed : brandDarkGray }}
           _focus={{
-            borderColor: isValid ? brandOrange : hasError ? brandRed : brandRed,
-            boxShadow: isValid ? `0 0 0 1px ${brandOrange}` : hasError ? `0 0 0 1px ${brandRed}` : `0 0 0 1px ${brandRed}`
+            borderColor: isValid ? brandRed : hasError ? brandRed : brandRed,
+            boxShadow: isValid ? `0 0 0 1px ${brandRed}` : hasError ? `0 0 0 1px ${brandRed}` : `0 0 0 1px ${brandRed}`
           }}
           bg={brandWhite}
           size="md"
@@ -236,7 +237,7 @@ const Contact = () => {
           </FormHelperText>
         )}
         {isValid && (
-          <FormHelperText color={brandOrange} fontSize="xs">
+          <FormHelperText color={brandDarkGray} fontSize="xs">
             ✓ Campo válido
           </FormHelperText>
         )}
@@ -246,6 +247,11 @@ const Contact = () => {
 
   return (
     <PublicLayout>
+      <SEO
+        title="Contacto - Oxígeno 88.1 FM"
+        description="Contáctanos en Oxígeno 88.1 FM. Envíanos tus comentarios, sugerencias o consultas. Estamos aquí para escucharte y responder todas tus preguntas."
+        keywords="contacto Oxígeno Radio, Barquisimeto, radio contacto, sugerencias radio, consultas radio, comunicación radio"
+      />
       <PageWithFooter>
         <Box bg={bgColor} py={8}>
           <Container maxW="container.lg" px={4}>
@@ -253,7 +259,7 @@ const Contact = () => {
               {/* Header */}
               <VStack spacing={4} textAlign="center">
                 <Text fontSize="4xl" fontWeight="bold" color={brandRed}>
-                  OXÍ Radio
+                  Oxígeno Radio
                 </Text>
                 <Text fontSize="lg" color="gray.600" maxW="md">
                   ¿Tienes alguna pregunta, sugerencia o necesitas ayuda? Envíanos un mensaje.

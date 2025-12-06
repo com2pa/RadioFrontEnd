@@ -16,6 +16,7 @@ import { useNavigate } from 'react-router-dom'
 import LoginForm from '../../components/forms/LoginForm'
 import PublicLayout from '../../components/layout/PublicLayout'
 import PageWithFooter from '../../components/layout/PageWithFooter'
+import SEO from '../../components/SEO'
 
 const Login = () => {
   const { redirectToDashboard } = useAuthRedirect()
@@ -23,10 +24,11 @@ const Login = () => {
   // Colores oficiales de OXÍGENO 88.1FM
   const brandRed = '#E50000'
   const brandDarkGray = '#333333'
+  const brandBlack = '#000000'
+  const brandWhite = '#FFFFFF'
   const brandLightGray = '#CCCCCC'
-  const brandOrange = '#FFA500'
 
-  const bgColor = useColorModeValue(brandLightGray + '40', brandDarkGray)
+  const bgColor = useColorModeValue(brandWhite, brandDarkGray)
   const textColor = useColorModeValue(brandDarkGray, brandLightGray)
 
   const handleLoginSuccess = (response) => {
@@ -68,6 +70,11 @@ const Login = () => {
 
   return (
     <PublicLayout>
+      <SEO
+        title="Iniciar Sesión - Oxígeno 88.1 FM"
+        description="Inicia sesión en tu cuenta de Oxígeno 88.1 FM para acceder a contenido exclusivo, personalizar tu experiencia y disfrutar de todos nuestros servicios."
+        keywords="login Oxígeno Radio, iniciar sesión, cuenta radio, acceso radio, usuario radio"
+      />
       <PageWithFooter>
         <Box bg={bgColor} py={8}>
           <Container maxW="container.lg" px={4}>
@@ -75,7 +82,7 @@ const Login = () => {
               {/* Header */}
               <VStack spacing={4} textAlign="center">
                 <Text fontSize="4xl" fontWeight="bold" color={brandRed}>
-                  Radio Oxigeno
+                  Radio Oxígeno
                 </Text>
                 <Text fontSize="lg" color={textColor} maxW="md">
                   Inicia sesión para acceder a tu cuenta y disfrutar de la mejor programación radial
@@ -98,7 +105,7 @@ const Login = () => {
                     to="/register" 
                     color={brandRed} 
                     fontWeight="medium"
-                    _hover={{ color: brandOrange, textDecoration: 'underline' }}
+                    _hover={{ color: brandRed, textDecoration: 'underline' }}
                   >
                     Regístrate aquí
                   </Link>

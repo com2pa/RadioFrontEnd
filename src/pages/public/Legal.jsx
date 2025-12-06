@@ -19,22 +19,28 @@ import {
 import { FiFileText, FiCheck, FiMapPin, FiPhone, FiMail } from 'react-icons/fi'
 import PageWithFooter from '../../components/layout/PageWithFooter'
 import PublicLayout from '../../components/layout/PublicLayout'
+import SEO from '../../components/SEO'
 
 const Legal = () => {
   // Colores oficiales de OXÍGENO 88.1FM
   const brandRed = '#E50000'      // Rojo Vibrante
   const brandDarkGray = '#333333' // Gris Oscuro
+  const brandBlack = '#000000'    // Negro
   const brandWhite = '#FFFFFF'    // Blanco Puro
   const brandLightGray = '#CCCCCC' // Gris Claro
-  const brandOrange = '#FFA500'   // Naranja Vibrante
 
-  const bgColor = useColorModeValue(brandLightGray + '40', brandDarkGray)
+  const bgColor = useColorModeValue(brandWhite, brandDarkGray)
   const textColor = useColorModeValue(brandDarkGray, brandLightGray)
   const headingColor = useColorModeValue(brandDarkGray, brandWhite)
   const accentColor = brandRed
 
   return (
     <PublicLayout>
+      <SEO
+        title="Aviso Legal - Oxígeno 88.1 FM"
+        description="Aviso legal de Oxígeno Radio 88.1 FM. Conoce nuestros términos de uso, condiciones legales, propiedad intelectual y normativas que rigen el uso de nuestro sitio web y servicios."
+        keywords="aviso legal Oxígeno Radio, términos legales, condiciones uso, propiedad intelectual, normativa radio"
+      />
       <PageWithFooter>
         <Box bg={bgColor} py={12}>
           <Container maxW="container.lg" px={4}>
@@ -53,7 +59,7 @@ const Legal = () => {
                   <Box>
                     <AlertTitle>Información Legal</AlertTitle>
                     <AlertDescription>
-                      Este aviso legal regula el uso del sitio web y servicios de OXÍ Radio 88.1 FM.
+                      Este aviso legal regula el uso del sitio web y servicios de Oxígeno Radio 88.1 FM.
                     </AlertDescription>
                   </Box>
                 </Alert>
@@ -75,7 +81,7 @@ const Legal = () => {
                   <List spacing={2} color={textColor}>
                     <ListItem>
                       <ListIcon as={FiCheck} color={accentColor} />
-                      <strong>Denominación social:</strong> OXÍ Radio 88.1 FM
+                      <strong>Denominación social:</strong> Oxígeno Radio 88.1 FM
                     </ListItem>
                     <ListItem>
                       <ListIcon as={FiCheck} color={accentColor} />
@@ -102,7 +108,7 @@ const Legal = () => {
                   </Heading>
                   <Text color={textColor} lineHeight="tall">
                     El presente aviso legal regula el uso del sitio web www.oxiradio.com (en adelante, el sitio web), 
-                    que es titularidad de OXÍ Radio 88.1 FM. La navegación por el sitio web atribuye la condición 
+                    que es titularidad de Oxígeno Radio 88.1 FM. La navegación por el sitio web atribuye la condición 
                     de usuario del mismo e implica la aceptación plena y sin reservas de todas y cada una de las 
                     disposiciones incluidas en este Aviso Legal.
                   </Text>
@@ -113,7 +119,7 @@ const Legal = () => {
                     3. Servicios Ofrecidos
                   </Heading>
                   <Text color={textColor} mb={4}>
-                    A través del sitio web, OXÍ Radio 88.1 FM ofrece a los usuarios la posibilidad de acceder a:
+                    A través del sitio web, Oxígeno Radio 88.1 FM ofrece a los usuarios la posibilidad de acceder a:
                   </Text>
                   <List spacing={2} color={textColor}>
                     <ListItem>
@@ -151,7 +157,7 @@ const Legal = () => {
                     Todos los contenidos del sitio web, entendiendo por estos a título enunciativo los textos, 
                     fotografías, gráficos, imágenes, iconos, tecnología, software, links y demás contenidos 
                     audiovisuales o sonoros, así como su diseño gráfico y códigos fuente, constituyen una 
-                    obra cuya propiedad pertenece a OXÍ Radio 88.1 FM, sin que puedan entenderse cedidos 
+                    obra cuya propiedad pertenece a Oxígeno Radio 88.1 FM, sin que puedan entenderse cedidos 
                     al usuario ninguno de los derechos de explotación sobre los mismos.
                   </Text>
                 </Box>
@@ -161,7 +167,7 @@ const Legal = () => {
                     5. Derechos de Autor Musical
                   </Heading>
                   <Text color={textColor} lineHeight="tall">
-                    OXÍ Radio 88.1 FM respeta los derechos de autor y propiedad intelectual de todos los 
+                    Oxígeno Radio 88.1 FM respeta los derechos de autor y propiedad intelectual de todos los 
                     artistas y compositores. La música transmitida cumple con las licencias correspondientes 
                     y está sujeta a los acuerdos con las sociedades de gestión de derechos de autor. 
                     Cualquier reclamación relacionada con derechos de autor debe dirigirse a: 
@@ -174,10 +180,10 @@ const Legal = () => {
                     6. Exclusión de Garantías y Responsabilidad
                   </Heading>
                   <Text color={textColor} lineHeight="tall">
-                    OXÍ Radio 88.1 FM no se hace responsable de la información contenida en el sitio web, 
+                    Oxígeno Radio 88.1 FM no se hace responsable de la información contenida en el sitio web, 
                     ni de los daños y perjuicios que puedan derivarse de su uso. La información contenida 
                     en el sitio web tiene carácter meramente informativo y no constituye asesoramiento de 
-                    ningún tipo. El acceso al sitio web no implica obligación de OXÍ Radio 88.1 FM de 
+                    ningún tipo. El acceso al sitio web no implica obligación de Oxígeno Radio 88.1 FM de 
                     controlar la ausencia de virus, gusanos o cualquier otro elemento informático dañino.
                   </Text>
                 </Box>
@@ -188,8 +194,8 @@ const Legal = () => {
                   </Heading>
                   <Text color={textColor} lineHeight="tall">
                     El sitio web puede contener enlaces a otros sitios web que consideramos de interés para 
-                    nuestros usuarios. OXÍ Radio 88.1 FM no ejerce ningún control sobre dichos sitios y 
-                    contenidos. En ningún caso OXÍ Radio 88.1 FM asumirá responsabilidad alguna por los 
+                    nuestros usuarios. Oxígeno Radio 88.1 FM no ejerce ningún control sobre dichos sitios y 
+                    contenidos. En ningún caso Oxígeno Radio 88.1 FM asumirá responsabilidad alguna por los 
                     contenidos de algún enlace perteneciente a un sitio web ajeno, ni garantizará la 
                     disponibilidad técnica, calidad, fiabilidad, exactitud, amplitud, veracidad, validez 
                     y constitucionalidad de cualquier material o información contenida en ninguno de dichos 
@@ -203,8 +209,8 @@ const Legal = () => {
                   </Heading>
                   <Text color={textColor} lineHeight="tall">
                     En cumplimiento de lo establecido en la Ley Orgánica de Protección de Datos de Carácter 
-                    Personal, OXÍ Radio 88.1 FM informa que los datos personales que nos proporcione serán 
-                    incorporados a un fichero automatizado, siendo responsable del mismo OXÍ Radio 88.1 FM. 
+                    Personal, Oxígeno Radio 88.1 FM informa que los datos personales que nos proporcione serán 
+                    incorporados a un fichero automatizado, siendo responsable del mismo Oxígeno Radio 88.1 FM. 
                     Para más información, consulte nuestra Política de Privacidad.
                   </Text>
                 </Box>
@@ -251,7 +257,7 @@ const Legal = () => {
                   <Box>
                     <AlertTitle>Compromiso Legal</AlertTitle>
                     <AlertDescription>
-                      OXÍ Radio 88.1 FM se compromete a cumplir con toda la legislación aplicable y 
+                      Oxígeno Radio 88.1 FM se compromete a cumplir con toda la legislación aplicable y 
                       a mantener los más altos estándares de transparencia y legalidad en todas sus operaciones.
                     </AlertDescription>
                   </Box>

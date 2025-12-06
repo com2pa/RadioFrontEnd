@@ -27,6 +27,7 @@ import { keyframes } from '@emotion/react'
 import axios from 'axios'
 import PublicLayout from '../../components/layout/PublicLayout'
 import PublicFooter from '../../components/layout/PublicFooter'
+import SEO from '../../components/SEO'
 import {
   FiArrowLeft,
   FiCalendar,
@@ -67,8 +68,10 @@ const ProgramView = () => {
   
   // Colores oficiales de OXÍGENO 88.1FM
   const brandRed = '#E50000'
+  const brandDarkGray = '#333333'
+  const brandBlack = '#000000'
   const brandWhite = '#FFFFFF'
-  const brandOrange = '#FFA500'
+  const brandLightGray = '#CCCCCC'
   
   const [program, setProgram] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -531,15 +534,20 @@ const ProgramView = () => {
   
   return (
     <PublicLayout>
+      <SEO
+        title={program ? `${program.program_name} - Oxígeno 88.1 FM` : 'Programa - Oxígeno 88.1 FM'}
+        description={program ? `Escucha ${program.program_name} en Oxígeno Radio 88.1 FM. ${program.program_description || 'Programa en vivo desde Barquisimeto.'}` : 'Escucha programas en vivo en Oxígeno Radio 88.1 FM'}
+        keywords={program ? `${program.program_name}, Oxígeno Radio, programa radio, Barquisimeto, streaming` : 'programas radio, Oxígeno Radio, streaming, Barquisimeto'}
+      />
       <Box
         minH="100vh"
-        bgGradient={`linear(135deg, ${brandRed}15, ${brandOrange}10, ${brandRed}15)`}
+        bgGradient={`linear(135deg, ${brandRed}15, ${brandLightGray}10, ${brandRed}15)`}
         pb={20}
       >
         {/* Header con botón de regreso */}
         <Box
           position="relative"
-          bgGradient={`linear(135deg, ${brandRed}, ${brandOrange})`}
+          bg={brandRed}
           py={8}
           mb={8}
         >
@@ -593,7 +601,7 @@ const ProgramView = () => {
               <Box
                 position="relative"
                 h={{ base: '300px', md: '400px', lg: '500px' }}
-                bgGradient={`linear(135deg, ${brandRed}, ${brandOrange})`}
+                bg={brandRed}
                 overflow="hidden"
               >
                 {programImage ? (
@@ -675,7 +683,7 @@ const ProgramView = () => {
                     )}
                     {program.scheduled_date && (
                       <HStack spacing={2}>
-                        <Icon as={FiClock} color={brandOrange} boxSize={5} />
+                        <Icon as={FiClock} color={brandRed} boxSize={5} />
                         <VStack align="start" spacing={0}>
                           <Text fontSize="xs" color="gray.500" fontWeight="bold">
                             HORA
@@ -750,7 +758,7 @@ const ProgramView = () => {
                   <VStack spacing={0} align="stretch">
                     {/* Header de la transmisión */}
                     <Box
-                      bgGradient={`linear(135deg, ${brandRed}, ${brandOrange})`}
+                      bg={brandRed}
                       p={6}
                     >
                       <HStack justify="space-between" align="center" flexWrap="wrap">
@@ -1049,10 +1057,10 @@ const ProgramView = () => {
                         <HStack justify="flex-end">
                           <Button
                             leftIcon={<Icon as={FiSend} />}
-                            bgGradient={`linear(135deg, ${brandRed}, ${brandOrange})`}
+                            bg={brandRed}
                             color={brandWhite}
                             _hover={{
-                              bgGradient: `linear(135deg, #C00000, #FF8C00)`,
+                              bg: brandRed,
                               transform: 'translateY(-2px)',
                               boxShadow: `0 10px 25px ${brandRed}60`,
                             }}
@@ -1097,7 +1105,7 @@ const ProgramView = () => {
                                   <HStack spacing={3}>
                                     <Avatar
                                       size="md"
-                                      bgGradient={`linear(135deg, ${brandRed}, ${brandOrange})`}
+                                      bg={brandRed}
                                       icon={<Icon as={FiUser} boxSize={5} />}
                                     />
                                     <VStack align="start" spacing={0}>

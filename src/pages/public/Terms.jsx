@@ -14,22 +14,28 @@ import {
 import { FiCheck } from 'react-icons/fi'
 import PageWithFooter from '../../components/layout/PageWithFooter'
 import PublicLayout from '../../components/layout/PublicLayout'
+import SEO from '../../components/SEO'
 
 const Terms = () => {
   // Colores oficiales de OXÍGENO 88.1FM
   const brandRed = '#E50000'      // Rojo Vibrante
   const brandDarkGray = '#333333' // Gris Oscuro
+  const brandBlack = '#000000'    // Negro
   const brandWhite = '#FFFFFF'    // Blanco Puro
   const brandLightGray = '#CCCCCC' // Gris Claro
-  const brandOrange = '#FFA500'   // Naranja Vibrante
 
-  const bgColor = useColorModeValue(brandLightGray + '40', brandDarkGray)
+  const bgColor = useColorModeValue(brandWhite, brandDarkGray)
   const textColor = useColorModeValue(brandDarkGray, brandLightGray)
   const headingColor = useColorModeValue(brandDarkGray, brandWhite)
   const accentColor = brandRed
 
   return (
     <PublicLayout>
+      <SEO
+        title="Términos y Condiciones - Oxígeno 88.1 FM"
+        description="Lee los términos y condiciones de uso de Oxígeno Radio 88.1 FM. Conoce las reglas, derechos y obligaciones al utilizar nuestros servicios de streaming y contenido."
+        keywords="términos condiciones Oxígeno Radio, condiciones uso, reglas radio, streaming términos, derechos usuario"
+      />
       <PageWithFooter>
         <Box bg={bgColor} py={12}>
           <Container maxW="container.lg" px={4}>
@@ -53,8 +59,8 @@ const Terms = () => {
                     1. Información General
                   </Heading>
                   <Text color={textColor} lineHeight="tall">
-                    Bienvenido a OXÍ Radio 88.1 FM. Estos términos y condiciones rigen el uso de nuestro sitio web, 
-                    servicios de streaming y cualquier contenido proporcionado por OXÍ Radio. Al acceder y utilizar 
+                    Bienvenido a Oxígeno Radio 88.1 FM. Estos términos y condiciones rigen el uso de nuestro sitio web, 
+                    servicios de streaming y cualquier contenido proporcionado por Oxígeno Radio. Al acceder y utilizar 
                     nuestros servicios, usted acepta cumplir con estos términos.
                   </Text>
                 </Box>
@@ -118,7 +124,7 @@ const Terms = () => {
                     4. Propiedad Intelectual
                   </Heading>
                   <Text color={textColor} lineHeight="tall">
-                    Todo el contenido de OXÍ Radio, incluyendo pero no limitado a música, programas, logos, 
+                    Todo el contenido de Oxígeno Radio, incluyendo pero no limitado a música, programas, logos, 
                     marcas comerciales y material gráfico, está protegido por derechos de autor y otras leyes 
                     de propiedad intelectual. El uso no autorizado de este contenido está estrictamente prohibido.
                   </Text>
@@ -129,7 +135,7 @@ const Terms = () => {
                     5. Limitación de Responsabilidad
                   </Heading>
                   <Text color={textColor} lineHeight="tall">
-                    OXÍ Radio no será responsable por interrupciones del servicio, pérdida de datos, o cualquier 
+                    Oxígeno Radio no será responsable por interrupciones del servicio, pérdida de datos, o cualquier 
                     daño directo o indirecto que pueda resultar del uso de nuestros servicios. Nos esforzamos por 
                     mantener un servicio de alta calidad, pero no podemos garantizar la disponibilidad continua.
                   </Text>

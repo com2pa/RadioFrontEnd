@@ -19,22 +19,28 @@ import {
 import { FiShield, FiCheck, FiEye, FiLock } from 'react-icons/fi'
 import PageWithFooter from '../../components/layout/PageWithFooter'
 import PublicLayout from '../../components/layout/PublicLayout'
+import SEO from '../../components/SEO'
 
 const Privacy = () => {
   // Colores oficiales de OXÍGENO 88.1FM
   const brandRed = '#E50000'      // Rojo Vibrante
   const brandDarkGray = '#333333' // Gris Oscuro
+  const brandBlack = '#000000'    // Negro
   const brandWhite = '#FFFFFF'    // Blanco Puro
   const brandLightGray = '#CCCCCC' // Gris Claro
-  const brandOrange = '#FFA500'   // Naranja Vibrante
 
-  const bgColor = useColorModeValue(brandLightGray + '40', brandDarkGray)
+  const bgColor = useColorModeValue(brandWhite, brandDarkGray)
   const textColor = useColorModeValue(brandDarkGray, brandLightGray)
   const headingColor = useColorModeValue(brandDarkGray, brandWhite)
   const accentColor = brandRed
 
   return (
     <PublicLayout>
+      <SEO
+        title="Política de Privacidad - Oxígeno 88.1 FM"
+        description="Política de privacidad de Oxígeno Radio 88.1 FM. Conoce cómo protegemos y gestionamos tus datos personales, tus derechos de privacidad y nuestra política de cookies."
+        keywords="privacidad Oxígeno Radio, protección datos, política privacidad, datos personales, GDPR, privacidad radio"
+      />
       <PageWithFooter>
         <Box bg={bgColor} py={12}>
           <Container maxW="container.lg" px={4}>

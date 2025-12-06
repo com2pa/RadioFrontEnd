@@ -18,7 +18,20 @@ const Home = () => {
 
   return (
     <PublicLayout>
-      <Box bg={bgColor} minH="100vh" pb="120px"> {/* Padding bottom para el reproductor sticky */}
+      <SEO
+        title="Oxígeno 88.1 FM - La Voz de Barquisimeto | Radio Online"
+        description="Escucha Oxígeno 88.1 FM, la radio de Barquisimeto. Música, programas en vivo, noticias y entretenimiento 24/7. Transmisión en alta calidad desde Venezuela."
+        keywords="Oxígeno Radio, 88.1 FM, Barquisimeto, radio online, streaming radio, música, programas radio, noticias Barquisimeto, radio Venezuela"
+      />
+      <Box 
+        bg={bgColor} 
+        minH="100vh" 
+        pb="120px"
+        px={{ base: 4, sm: 6, md: 8, lg: 10, xl: 12 }}
+        py={{ base: 4, sm: 6, md: 8, lg: 10, xl: 12 }}
+        position="relative"
+        overflow="hidden"
+      >
         <HeroSection />
         {/* <LivePrograms /> */}
         {/* <TopSongs /> */}

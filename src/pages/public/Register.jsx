@@ -13,16 +13,17 @@ import { Link as RouterLink } from 'react-router-dom'
 import RegisterForm from '../../components/forms/RegisterForm'
 import PublicLayout from '../../components/layout/PublicLayout'
 import PageWithFooter from '../../components/layout/PageWithFooter'
+import SEO from '../../components/SEO'
 
 const Register = () => {
   // Colores oficiales de OXÍGENO 88.1FM
   const brandRed = '#E50000'
   const brandDarkGray = '#333333'
+  const brandBlack = '#000000'
   const brandWhite = '#FFFFFF'
   const brandLightGray = '#CCCCCC'
-  const brandOrange = '#FFA500'
 
-  const bgColor = useColorModeValue(brandLightGray + '40', brandDarkGray)
+  const bgColor = useColorModeValue(brandWhite, brandDarkGray)
   const textColor = useColorModeValue(brandDarkGray, brandLightGray)
 
   const handleRegisterSuccess = (response) => {
@@ -37,6 +38,11 @@ const Register = () => {
 
   return (
     <PublicLayout>
+      <SEO
+        title="Registro - Oxígeno 88.1 FM"
+        description="Únete a la comunidad de Oxígeno 88.1 FM. Regístrate gratis y accede a contenido exclusivo, personaliza tu experiencia y forma parte de nuestra familia radial."
+        keywords="registro Oxígeno Radio, crear cuenta, unirse radio, comunidad radio, suscripción radio"
+      />
       <PageWithFooter>
         <Box bg={bgColor} py={8}>
           <Container maxW="container.lg" px={4}>
@@ -44,7 +50,7 @@ const Register = () => {
               {/* Header */}
               <VStack spacing={4} textAlign="center">
                 <Text fontSize="4xl" fontWeight="bold" color={brandRed}>
-                  Radio Oxigeno
+                  Radio Oxígeno
                 </Text>
                 <Text fontSize="lg" color={textColor} maxW="md">
                   Únete a nuestra comunidad y disfruta de la mejor programación radial
@@ -67,7 +73,7 @@ const Register = () => {
                     to="/login" 
                     color={brandRed} 
                     fontWeight="medium"
-                    _hover={{ color: brandOrange, textDecoration: 'underline' }}
+                    _hover={{ color: brandRed, textDecoration: 'underline' }}
                   >
                     Inicia sesión aquí
                   </Link>

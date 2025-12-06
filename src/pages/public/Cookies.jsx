@@ -26,16 +26,17 @@ import {
 import { FiCheck, FiSettings, FiShield, FiFile } from 'react-icons/fi'
 import PageWithFooter from '../../components/layout/PageWithFooter'
 import PublicLayout from '../../components/layout/PublicLayout'
+import SEO from '../../components/SEO'
 
 const Cookies = () => {
   // Colores oficiales de OXÍGENO 88.1FM
   const brandRed = '#E50000'      // Rojo Vibrante
   const brandDarkGray = '#333333' // Gris Oscuro
+  const brandBlack = '#000000'    // Negro
   const brandWhite = '#FFFFFF'    // Blanco Puro
   const brandLightGray = '#CCCCCC' // Gris Claro
-  const brandOrange = '#FFA500'   // Naranja Vibrante
 
-  const bgColor = useColorModeValue(brandLightGray + '40', brandDarkGray)
+  const bgColor = useColorModeValue(brandWhite, brandDarkGray)
   const textColor = useColorModeValue(brandDarkGray, brandLightGray)
   const headingColor = useColorModeValue(brandDarkGray, brandWhite)
   const accentColor = brandRed
@@ -69,6 +70,11 @@ const Cookies = () => {
 
   return (
     <PublicLayout>
+      <SEO
+        title="Política de Cookies - Oxígeno 88.1 FM"
+        description="Política de cookies de Oxígeno Radio 88.1 FM. Información sobre el uso de cookies en nuestro sitio web, tipos de cookies y cómo gestionar tus preferencias."
+        keywords="cookies Oxígeno Radio, política cookies, gestión cookies, preferencias cookies, cookies sitio web"
+      />
       <PageWithFooter>
         <Box bg={bgColor} py={12}>
           <Container maxW="container.lg" px={4}>

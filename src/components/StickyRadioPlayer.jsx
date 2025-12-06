@@ -9,15 +9,9 @@ import {
   SliderFilledTrack,
   SliderThumb,
   Text,
-  Badge,
-  Tooltip,
-  useColorModeValue,
+  Button,
+  Flex,
   Icon,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  MenuDivider,
   useToast,
 } from '@chakra-ui/react'
 import { keyframes } from '@emotion/react'
@@ -26,9 +20,6 @@ import {
   FiPause,
   FiVolume2,
   FiVolumeX,
-  FiRadio,
-  FiShare2,
-  FiMoreVertical,
 } from 'react-icons/fi'
 import { radioConfig, getStreamUrl, isValidStreamUrl } from '../config/radioConfig'
 
@@ -54,11 +45,16 @@ const StickyRadioPlayer = () => {
   const toast = useToast()
   const audioRef = useRef(null)
 
-  // Colores responsivos
-  const bgColor = useColorModeValue('white', 'gray.800')
-  const borderColor = useColorModeValue('gray.200', 'gray.700')
-  const textColor = useColorModeValue('gray.800', 'white')
-  const mutedTextColor = useColorModeValue('gray.600', 'gray.400')
+  // Colores oficiales de OXÍGENO 88.1FM
+  const brandRed = '#E50000'
+  const brandWhite = '#FFFFFF'
+  const brandDarkGray = '#333333'
+  const brandLightGray = '#CCCCCC'
+
+  // Colores del reproductor (tema oscuro)
+  const playerBg = brandDarkGray
+  const textColor = brandWhite
+  const mutedTextColor = brandLightGray
 
   // Obtener URL del stream
   const streamUrl = getStreamUrl()
@@ -413,6 +409,10 @@ const StickyRadioPlayer = () => {
     }
   }
 
+  // Determinar color del botón según estado
+  const buttonColor = isPlaying && !error ? "#00FF00" : "#E50000"
+  const buttonHoverColor = isPlaying && !error ? "#00CC00" : "#C00000"
+
   return (
     <>
       {/* Elemento de audio oculto */}
@@ -423,198 +423,261 @@ const StickyRadioPlayer = () => {
         style={{ display: 'none' }}
       />
 
-      {/* Reproductor principal */}
-    <Box
-      position="fixed"
-      bottom={0}
-      left={0}
-      right={0}
-      zIndex={1000}
-      bg={bgColor}
-      borderTop="1px solid"
-      borderColor={borderColor}
-      boxShadow="0 -4px 20px rgba(0,0,0,0.1)"
-      backdropFilter="blur(10px)"
-      transition="all 0.3s ease"
-    >
-      {/* Contenido principal del reproductor */}
-      <Box p={{ base: 3, md: 4 }}>
-        <HStack spacing={{ base: 3, md: 4 }} align="center">
-            {/* Información de la radio */}
-          <HStack spacing={3} minW={0} flex={1}>
-            <Box
-              position="relative"
-              w={{ base: "50px", md: "60px" }}
-              h={{ base: "50px", md: "60px" }}
-              borderRadius="md"
-              overflow="hidden"
-              flexShrink={0}
-                bgGradient="linear(135deg, blue.500, purple.500)"
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                >
-                <Icon as={FiRadio} color="white" boxSize={6} />
-              {isPlaying && (
+      {/* Reproductor principal - Diseño moderno y limpio */}
+      <Box
+        position="fixed"
+        bottom={0}
+        left={0}
+        right={0}
+        zIndex={1000}
+        bg={brandWhite}
+        borderTop="1px solid rgba(0, 0, 0, 0.1)"
+        boxShadow="0 -4px 20px rgba(0, 0, 0, 0.15)"
+      >
+        <Box px={{ base: 2, sm: 3, md: 4, lg: 6 }} py={{ base: 2.5, sm: 3, md: 4 }}>
+          {/* Layout responsive: vertical en móvil, horizontal en desktop */}
+          <VStack 
+            spacing={{ base: 2, sm: 3, md: 0 }} 
+            align="stretch"
+            display={{ base: "flex", md: "none" }}
+          >
+            {/* Móvil: Layout vertical */}
+            {/* Fila superior: Información y botón play */}
+            <HStack 
+              spacing={3} 
+              align="center" 
+              justify="space-between"
+              w="full"
+            >
+              {/* Información de la estación */}
+              <HStack 
+                spacing={2} 
+                align="center" 
+                flex={1} 
+                minW={0}
+              >
+                {/* Indicador de estado */}
                 <Box
-                  position="absolute"
-                  top={0}
-                  left={0}
-                  right={0}
-                  bottom={0}
-                  bg="rgba(0,0,0,0.3)"
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                  animation={`${pulse} 1s ease-in-out infinite`}
-                >
-                  <Icon as={FiRadio} color="white" boxSize={4} />
-                </Box>
-              )}
-            </Box>
-
-            <VStack align="start" spacing={0} minW={0} flex={1}>
-              <Text
-                fontSize={{ base: "sm", md: "md" }}
-                fontWeight="bold"
-                color={textColor}
-                noOfLines={1}
-                w="full"
-              >
-                  {radioConfig.stationName}
-              </Text>
-              <Text
-                fontSize={{ base: "xs", md: "sm" }}
-                color={mutedTextColor}
-                noOfLines={1}
-                w="full"
-              >
-                  {radioConfig.stationDescription}
-              </Text>
-              <HStack spacing={2} mt={1}>
-                {isPlaying && (
-                  <Badge
-                    size="sm"
-                    colorScheme="green"
-                    variant="subtle"
-                    fontSize="xs"
+                  w={{ base: "8px", sm: "10px" }}
+                  h={{ base: "8px", sm: "10px" }}
+                  borderRadius="full"
+                  bg={isPlaying && !error ? "#00FF00" : "#E50000"}
+                  boxShadow={isPlaying && !error ? "0 0 8px rgba(0, 255, 0, 0.6)" : "0 0 8px rgba(229, 0, 0, 0.6)"}
+                  animation={isPlaying && !error ? `${pulse} 2s ease-in-out infinite` : 'none'}
+                  flexShrink={0}
+                />
+                
+                {/* Información de la estación */}
+                <VStack spacing={0.5} align="start" flex={1} minW={0}>
+                  <Text
+                    fontSize={{ base: "xs", sm: "sm" }}
+                    fontWeight="bold"
+                    color={brandDarkGray}
+                    noOfLines={1}
+                    letterSpacing="0.2px"
                   >
-                      🔴 EN VIVO
-                  </Badge>
-                )}
-                  {isLoading && (
-                    <Badge
-                      size="sm"
-                      colorScheme="blue"
-                      variant="subtle"
-                      fontSize="xs"
-                    >
-                      Cargando...
-                    </Badge>
-                  )}
-                  {error && (
-                    <Badge
-                      size="sm"
-                      colorScheme="red"
-                      variant="subtle"
-                      fontSize="xs"
-                    >
-                      Error
-                    </Badge>
-                )}
+                    {radioConfig.stationName}
+                  </Text>
+                  <Text
+                    fontSize="2xs"
+                    color={isPlaying && !error ? "#00FF00" : brandDarkGray}
+                    fontWeight={isPlaying && !error ? "semibold" : "normal"}
+                    opacity={isPlaying && !error ? 1 : 0.7}
+                  >
+                    {isPlaying && !error ? "● En vivo" : error ? "Sin conexión" : "Pausado"}
+                  </Text>
+                </VStack>
               </HStack>
-            </VStack>
-          </HStack>
 
-          {/* Controles principales */}
-          <HStack spacing={{ base: 2, md: 3 }} align="center">
-            {/* Botón play/pause principal */}
-            <IconButton
-              aria-label={isPlaying ? 'Pausar' : 'Reproducir'}
-              icon={<Icon as={isPlaying ? FiPause : FiPlay} />}
-              size="lg"
-              colorScheme="blue"
-              onClick={handlePlayPause}
-              borderRadius="full"
-              bgGradient="linear(135deg, blue.500, purple.500)"
-              color="white"
+              {/* Botón play/pause principal */}
+              <IconButton
+                aria-label={isPlaying ? 'Pausar' : 'Reproducir'}
+                icon={<Icon as={isPlaying ? FiPause : FiPlay} />}
+                onClick={handlePlayPause}
+                borderRadius="full"
+                bg={buttonColor}
+                color="white"
                 isLoading={isLoading}
                 isDisabled={!isValidStreamUrl(streamUrl) || !!error}
-              _hover={{
-                bgGradient: 'linear(135deg, blue.600, purple.600)',
-                transform: 'scale(1.05)',
-                boxShadow: '0 4px 20px rgba(59, 130, 246, 0.4)'
-              }}
-              animation={isPlaying ? `${pulse} 1.5s ease-in-out infinite` : 'none'}
-              boxShadow={isPlaying ? '0 0 20px rgba(59, 130, 246, 0.3)' : 'none'}
-            />
-          </HStack>
+                _hover={{
+                  bg: buttonHoverColor,
+                  transform: 'scale(1.05)',
+                }}
+                _active={{
+                  transform: 'scale(0.95)',
+                }}
+                transition="all 0.2s ease"
+                w={{ base: "44px", sm: "50px" }}
+                h={{ base: "44px", sm: "50px" }}
+                boxShadow={`0 4px 15px ${buttonColor}50`}
+                fontSize={{ base: "16px", sm: "18px" }}
+                flexShrink={0}
+              />
+            </HStack>
 
-          {/* Controles adicionales */}
-          <HStack spacing={2} align="center">
-            {/* Controles de volumen */}
-            <HStack spacing={1} align="center">
-              <Tooltip label={isMuted ? "Activar sonido" : "Silenciar"} placement="top">
-                <IconButton
-                  aria-label={isMuted ? "Activar sonido" : "Silenciar"}
-                  icon={<Icon as={isMuted ? FiVolumeX : FiVolume2} />}
-                  size="sm"
-                  variant="ghost"
-                  color={mutedTextColor}
-                  onClick={() => setIsMuted(!isMuted)}
-                  _hover={{ color: textColor }}
-                />
-              </Tooltip>
-              
-              <Box w="60px">
+            {/* Fila inferior: Control de volumen */}
+            <HStack 
+              spacing={2} 
+              align="center"
+              justify="center"
+              w="full"
+            >
+              <IconButton
+                aria-label={isMuted ? 'Activar sonido' : 'Silenciar'}
+                icon={<Icon as={isMuted ? FiVolumeX : FiVolume2} />}
+                onClick={() => setIsMuted(!isMuted)}
+                variant="ghost"
+                color={brandDarkGray}
+                size="xs"
+                _hover={{
+                  bg: "rgba(0, 0, 0, 0.05)",
+                }}
+                w="32px"
+                h="32px"
+              />
+              <Box flex={1} maxW="200px">
                 <Slider
                   value={isMuted ? 0 : volume}
                   min={0}
                   max={100}
                   onChange={handleVolumeChange}
-                  colorScheme="blue"
                   size="sm"
                 >
-                  <SliderTrack bg="gray.200">
-                    <SliderFilledTrack bg="blue.400" />
+                  <SliderTrack bg="rgba(0, 0, 0, 0.1)" h="3px" borderRadius="full">
+                    <SliderFilledTrack bg={buttonColor} borderRadius="full" />
                   </SliderTrack>
-                  <SliderThumb boxSize={3} />
+                  <SliderThumb 
+                    boxSize={2.5} 
+                    bg={brandDarkGray} 
+                    border="2px solid"
+                    borderColor={buttonColor}
+                    _focus={{ boxShadow: `0 0 0 3px ${buttonColor}30` }}
+                  />
                 </Slider>
               </Box>
             </HStack>
+          </VStack>
 
-              {/* Menú de opciones */}
-              <Menu>
-                <MenuButton
-                  as={IconButton}
-                  aria-label="Más opciones"
-                  icon={<Icon as={FiMoreVertical} />}
-                  size="sm"
+          {/* Desktop: Layout horizontal */}
+          <HStack 
+            spacing={{ base: 3, md: 4, lg: 6 }} 
+            align="center" 
+            justify="space-between"
+            display={{ base: "none", md: "flex" }}
+          >
+            {/* Sección izquierda - Información de la estación */}
+            <HStack 
+              spacing={3} 
+              align="center" 
+              flex={1} 
+              minW={0}
+              maxW={{ md: "300px", lg: "400px" }}
+            >
+              {/* Indicador de estado */}
+              <Box
+                w={{ md: "10px", lg: "12px" }}
+                h={{ md: "10px", lg: "12px" }}
+                borderRadius="full"
+                bg={isPlaying && !error ? "#00FF00" : "#E50000"}
+                boxShadow={isPlaying && !error ? "0 0 10px rgba(0, 255, 0, 0.6)" : "0 0 10px rgba(229, 0, 0, 0.6)"}
+                animation={isPlaying && !error ? `${pulse} 2s ease-in-out infinite` : 'none'}
+                flexShrink={0}
+              />
+              
+              {/* Información de la estación */}
+              <VStack spacing={1} align="start" flex={1} minW={0}>
+                <Text
+                  fontSize={{ md: "md", lg: "lg" }}
+                  fontWeight="bold"
+                  color={brandDarkGray}
+                  noOfLines={1}
+                  letterSpacing="0.3px"
+                >
+                  {radioConfig.stationName}
+                </Text>
+                <Text
+                  fontSize={{ md: "sm", lg: "md" }}
+                  color={isPlaying && !error ? "#00FF00" : brandDarkGray}
+                  fontWeight={isPlaying && !error ? "semibold" : "normal"}
+                  opacity={isPlaying && !error ? 1 : 0.7}
+                >
+                  {isPlaying && !error ? "● En vivo" : error ? "Sin conexión" : "Pausado"}
+                </Text>
+              </VStack>
+            </HStack>
+
+            {/* Sección central - Controles principales */}
+            <HStack 
+              spacing={{ md: 3, lg: 4 }} 
+              align="center" 
+              justify="center"
+              flexShrink={0}
+            >
+              {/* Botón play/pause principal */}
+              <IconButton
+                aria-label={isPlaying ? 'Pausar' : 'Reproducir'}
+                icon={<Icon as={isPlaying ? FiPause : FiPlay} />}
+                onClick={handlePlayPause}
+                borderRadius="full"
+                bg={buttonColor}
+                color="white"
+                isLoading={isLoading}
+                isDisabled={!isValidStreamUrl(streamUrl) || !!error}
+                _hover={{
+                  bg: buttonHoverColor,
+                  transform: 'scale(1.1)',
+                }}
+                _active={{
+                  transform: 'scale(0.95)',
+                }}
+                transition="all 0.2s ease"
+                w={{ md: "56px", lg: "64px" }}
+                h={{ md: "56px", lg: "64px" }}
+                boxShadow={`0 4px 15px ${buttonColor}50`}
+                fontSize={{ md: "20px", lg: "22px" }}
+              />
+
+              {/* Control de volumen */}
+              <HStack 
+                spacing={2} 
+                align="center"
+              >
+                <IconButton
+                  aria-label={isMuted ? 'Activar sonido' : 'Silenciar'}
+                  icon={<Icon as={isMuted ? FiVolumeX : FiVolume2} />}
+                  onClick={() => setIsMuted(!isMuted)}
                   variant="ghost"
-                  color={mutedTextColor}
-                  _hover={{ color: textColor }}
+                  color={brandDarkGray}
+                  size="sm"
+                  _hover={{
+                    bg: "rgba(0, 0, 0, 0.05)",
+                  }}
                 />
-                <MenuList>
-                  <MenuItem icon={<Icon as={FiShare2} />} onClick={handleShare}>
-                    Compartir Radio
-                  </MenuItem>
-                  <MenuDivider />
-                  <MenuItem>
-                    <VStack align="start" spacing={0}>
-                      <Text fontSize="xs" fontWeight="bold">
-                        {radioConfig.stationName}
-                      </Text>
-                      <Text fontSize="xs" color="gray.500">
-                        {radioConfig.stationDescription}
-                      </Text>
-                    </VStack>
-                  </MenuItem>
-                </MenuList>
-              </Menu>
+                <Box w={{ md: "80px", lg: "100px" }}>
+                  <Slider
+                    value={isMuted ? 0 : volume}
+                    min={0}
+                    max={100}
+                    onChange={handleVolumeChange}
+                    size="sm"
+                  >
+                    <SliderTrack bg="rgba(0, 0, 0, 0.1)" h="4px" borderRadius="full">
+                      <SliderFilledTrack bg={buttonColor} borderRadius="full" />
+                    </SliderTrack>
+                    <SliderThumb 
+                      boxSize={3} 
+                      bg={brandDarkGray} 
+                      border="2px solid"
+                      borderColor={buttonColor}
+                      _focus={{ boxShadow: `0 0 0 3px ${buttonColor}30` }}
+                    />
+                  </Slider>
+                </Box>
+              </HStack>
+            </HStack>
           </HStack>
-        </HStack>
+        </Box>
       </Box>
-    </Box>
     </>
   )
 }

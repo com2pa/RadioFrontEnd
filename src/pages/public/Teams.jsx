@@ -37,14 +37,15 @@ import {
 } from 'react-icons/fi'
 import PageWithFooter from '../../components/layout/PageWithFooter'
 import PublicLayout from '../../components/layout/PublicLayout'
+import SEO from '../../components/SEO'
 
 const Teams = () => {
   // Colores oficiales de OXÍGENO 88.1FM
   const brandRed = '#E50000'      // Rojo Vibrante
   const brandDarkGray = '#333333' // Gris Oscuro
+  const brandBlack = '#000000'    // Negro
   const brandWhite = '#FFFFFF'    // Blanco Puro
   const brandLightGray = '#CCCCCC' // Gris Claro
-  const brandOrange = '#FFA500'   // Naranja Vibrante
 
   const bgGradient = useColorModeValue(
     `linear(to-br, ${brandWhite}, ${brandLightGray})`,
@@ -56,7 +57,7 @@ const Teams = () => {
   const borderColor = useColorModeValue(brandLightGray, '#555555')
   const glassBg = useColorModeValue('rgba(255, 255, 255, 0.9)', 'rgba(51, 51, 51, 0.9)')
   const statCardBg = useColorModeValue('rgba(255, 255, 255, 0.95)', 'rgba(51, 51, 51, 0.95)')
-  const statCardBorder = useColorModeValue(brandLightGray, brandOrange)
+  const statCardBorder = useColorModeValue(brandLightGray, brandRed)
   const memberBoxBg = useColorModeValue(brandLightGray + '40', brandDarkGray + '80')
   const memberBoxHoverBg = useColorModeValue(brandLightGray + '60', brandDarkGray + 'A0')
 
@@ -92,8 +93,8 @@ const Teams = () => {
       id: 2,
       department: 'Programación',
       icon: FiRadio,
-      color: 'orange',
-      gradient: `linear(to-br, ${brandOrange}, #FF8C00)`,
+      color: 'red',
+      gradient: `linear(to-br, ${brandRed}, #C00000)`,
       description: 'Producción y coordinación de la programación diaria',
       members: [
         {
@@ -202,8 +203,8 @@ const Teams = () => {
       id: 5,
       department: 'Musicalización',
       icon: FiMusic,
-      color: 'orange',
-      gradient: `linear(to-br, ${brandOrange}, #FF8C00)`,
+      color: 'red',
+      gradient: `linear(to-br, ${brandRed}, #C00000)`,
       description: 'Selección y gestión del contenido musical',
       members: [
         {
@@ -288,8 +289,8 @@ const Teams = () => {
       id: 8,
       department: 'Comercial y Ventas',
       icon: FiBriefcase,
-      color: 'orange',
-      gradient: `linear(to-br, ${brandOrange}, #FF8C00)`,
+      color: 'red',
+      gradient: `linear(to-br, ${brandRed}, #C00000)`,
       description: 'Gestión comercial y relaciones con clientes',
       members: [
         {
@@ -322,6 +323,11 @@ const Teams = () => {
 
   return (
     <PublicLayout>
+      <SEO
+        title="Nuestro Equipo - Oxígeno 88.1 FM"
+        description="Conoce al talentoso equipo de Oxígeno Radio 88.1 FM. Profesionales apasionados trabajando juntos para brindarte la mejor experiencia radial en Barquisimeto."
+        keywords="equipo Oxígeno Radio, personal radio, locutores Barquisimeto, equipo radio, profesionales radio, estructura organizativa"
+      />
       <PageWithFooter>
         {/* Hero Section - Modern with Animated Background */}
         <Box
@@ -350,7 +356,7 @@ const Teams = () => {
             width={{ base: '250px', md: '500px' }}
             height={{ base: '250px', md: '500px' }}
             borderRadius="full"
-            bg={brandOrange}
+            bg={brandRed}
             opacity={0.2}
             filter="blur(80px)"
             animation="float 15s ease-in-out infinite reverse"
@@ -416,9 +422,9 @@ const Teams = () => {
                   >
                     {[
                       { icon: FiUsers, label: 'Profesionales', value: '+25', color: brandRed },
-                      { icon: FiBriefcase, label: 'Departamentos', value: '8', color: brandOrange },
+                      { icon: FiBriefcase, label: 'Departamentos', value: '8', color: brandRed },
                       { icon: FiStar, label: 'Años Experiencia', value: '150+', color: brandRed },
-                      { icon: FiAward, label: 'Premios', value: '15+', color: brandOrange }
+                      { icon: FiAward, label: 'Premios', value: '15+', color: brandRed }
                     ].map((stat, idx) => (
                       <Box
                         key={idx}
@@ -489,7 +495,7 @@ const Teams = () => {
                     _hover={{
                       transform: 'translateY(-12px) rotate(1deg)',
                       shadow: '3xl',
-                      borderColor: dept.color === 'red' ? brandRed : dept.color === 'orange' ? brandOrange : brandDarkGray
+                      borderColor: dept.color === 'red' ? brandRed : brandDarkGray
                     }}
                     group
                   >
@@ -546,7 +552,7 @@ const Teams = () => {
                               transition="all 0.2s"
                               _hover={{
                                 bg: memberBoxHoverBg,
-                                borderColor: dept.color === 'red' ? brandRed : dept.color === 'orange' ? brandOrange : brandDarkGray,
+                                borderColor: dept.color === 'red' ? brandRed : brandDarkGray,
                                 transform: 'scale(1.05)'
                               }}
                             >
@@ -574,7 +580,7 @@ const Teams = () => {
                                   </Text>
                                   <Text
                                     fontSize="2xs"
-                                    color={dept.color === 'red' ? brandRed : dept.color === 'orange' ? brandOrange : brandDarkGray}
+                                    color={dept.color === 'red' ? brandRed : brandDarkGray}
                                     fontWeight="medium"
                                     textAlign="center"
                                     noOfLines={1}
@@ -583,7 +589,7 @@ const Teams = () => {
                                   </Text>
                                   <Badge
                                     fontSize="2xs"
-                                    bg={dept.color === 'red' ? brandRed : dept.color === 'orange' ? brandOrange : brandDarkGray}
+                                    bg={dept.color === 'red' ? brandRed : brandDarkGray}
                                     color={brandWhite}
                                     variant="solid"
                                     mt={1}
@@ -599,14 +605,14 @@ const Teams = () => {
 
                         <Button
                           size="sm"
-                          bg={dept.color === 'red' ? brandRed : dept.color === 'orange' ? brandOrange : brandDarkGray}
+                          bg={dept.color === 'red' ? brandRed : brandDarkGray}
                           color={brandWhite}
                           variant="solid"
                           rightIcon={<Icon as={FiArrowRight} />}
                           w="full"
                           mt={2}
                           _hover={{
-                            bg: dept.color === 'red' ? '#CC0000' : dept.color === 'orange' ? '#FF8C00' : '#222222',
+                            bg: dept.color === 'red' ? '#CC0000' : '#222222',
                             transform: 'translateX(4px)'
                           }}
                         >
@@ -640,8 +646,8 @@ const Teams = () => {
                     icon: FiStar,
                     title: 'Excelencia',
                     description: 'Buscamos la perfección en cada detalle',
-                    color: brandOrange,
-                    gradient: `linear(to-br, ${brandOrange}, #FF8C00)`
+                    color: brandRed,
+                    gradient: `linear(to-br, ${brandRed}, #C00000)`
                   },
                   {
                     icon: FiUsers,
@@ -654,8 +660,8 @@ const Teams = () => {
                     icon: FiZap,
                     title: 'Innovación',
                     description: 'Siempre a la vanguardia tecnológica',
-                    color: brandOrange,
-                    gradient: `linear(to-br, ${brandOrange}, #FF8C00)`
+                    color: brandRed,
+                    gradient: `linear(to-br, ${brandRed}, #C00000)`
                   },
                   {
                     icon: FiHeart,
@@ -726,7 +732,7 @@ const Teams = () => {
           py={{ base: 12, md: 20 }}
           position="relative"
           overflow="hidden"
-          bgGradient={`linear(to-r, ${brandRed}, ${brandOrange})`}
+          bg={brandRed}
           color={brandWhite}
         >
           {/* Animated background elements */}

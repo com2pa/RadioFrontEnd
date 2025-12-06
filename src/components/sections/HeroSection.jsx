@@ -34,7 +34,9 @@ import {
   FiStar,
   FiTrendingUp,
   FiZap,
-  FiEye
+  FiEye,
+  FiMic,
+  FiRss
 } from 'react-icons/fi'
 
 // Animaciones EXTREMAS para máximo impacto
@@ -247,14 +249,15 @@ const HeroSection = () => {
   return (
     <Box
       position="relative"
-      h={{ base: "calc(100vh - 150px)", sm: "calc(100vh - 170px)", md: "calc(100vh - 180px)" }}
-      minH={{ base: "350px", sm: "450px", md: "500px" }}
-      maxH={{ base: "calc(100vh - 150px)", sm: "calc(100vh - 170px)", md: "calc(100vh - 180px)" }}
+      h={{ base: "calc(100vh - 150px)", sm: "calc(100vh - 170px)", md: "calc(100vh - 180px)", lg: "calc(100vh - 200px)", xl: "calc(100vh - 220px)" }}
+      minH={{ base: "350px", sm: "450px", md: "500px", lg: "600px", xl: "700px" }}
+      maxH={{ base: "calc(100vh - 150px)", sm: "calc(100vh - 170px)", md: "calc(100vh - 180px)", lg: "calc(100vh - 200px)", xl: "calc(100vh - 220px)" }}
       overflow="hidden"
       display="flex"
       alignItems="center"
       justifyContent="center"
-      pb={{ base: "150px", sm: "170px", md: "180px" }}
+      pb={{ base: "150px", sm: "170px", md: "180px", lg: "200px", xl: "220px" }}
+      px={{ base: 4, sm: 6, md: 8, lg: 10, xl: 12 }}
     >
       {/* Fondo transparente - sin colores */}
 
@@ -264,8 +267,8 @@ const HeroSection = () => {
           ref={carouselRef}
           position="absolute"
           top={0}
-          left={0}
-          w="full"
+          left={{ base: 4, sm: 6, md: 8, lg: 10, xl: 12 }}
+          right={{ base: 4, sm: 6, md: 8, lg: 10, xl: 12 }}
           h="full"
           display="flex"
           sx={{
@@ -313,7 +316,7 @@ const HeroSection = () => {
                 left={0}
                 w="100%"
                 h="100%"
-                objectFit={{ base: "contain", md: "cover", lg: "cover" }}
+                objectFit={{ base: "contain", sm: "contain", md: "contain", lg: "contain", xl: "contain" }}
                 objectPosition="center"
                 zIndex={0}
               />

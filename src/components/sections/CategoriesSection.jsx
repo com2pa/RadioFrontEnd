@@ -23,6 +23,7 @@ import {
   FiRss,
   FiHeadphones,
   FiStar,
+  FiRadio,
 } from 'react-icons/fi'
 import { useNavigate } from 'react-router-dom'
 
@@ -96,22 +97,289 @@ const CategoriesSection = () => {
   return (
     <Box 
       py={{ base: 12, sm: 16, md: 20, lg: 24 }} 
-      bg={brandLightGray}
+      bg="transparent"
       position="relative"
       overflow="hidden"
     >
+      {/* Marcas de agua de radio - Fondo decorativo en espacios vacíos */}
+      <Box
+        position="absolute"
+        top={0}
+        left={0}
+        right={0}
+        bottom={0}
+        zIndex={0}
+        pointerEvents="none"
+        opacity={0.08}
+      >
+        {/* Onda de radio - Área vacía superior izquierda (fuera de las cards) */}
+        <Box
+          position="absolute"
+          top={{ base: "3%", md: "2%" }}
+          left={{ base: "3%", md: "2%" }}
+          transform="rotate(-15deg)"
+        >
+            <Icon 
+              as={FiRss} 
+              boxSize={{ base: "50px", sm: "60px", md: "70px", lg: "80px" }}
+              color="#B19CD9"
+              opacity={0.4}
+            />
+        </Box>
+
+        {/* Micrófono - Área vacía superior derecha (fuera de las cards) */}
+        <Box
+          position="absolute"
+          top={{ base: "3%", md: "2%" }}
+          right={{ base: "3%", md: "2%" }}
+          transform="rotate(15deg)"
+        >
+            <Icon 
+              as={FiMic} 
+              boxSize={{ base: "50px", sm: "60px", md: "70px", lg: "80px" }}
+              color="#B19CD9"
+              opacity={0.4}
+            />
+        </Box>
+
+        {/* Onda de radio - Área vacía inferior derecha (fuera de las cards) */}
+        <Box
+          position="absolute"
+          bottom={{ base: "3%", md: "2%" }}
+          right={{ base: "3%", md: "2%" }}
+          transform="rotate(-15deg)"
+        >
+            <Icon 
+              as={FiRss} 
+              boxSize={{ base: "50px", sm: "60px", md: "70px", lg: "80px" }}
+              color="#B19CD9"
+              opacity={0.4}
+            />
+        </Box>
+
+        {/* Marcas de agua verticales - Panel lateral izquierdo */}
+        <VStack
+          position="absolute"
+          left={{ base: "2%", md: "1%" }}
+          top="50%"
+          transform="translateY(-50%)"
+          spacing={{ base: 10, sm: 12, md: 14 }}
+          align="center"
+          zIndex={1}
+        >
+          {/* Onda de sonido morada - Parte superior */}
+          <Box
+            w={{ base: "50px", sm: "60px", md: "70px" }}
+            h={{ base: "30px", sm: "35px", md: "40px" }}
+            position="relative"
+            opacity={0.6}
+          >
+            <svg width="100%" height="100%" viewBox="0 0 100 50" preserveAspectRatio="none">
+              <path
+                d="M 0 25 Q 12.5 10, 25 25 T 50 25 T 75 25 T 100 25"
+                stroke="#B19CD9"
+                strokeWidth="4"
+                fill="none"
+                strokeLinecap="round"
+              />
+              <path
+                d="M 0 25 Q 12.5 40, 25 25 T 50 25 T 75 25 T 100 25"
+                stroke="#B19CD9"
+                strokeWidth="4"
+                fill="none"
+                strokeLinecap="round"
+              />
+            </svg>
+          </Box>
+
+          {/* Torre de transmisión morada - Parte inferior */}
+          <VStack spacing={2} align="center" opacity={0.6}>
+            <Icon 
+              as={FiRadio} 
+              boxSize={{ base: "40px", sm: "50px", md: "60px" }}
+              color="#B19CD9"
+            />
+            <Box
+              position="relative"
+              w={{ base: "30px", sm: "40px", md: "50px" }}
+              h={{ base: "20px", sm: "25px", md: "30px" }}
+            >
+              {/* Ondas de radio */}
+              <Box
+                position="absolute"
+                top="50%"
+                left="50%"
+                transform="translate(-50%, -50%)"
+                w="100%"
+                h="100%"
+              >
+                <svg width="100%" height="100%" viewBox="0 0 30 20" preserveAspectRatio="xMidYMid meet">
+                  <path
+                    d="M 15 10 Q 15 5, 20 10 Q 15 15, 15 10"
+                    stroke="#B19CD9"
+                    strokeWidth="2"
+                    fill="none"
+                  />
+                  <path
+                    d="M 15 10 Q 15 2, 25 10 Q 15 18, 15 10"
+                    stroke="#B19CD9"
+                    strokeWidth="2"
+                    fill="none"
+                  />
+                  <path
+                    d="M 15 10 Q 15 0, 30 10 Q 15 20, 15 10"
+                    stroke="#B19CD9"
+                    strokeWidth="2"
+                    fill="none"
+                  />
+                </svg>
+              </Box>
+            </Box>
+          </VStack>
+        </VStack>
+
+        {/* Marcas de agua verticales - Panel lateral derecho */}
+        <VStack
+          position="absolute"
+          right={{ base: "2%", md: "1%" }}
+          top="50%"
+          transform="translateY(-50%)"
+          spacing={{ base: 10, sm: 12, md: 14 }}
+          align="center"
+          zIndex={1}
+        >
+          {/* Onda de sonido verde claro - Parte superior */}
+          <Box
+            w={{ base: "50px", sm: "60px", md: "70px" }}
+            h={{ base: "30px", sm: "35px", md: "40px" }}
+            position="relative"
+            opacity={0.6}
+          >
+            <svg width="100%" height="100%" viewBox="0 0 100 50" preserveAspectRatio="none">
+              <path
+                d="M 0 25 Q 12.5 10, 25 25 T 50 25 T 75 25 T 100 25"
+                stroke="#40E0D0"
+                strokeWidth="4"
+                fill="none"
+                strokeLinecap="round"
+              />
+              <path
+                d="M 0 25 Q 12.5 40, 25 25 T 50 25 T 75 25 T 100 25"
+                stroke="#40E0D0"
+                strokeWidth="4"
+                fill="none"
+                strokeLinecap="round"
+              />
+            </svg>
+          </Box>
+
+          {/* Torre de transmisión morada - Parte inferior */}
+          <VStack spacing={2} align="center" opacity={0.6}>
+            <Icon 
+              as={FiRadio} 
+              boxSize={{ base: "40px", sm: "50px", md: "60px" }}
+              color="#B19CD9"
+            />
+            <Box
+              position="relative"
+              w={{ base: "30px", sm: "40px", md: "50px" }}
+              h={{ base: "20px", sm: "25px", md: "30px" }}
+            >
+              {/* Ondas de radio */}
+              <Box
+                position="absolute"
+                top="50%"
+                left="50%"
+                transform="translate(-50%, -50%)"
+                w="100%"
+                h="100%"
+              >
+                <svg width="100%" height="100%" viewBox="0 0 30 20" preserveAspectRatio="xMidYMid meet">
+                  <path
+                    d="M 15 10 Q 15 5, 20 10 Q 15 15, 15 10"
+                    stroke="#B19CD9"
+                    strokeWidth="2"
+                    fill="none"
+                  />
+                  <path
+                    d="M 15 10 Q 15 2, 25 10 Q 15 18, 15 10"
+                    stroke="#B19CD9"
+                    strokeWidth="2"
+                    fill="none"
+                  />
+                  <path
+                    d="M 15 10 Q 15 0, 30 10 Q 15 20, 15 10"
+                    stroke="#B19CD9"
+                    strokeWidth="2"
+                    fill="none"
+                  />
+                </svg>
+              </Box>
+            </Box>
+          </VStack>
+        </VStack>
+      </Box>
+
       <Container maxW="container.xl" position="relative" zIndex={2} px={{ base: 4, sm: 6, md: 8 }}>
         <VStack spacing={{ base: 8, sm: 10, md: 12 }} align="stretch">
           {/* Header */}
           <VStack spacing={{ base: 3, sm: 4 }} textAlign="center" maxW="800px" mx="auto">
-            <Heading 
-              size={{ base: "lg", sm: "xl", md: "2xl" }}
-              fontWeight="bold"
-              color={textColor}
-              lineHeight="shorter"
+            <Flex 
+              align="center" 
+              justify="center" 
+              position="relative"
+              w="full"
+              gap={{ base: 4, sm: 6, md: 8 }}
             >
-              Explora Nuestro Contenido
-            </Heading>
+              {/* Onda de sonido izquierda */}
+              <Box
+                position="relative"
+                display={{ base: "none", sm: "flex" }}
+                alignItems="flex-end"
+                h={{ base: "40px", sm: "50px", md: "60px" }}
+                gap="3px"
+              >
+                {[30, 60, 45, 80, 35, 70, 50, 65].map((height, i) => (
+                  <Box
+                    key={i}
+                    w="4px"
+                    h={`${height}%`}
+                    bgGradient="linear(to-b, #B19CD9, #40E0D0)"
+                    borderRadius="full"
+                    opacity={0.7}
+                  />
+                ))}
+              </Box>
+              
+              <Heading 
+                size={{ base: "lg", sm: "xl", md: "2xl" }}
+                fontWeight="bold"
+                color={textColor}
+                lineHeight="shorter"
+              >
+                Explora Nuestro Contenido
+              </Heading>
+              
+              {/* Onda de sonido derecha */}
+              <Box
+                position="relative"
+                display={{ base: "none", sm: "flex" }}
+                alignItems="flex-end"
+                h={{ base: "40px", sm: "50px", md: "60px" }}
+                gap="3px"
+              >
+                {[30, 60, 45, 80, 35, 70, 50, 65].map((height, i) => (
+                  <Box
+                    key={i}
+                    w="4px"
+                    h={`${height}%`}
+                    bgGradient="linear(to-b, #B19CD9, #40E0D0)"
+                    borderRadius="full"
+                    opacity={0.7}
+                  />
+                ))}
+              </Box>
+            </Flex>
           </VStack>
 
           {/* Grid de categorías - Diseño elegante con imágenes */}
@@ -145,7 +413,7 @@ const CategoriesSection = () => {
                   position="relative"
                   h={{ base: "120px", sm: "140px", md: "160px" }}
                   overflow="hidden"
-                  bg="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+                  bg={brandDarkGray}
                 >
                   {/* Imagen de fondo */}
                   <Image
@@ -165,7 +433,7 @@ const CategoriesSection = () => {
                     left={0}
                     right={0}
                     bottom={0}
-                    bg="linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.6))"
+                    bg="rgba(0,0,0,0.5)"
                   />
 
                     {/* Título superpuesto en la imagen */}
@@ -257,10 +525,9 @@ const CategoriesSection = () => {
                       </HStack>
                     </Flex>
 
-                    {/* Divisor con gradiente */}
+                    {/* Divisor */}
                     <Divider
-                      borderColor="transparent"
-                      bgGradient={`linear(to-r, #667eea, ${brandRed})`}
+                      borderColor={brandRed}
                       h="2px"
                       borderRadius="full"
                     />
@@ -280,7 +547,6 @@ const CategoriesSection = () => {
                           <Text
                             fontSize={{ base: "2xs", sm: "2xs" }}
                             color={textColor}
-                            opacity={0.7}
                             fontWeight="medium"
                           >
                             {stat.label}
@@ -289,17 +555,17 @@ const CategoriesSection = () => {
                       ))}
                     </SimpleGrid>
 
-                    {/* Botón de acción con gradiente */}
+                    {/* Botón de acción */}
                     <Button
                       size={{ base: "sm", sm: "sm" }}
-                      bgGradient={`linear(135deg, ${brandRed}, ${brandOrange})`}
+                      bg={brandRed}
                       color={brandWhite}
                       fontWeight="bold"
                       borderRadius="md"
                       py={{ base: 4, sm: 4 }}
                       fontSize={{ base: "xs", sm: "sm" }}
                       _hover={{
-                        bgGradient: `linear(135deg, #C00000, #FF8C00)`,
+                        bg: '#C00000',
                         transform: 'translateY(-2px)',
                         boxShadow: `0 8px 24px ${brandRed}50`,
                       }}
@@ -318,6 +584,7 @@ const CategoriesSection = () => {
           </SimpleGrid>
         </VStack>
       </Container>
+
     </Box>
   )
 }

@@ -38,14 +38,15 @@ import {
 } from 'react-icons/fi'
 import PageWithFooter from '../../components/layout/PageWithFooter'
 import PublicLayout from '../../components/layout/PublicLayout'
+import SEO from '../../components/SEO'
 
 const About = () => {
   // Colores oficiales de OXÍGENO 88.1FM
   const brandRed = '#E50000'      // Rojo Vibrante
   const brandDarkGray = '#333333' // Gris Oscuro
+  const brandBlack = '#000000'    // Negro
   const brandWhite = '#FFFFFF'    // Blanco Puro
   const brandLightGray = '#CCCCCC' // Gris Claro
-  const brandOrange = '#FFA500'   // Naranja Vibrante
 
   const bgGradient = useColorModeValue(
     `linear(to-br, ${brandWhite}, ${brandLightGray})`,
@@ -58,6 +59,11 @@ const About = () => {
 
   return (
     <PublicLayout>
+      <SEO
+        title="Quiénes Somos - Oxígeno 88.1 FM"
+        description="Conoce la historia, misión, visión y valores de Oxígeno Radio 88.1 FM, la voz de Barquisimeto desde 2015. Descubre nuestro compromiso con la comunidad y la excelencia en programación radial."
+        keywords="Oxígeno Radio, Barquisimeto, radio 88.1 FM, historia radio, misión visión valores, radio Venezuela, Barquisimeto radio"
+      />
       <PageWithFooter>
       {/* Hero Section */}
       <Box
@@ -79,13 +85,13 @@ const About = () => {
               fontWeight="bold"
             >
               <Icon as={FiRadio} mr={2} />
-              OXÍ Radio 88.1 FM
+              Oxígeno Radio 88.1 FM
             </Badge>
             
             <Heading
               as="h1"
               size="4xl"
-              bgGradient={`linear(to-r, ${brandRed}, ${brandOrange})`}
+              color={brandRed}
               bgClip="text"
               fontWeight="bold"
               lineHeight="shorter"
@@ -164,7 +170,7 @@ const About = () => {
 
               {/* Visión */}
               <Card bg={cardBg} shadow="xl" borderRadius="xl" overflow="hidden">
-                <CardHeader bgGradient={`linear(to-r, ${brandOrange}, #FF8C00)`} color={brandWhite}>
+                <CardHeader bg={brandRed} color={brandWhite}>
                   <HStack>
                     <Icon as={FiAward} boxSize={6} />
                     <Heading size="lg">Nuestra Visión</Heading>
@@ -215,7 +221,7 @@ const About = () => {
                   icon: FiUsers,
                   title: 'Comunidad',
                   description: 'Construimos lazos que unen a toda Barquisimeto',
-                  color: brandOrange
+                  color: brandRed
                 },
                 {
                   icon: FiStar,
@@ -275,7 +281,7 @@ const About = () => {
                 Nuestra Historia
               </Heading>
               <Text fontSize="lg" color={textColor} lineHeight="tall">
-                Desde nuestros inicios, OXÍ Radio 88.1 FM ha sido testigo y protagonista de la 
+                Desde nuestros inicios, Oxígeno Radio 88.1 FM ha sido testigo y protagonista de la 
                 evolución de Barquisimeto. Nacimos con el propósito de ser más que una estación 
                 de radio; somos el corazón que late al ritmo de nuestra ciudad.
               </Text>
@@ -303,7 +309,7 @@ const About = () => {
             
             <Box position="relative">
               <Box
-                bgGradient={`linear(to-br, ${brandRed}, ${brandOrange})`}
+                bg={brandRed}
                 borderRadius="xl"
                 p={8}
                 color={brandWhite}
@@ -311,7 +317,7 @@ const About = () => {
               >
                 <VStack spacing={6}>
                   <Icon as={FiRadio} boxSize={16} />
-                  <Heading size="lg">OXÍ Radio</Heading>
+                  <Heading size="lg">Oxígeno Radio</Heading>
                   <Text fontSize="lg" opacity={0.9}>
                     La voz de Barquisimeto desde 2015
                   </Text>
@@ -351,7 +357,7 @@ const About = () => {
                   icon: FiGlobe,
                   title: 'Cobertura Regional',
                   description: 'Llegamos a toda Barquisimeto y municipios aledaños',
-                  color: brandOrange
+                  color: brandRed
                 },
                 {
                   icon: FiMusic,
@@ -399,13 +405,13 @@ const About = () => {
       {/* Call to Action Section */}
       <Box
         py={20}
-        bgGradient={`linear(to-r, ${brandRed}, ${brandOrange})`}
+        bg={brandRed}
         color={brandWhite}
       >
         <Container maxW="container.xl">
           <VStack spacing={8} textAlign="center">
             <Heading as="h2" size="2xl">
-              ¡Únete a la Familia OXÍ!
+              ¡Únete a la Familia Oxígeno!
             </Heading>
             <Text fontSize="xl" maxW="2xl" opacity={0.9}>
               Sintoniza 88.1 FM y forma parte de la comunidad más vibrante de Barquisimeto
