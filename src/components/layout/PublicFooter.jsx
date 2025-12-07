@@ -119,7 +119,7 @@ const PublicFooter = ({
             templateColumns={{ 
               base: '1fr', 
               md: 'repeat(2, 1fr)', 
-              lg: 'repeat(4, 1fr)' 
+              lg: 'repeat(2, 1fr)' 
             }} 
             gap={8}
           >
@@ -178,7 +178,7 @@ const PublicFooter = ({
             </GridItem>
 
             {/* Enlaces rápidos */}
-            <GridItem>
+            {/* <GridItem>
               <VStack align="start" spacing={4}>
                 <Text 
                   fontSize="lg" 
@@ -206,10 +206,10 @@ const PublicFooter = ({
                   ))}
                 </VStack>
               </VStack>
-            </GridItem>
+            </GridItem> */}
 
             {/* Servicios */}
-            <GridItem>
+            {/* <GridItem>
               <VStack align="start" spacing={4}>
                 <Text 
                   fontSize="lg" 
@@ -237,7 +237,7 @@ const PublicFooter = ({
                   ))}
                 </VStack>
               </VStack>
-            </GridItem>
+            </GridItem> */}
 
             {/* Redes sociales y newsletter */}
             <GridItem>
