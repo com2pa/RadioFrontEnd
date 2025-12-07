@@ -71,8 +71,8 @@ const PublicFooter = ({
   ],
   socialMedia = {
     facebook: ' @oxigenobqto',
-    TikTok: 'TikTok @oxigenotemueve8',
-    instagram: '@oxigenotemueve',
+    TikTok: 'https://www.tiktok.com/@oxigenotemueve8?lang=es-419',
+    instagram: 'https://www.instagram.com/oxigenotemueve/',
    
   },
   contactInfo = {

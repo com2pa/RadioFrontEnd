@@ -8,7 +8,7 @@ import TopSongs from '../../components/sections/TopSongs'
 import StatsSection from '../../components/sections/StatsSection'
 import CategoriesSection from '../../components/sections/CategoriesSection'
 import StickyRadioPlayer from '../../components/StickyRadioPlayer'
-
+import SEO from '../../components/SEO'
 const Home = () => {
   // Colores oficiales de OXÍGENO 88.1FM
   const brandLightGray = '#CCCCCC' // Gris Claro

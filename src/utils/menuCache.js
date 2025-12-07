@@ -17,7 +17,7 @@ class MenuCache {
     const cached = this.cache.get(key)
     
     if (cached && Date.now() - cached.timestamp < this.cacheTimeout) {
-      console.log('📦 Datos obtenidos del cache:', key)
+      // console.log('📦 Datos obtenidos del cache:', key)
       return cached.data
     }
     
@@ -36,20 +36,20 @@ class MenuCache {
       data,
       timestamp: Date.now()
     })
-    console.log('💾 Datos guardados en cache:', key)
+    // console.log('💾 Datos guardados en cache:', key)
   }
 
   // Limpiar cache específico
   clear(roleId, menuType = 'main') {
     const key = this.generateKey(roleId, menuType)
     this.cache.delete(key)
-    console.log('🗑️ Cache limpiado:', key)
+    // console.log('🗑️ Cache limpiado:', key)
   }
 
   // Limpiar todo el cache
   clearAll() {
     this.cache.clear()
-    console.log('🗑️ Todo el cache limpiado')
+    // console.log('🗑️ Todo el cache limpiado')
   }
 
   // Obtener estadísticas del cache
