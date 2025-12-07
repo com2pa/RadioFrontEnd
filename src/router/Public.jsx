@@ -15,6 +15,7 @@ import EmailVerification from '../pages/public/EmailVerification'
 import Contact from '../pages/public/Contact'
 import Teams from '../pages/public/Teams'
 import ProgramView from '../pages/public/ProgramView'
+import CategoryContentView from '../pages/public/CategoryContentView'
 // Componente de carga
 const LoadingFallback = () => (
   <Box display="flex" justifyContent="center" alignItems="center" minH="50vh">
@@ -69,6 +70,7 @@ const Public = () => {
         <Route path='/contact' element={<Contact />} />
         <Route path='/teams' element={<Teams />} />
         <Route path='/program/:id?' element={<ProgramView />} />
+        <Route path='/category' element={<CategoryContentView />} />
         
         {/* Rutas dinámicas generadas desde el backend - solo para rutas no públicas */}
         {!isPublicRoute && routes.map((route) => {
