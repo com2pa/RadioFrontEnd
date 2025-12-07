@@ -198,17 +198,22 @@ const CategoryContentView = () => {
       <Box 
         bg={useColorModeValue(brandLightGray + '40', brandDarkGray)}
         minH="100vh"
-        pb="120px"
-        px={{ base: 4, sm: 6, md: 8 }}
-        py={{ base: 6, sm: 8, md: 10 }}
+        pb={{ base: "100px", sm: "110px", md: "120px" }}
+        px={{ base: 3, sm: 4, md: 6, lg: 8 }}
+        py={{ base: 4, sm: 6, md: 8, lg: 10 }}
+        w="100%"
       >
-        <Container maxW="container.xl">
-          <VStack spacing={6} align="stretch">
+        <Container 
+          maxW={{ base: "100%", sm: "container.sm", md: "container.md", lg: "container.lg", xl: "container.xl", "2xl": "container.2xl" }}
+          px={{ base: 2, sm: 4, md: 6 }}
+        >
+          <VStack spacing={{ base: 4, sm: 5, md: 6, lg: 8 }} align="stretch">
             {/* Breadcrumb */}
             <Breadcrumb 
               separator={<FiChevronRight />} 
               color={textColor}
-              fontSize={{ base: "sm", md: "md" }}
+              fontSize={{ base: "xs", sm: "sm", md: "md" }}
+              spacing={{ base: 1, sm: 2 }}
             >
               <BreadcrumbItem>
                 <BreadcrumbLink onClick={handleBackClick} cursor="pointer">
@@ -227,32 +232,40 @@ const CategoryContentView = () => {
 
             {/* Header */}
             <Flex 
-              direction={{ base: "column", md: "row" }}
-              align={{ base: "start", md: "center" }}
+              direction={{ base: "column", sm: "column", md: "row" }}
+              align={{ base: "start", sm: "start", md: "center" }}
               justify="space-between"
-              gap={4}
+              gap={{ base: 3, sm: 4, md: 4, lg: 6 }}
+              w="full"
             >
-              <VStack align={{ base: "start", md: "start" }} spacing={2}>
+              <VStack align={{ base: "start", md: "start" }} spacing={{ base: 1.5, sm: 2 }} flex="1" minW="0">
                 <Button
                   leftIcon={<FiArrowLeft />}
                   variant="ghost"
-                  size="sm"
+                  size={{ base: "xs", sm: "sm", md: "md" }}
                   onClick={handleBackClick}
                   color={textColor}
+                  px={{ base: 2, sm: 3 }}
+                  fontSize={{ base: "xs", sm: "sm" }}
+                  h={{ base: "32px", sm: "36px", md: "40px" }}
                 >
                   Volver
                 </Button>
                 <Heading 
-                  size={{ base: "lg", md: "xl" }}
+                  size={{ base: "md", sm: "lg", md: "xl", lg: "2xl" }}
                   fontWeight="bold"
                   color={textColor}
+                  lineHeight={{ base: "1.2", md: "shorter" }}
+                  noOfLines={{ base: 2, sm: 1 }}
+                  w="full"
                 >
                   {displayCategoryName}
                 </Heading>
                 <Text 
-                  fontSize={{ base: "sm", md: "md" }}
+                  fontSize={{ base: "xs", sm: "sm", md: "md" }}
                   color={textColor}
                   opacity={0.8}
+                  w="full"
                 >
                   {contentType === 'news' 
                     ? 'Explora las subcategorías de noticias' 
@@ -262,48 +275,67 @@ const CategoryContentView = () => {
               <Badge
                 bg={brandRed}
                 color={brandWhite}
-                px={4}
-                py={2}
+                px={{ base: 3, sm: 4, md: 5 }}
+                py={{ base: 1.5, sm: 2, md: 2.5 }}
                 borderRadius="md"
-                fontSize={{ base: "sm", md: "md" }}
+                fontSize={{ base: "xs", sm: "sm", md: "md" }}
                 display="flex"
                 alignItems="center"
-                gap={2}
+                gap={{ base: 1.5, sm: 2 }}
+                flexShrink={0}
+                alignSelf={{ base: "start", md: "center" }}
               >
-                <Icon as={contentType === 'news' ? FiRss : FiHeadphones} />
-                {contentType === 'news' ? 'Noticias' : 'Podcasts'}
+                <Icon as={contentType === 'news' ? FiRss : FiHeadphones} boxSize={{ base: "14px", sm: "16px", md: "18px" }} />
+                <Text as="span" display={{ base: "none", sm: "inline" }}>
+                  {contentType === 'news' ? 'Noticias' : 'Podcasts'}
+                </Text>
               </Badge>
             </Flex>
 
-            <Divider borderColor={brandRed} />
+            <Divider borderColor={brandRed} borderWidth={{ base: "1.5px", md: "2px" }} />
 
             {/* Contenido */}
             {loading ? (
-              <Box display="flex" justifyContent="center" py={20}>
-                <VStack spacing={4}>
-                  <Spinner size="xl" color={brandRed} />
-                  <Text color={textColor}>Cargando subcategorías...</Text>
+              <Box display="flex" justifyContent="center" py={{ base: 12, sm: 16, md: 20 }}>
+                <VStack spacing={{ base: 3, sm: 4 }}>
+                  <Spinner size={{ base: "lg", sm: "xl" }} color={brandRed} />
+                  <Text 
+                    color={textColor}
+                    fontSize={{ base: "sm", sm: "md" }}
+                  >
+                    Cargando subcategorías...
+                  </Text>
                 </VStack>
               </Box>
             ) : subcategories.length === 0 ? (
               <Box 
                 textAlign="center" 
-                py={20}
+                py={{ base: 12, sm: 16, md: 20 }}
                 bg={cardBg}
-                borderRadius="xl"
-                px={6}
+                borderRadius={{ base: "lg", md: "xl" }}
+                px={{ base: 4, sm: 6, md: 8 }}
+                mx={{ base: 2, sm: 0 }}
               >
-                <VStack spacing={4}>
+                <VStack spacing={{ base: 3, sm: 4 }}>
                   <Icon 
                     as={contentType === 'news' ? FiRss : FiHeadphones} 
-                    boxSize="60px"
+                    boxSize={{ base: "50px", sm: "60px", md: "70px" }}
                     color={brandRed}
                     opacity={0.5}
                   />
-                  <Heading size="md" color={textColor}>
+                  <Heading 
+                    size={{ base: "sm", sm: "md", md: "lg" }}
+                    color={textColor}
+                    px={{ base: 2, sm: 0 }}
+                  >
                     No hay subcategorías disponibles
                   </Heading>
-                  <Text color={textColor} opacity={0.7}>
+                  <Text 
+                    color={textColor} 
+                    opacity={0.7}
+                    fontSize={{ base: "xs", sm: "sm", md: "md" }}
+                    px={{ base: 2, sm: 0 }}
+                  >
                     Esta categoría aún no tiene subcategorías creadas.
                   </Text>
                   <Button
@@ -312,6 +344,10 @@ const CategoryContentView = () => {
                     bg={brandRed}
                     color={brandWhite}
                     _hover={{ bg: '#C00000' }}
+                    size={{ base: "sm", sm: "md" }}
+                    fontSize={{ base: "xs", sm: "sm" }}
+                    px={{ base: 4, sm: 6 }}
+                    py={{ base: 5, sm: 6 }}
                   >
                     Volver al inicio
                   </Button>
@@ -319,8 +355,10 @@ const CategoryContentView = () => {
               </Box>
             ) : (
               <SimpleGrid 
-                columns={{ base: 1, sm: 2, md: 3, lg: 4 }} 
-                spacing={{ base: 4, md: 6 }}
+                columns={{ base: 1, sm: 2, md: 2, lg: 3, xl: 4 }} 
+                spacing={{ base: 3, sm: 4, md: 5, lg: 6 }}
+                w="full"
+                px={{ base: 1, sm: 0 }}
               >
                 {subcategories.map((subcategory, index) => {
                   const subcategoryId = subcategory.subcategory_id || subcategory.id
@@ -330,36 +368,37 @@ const CategoryContentView = () => {
                     <Card
                       key={subcategoryId}
                       bg={cardBg}
-                      borderRadius="xl"
+                      borderRadius={{ base: "lg", sm: "xl" }}
                       overflow="hidden"
                       position="relative"
-                      boxShadow="0 4px 16px rgba(0, 0, 0, 0.1)"
+                      boxShadow={{ base: "0 2px 8px rgba(0, 0, 0, 0.08)", md: "0 4px 16px rgba(0, 0, 0, 0.1)" }}
                       sx={{
                         animation: `${scaleIn} 0.5s ease-out ${index * 0.1}s both`,
                         transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                         '&:hover': {
-                          transform: 'translateY(-8px)',
-                          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
+                          transform: { base: 'translateY(-4px)', md: 'translateY(-8px)' },
+                          boxShadow: { base: '0 6px 20px rgba(0, 0, 0, 0.15)', md: '0 8px 32px rgba(0, 0, 0, 0.2)' },
                         }
                       }}
                       cursor="pointer"
                       onClick={() => handleSubcategoryClick(subcategoryId, subcategoryName)}
+                      w="100%"
                     >
-                      <CardBody p={{ base: 4, md: 6 }}>
-                        <VStack spacing={4} align="stretch">
+                      <CardBody p={{ base: 3, sm: 4, md: 5, lg: 6 }}>
+                        <VStack spacing={{ base: 3, sm: 3.5, md: 4 }} align="stretch">
                           {/* Icono */}
                           <Flex justify="center">
                             <Box
                               bg={brandRed}
                               borderRadius="full"
-                              p={4}
+                              p={{ base: 3, sm: 3.5, md: 4 }}
                               display="flex"
                               alignItems="center"
                               justifyContent="center"
                             >
                               <Icon 
                                 as={contentType === 'news' ? FiRss : FiHeadphones}
-                                boxSize={{ base: "32px", md: "40px" }}
+                                boxSize={{ base: "28px", sm: "32px", md: "36px", lg: "40px" }}
                                 color={brandWhite}
                               />
                             </Box>
@@ -367,35 +406,53 @@ const CategoryContentView = () => {
 
                           {/* Título */}
                           <Heading
-                            size={{ base: "sm", md: "md" }}
+                            size={{ base: "xs", sm: "sm", md: "md" }}
                             fontWeight="bold"
                             color={textColor}
                             textAlign="center"
                             noOfLines={2}
+                            lineHeight={{ base: "1.3", md: "1.4" }}
+                            minH={{ base: "2.6em", sm: "2.8em" }}
                           >
                             {subcategoryName}
                           </Heading>
 
-                          <Divider borderColor={brandRed} />
+                          <Divider borderColor={brandRed} borderWidth={{ base: "1.5px", md: "2px" }} />
 
                           {/* Información adicional */}
-                          <VStack spacing={2} align="stretch">
+                          <VStack spacing={{ base: 1.5, sm: 2 }} align="stretch">
                             {subcategory.news_count !== undefined && (
                               <HStack justify="space-between">
-                                <Text fontSize="sm" color={textColor} opacity={0.7}>
+                                <Text 
+                                  fontSize={{ base: "xs", sm: "sm" }}
+                                  color={textColor} 
+                                  opacity={0.7}
+                                >
                                   Noticias:
                                 </Text>
-                                <Text fontSize="sm" fontWeight="bold" color={textColor}>
+                                <Text 
+                                  fontSize={{ base: "xs", sm: "sm", md: "md" }}
+                                  fontWeight="bold" 
+                                  color={textColor}
+                                >
                                   {subcategory.news_count || 0}
                                 </Text>
                               </HStack>
                             )}
                             {subcategory.podcast_count !== undefined && (
                               <HStack justify="space-between">
-                                <Text fontSize="sm" color={textColor} opacity={0.7}>
+                                <Text 
+                                  fontSize={{ base: "xs", sm: "sm" }}
+                                  color={textColor} 
+                                  opacity={0.7}
+                                >
                                   Podcasts:
                                 </Text>
-                                <Text fontSize="sm" fontWeight="bold" color={textColor}>
+                                <Text 
+                                  fontSize={{ base: "xs", sm: "sm", md: "md" }}
+                                  fontWeight="bold" 
+                                  color={textColor}
+                                >
                                   {subcategory.podcast_count || 0}
                                 </Text>
                               </HStack>
@@ -404,14 +461,20 @@ const CategoryContentView = () => {
 
                           {/* Botón */}
                           <Button
-                            size="sm"
+                            size={{ base: "xs", sm: "sm", md: "md" }}
                             bg={brandRed}
                             color={brandWhite}
                             fontWeight="bold"
                             borderRadius="md"
+                            py={{ base: 4, sm: 5, md: 6 }}
+                            fontSize={{ base: "xs", sm: "sm", md: "md" }}
+                            w="full"
                             _hover={{
                               bg: '#C00000',
                               transform: 'translateY(-2px)',
+                            }}
+                            _active={{
+                              transform: 'translateY(0)',
                             }}
                             transition="all 0.3s ease"
                             onClick={(e) => {
