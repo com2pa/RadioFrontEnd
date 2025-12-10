@@ -54,6 +54,13 @@ export const adminMenuItems = [
     description: 'Administrar noticias existentes'
   },
   {
+    id: 'advertising',
+    label: 'Crear Publicidad',
+    href: '/dashboard/admin/advertising',
+    icon: 'FiDollarSign',
+    description: 'Crear y administrar publicidad'
+  },
+  {
     id: 'programs',
     label: 'Crear Programa',
     href: '/dashboard/admin/programs',

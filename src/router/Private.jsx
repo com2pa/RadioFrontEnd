@@ -23,6 +23,7 @@ import ContactNotifications from '../pages/private/ContactNotifications'
 import Auditoria from '../pages/private/Auditoria'
 import ProfileUser from '../pages/private/ProfileUser'
 import ChangePassword from '../pages/private/ChangePassword'
+import AdvertisingManagement from '../pages/private/AdvertisingManagement'
 
 const LoadingFallback = () => (
   <Box display="flex" justifyContent="center" alignItems="center" minH="100vh">
@@ -72,6 +73,7 @@ const Private = () => {
       <Route path="admin/user-roles" element={<UserRolesManagement />} />
       <Route path="admin/contact-notifications" element={<ContactNotifications />} />
       <Route path="admin/auditoria" element={<Auditoria />} />
+      <Route path="admin/advertising" element={<AdvertisingManagement />} />
       <Route path="admin/profile" element={<ProfileUser />} />
       <Route path="admin/change-password" element={<ChangePassword />} />
       

@@ -30,7 +30,8 @@ import {
   FiEdit3,
   FiList,
   FiFileText,
-  FiUser
+  FiUser,
+  FiDollarSign
 } from 'react-icons/fi'
 import { useAuth } from '../../hooks/useAuth'
 import { adminMenuItems } from '../../config/adminMenuConfig'
@@ -76,7 +77,8 @@ const AdminMenu = ({
       FiEdit3,
       FiList,
       FiFileText,
-      FiUser
+      FiUser,
+      FiDollarSign
     }
     return iconMap[iconName] || FiSettings
   }
