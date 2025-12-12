@@ -43,6 +43,10 @@ import {
   ModalBody,
   ModalCloseButton,
   SimpleGrid,
+  Checkbox,
+  CheckboxGroup,
+  Wrap,
+  WrapItem,
 } from '@chakra-ui/react'
 import { 
   FiSave, 
@@ -68,6 +72,7 @@ const AdvertisingManagement = () => {
   const bgColor = useColorModeValue('gray.50', 'gray.900')
   const cardBg = useColorModeValue('white', 'gray.800')
   const textColor = useColorModeValue('gray.600', 'gray.300')
+  const borderColor = useColorModeValue('gray.200', 'gray.700')
   const toast = useToast()
   const { auth, logout } = useAuth()
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -95,9 +100,21 @@ const AdvertisingManagement = () => {
     end_date: '',
     time: '',
     advertising_days: '',
+    publication_days: [], // Array de días de la semana: ['lunes', 'martes', etc.]
     status: true,
     advertising_image: null
   })
+
+  // Días de la semana válidos
+  const weekDays = [
+    { value: 'lunes', label: 'Lunes' },
+    { value: 'martes', label: 'Martes' },
+    { value: 'miércoles', label: 'Miércoles' },
+    { value: 'jueves', label: 'Jueves' },
+    { value: 'viernes', label: 'Viernes' },
+    { value: 'sábado', label: 'Sábado' },
+    { value: 'domingo', label: 'Domingo' }
+  ]
 
   // Verificar permisos de administrador
   if (!auth || !canAdmin(auth)) {
@@ -178,32 +195,64 @@ const AdvertisingManagement = () => {
     }
   }
 
+  // Manejar cambios en los días de publicación
+  const handlePublicationDaysChange = (selectedDays) => {
+    setFormData(prev => ({
+      ...prev,
+      publication_days: selectedDays || []
+    }))
+  }
+
   // Crear nueva publicidad
   const createAdvertisement = async () => {
     setSubmitting(true)
     try {
       const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken')
       
-      // Preparar datos según lo que espera el backend
-      const dataToSend = {
-        company_name: formData.company_name.trim(),
-        rif: formData.rif.trim(),
-        company_address: formData.company_address.trim(),
-        phone: formData.phone.trim(),
-        email: formData.email.trim(),
-        start_date: formData.start_date ? formData.start_date.split('T')[0] : '',
-        end_date: formData.end_date ? formData.end_date.split('T')[0] : '',
-        time: formData.time || null,
-        advertising_days: parseInt(formData.advertising_days) || 0,
-        status: formData.status,
-        advertising_image: formData.advertising_image ? formData.advertising_image.name : null
+      // Si hay imagen, usar FormData, si no, usar JSON
+      let dataToSend
+      let headers = {
+        'Authorization': `Bearer ${token}`
+      }
+
+      if (formData.advertising_image && formData.advertising_image instanceof File) {
+        // Usar FormData para enviar la imagen
+        const formDataToSend = new FormData()
+        formDataToSend.append('company_name', formData.company_name.trim())
+        formDataToSend.append('rif', formData.rif.trim())
+        formDataToSend.append('company_address', formData.company_address.trim())
+        formDataToSend.append('phone', formData.phone.trim())
+        formDataToSend.append('email', formData.email.trim())
+        formDataToSend.append('start_date', formData.start_date ? formData.start_date.split('T')[0] : '')
+        formDataToSend.append('end_date', formData.end_date ? formData.end_date.split('T')[0] : '')
+        if (formData.time) formDataToSend.append('time', formData.time)
+        formDataToSend.append('advertising_days', parseInt(formData.advertising_days) || 0)
+        formDataToSend.append('publication_days', JSON.stringify(Array.isArray(formData.publication_days) ? formData.publication_days : []))
+        formDataToSend.append('status', formData.status)
+        formDataToSend.append('advertising_image', formData.advertising_image)
+        
+        dataToSend = formDataToSend
+        // No establecer Content-Type para FormData, el navegador lo hace automáticamente
+      } else {
+        // Usar JSON si no hay imagen
+        dataToSend = {
+          company_name: formData.company_name.trim(),
+          rif: formData.rif.trim(),
+          company_address: formData.company_address.trim(),
+          phone: formData.phone.trim(),
+          email: formData.email.trim(),
+          start_date: formData.start_date ? formData.start_date.split('T')[0] : '',
+          end_date: formData.end_date ? formData.end_date.split('T')[0] : '',
+          time: formData.time || null,
+          advertising_days: parseInt(formData.advertising_days) || 0,
+          publication_days: Array.isArray(formData.publication_days) ? formData.publication_days : [],
+          status: formData.status
+        }
+        headers['Content-Type'] = 'application/json'
       }
 
       const response = await axios.post('/api/advertising/create', dataToSend, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        }
+        headers
       })
 
       if (response.data.success) {
@@ -239,28 +288,56 @@ const AdvertisingManagement = () => {
     try {
       const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken')
       
-      // Preparar datos según lo que espera el backend
-      const dataToSend = {}
-      
-      if (formData.company_name) dataToSend.company_name = formData.company_name.trim()
-      if (formData.rif) dataToSend.rif = formData.rif.trim()
-      if (formData.company_address) dataToSend.company_address = formData.company_address.trim()
-      if (formData.phone) dataToSend.phone = formData.phone.trim()
-      if (formData.email) dataToSend.email = formData.email.trim()
-      if (formData.start_date) dataToSend.start_date = formData.start_date.split('T')[0]
-      if (formData.end_date) dataToSend.end_date = formData.end_date.split('T')[0]
-      if (formData.time !== undefined) dataToSend.time = formData.time || null
-      if (formData.advertising_days) dataToSend.advertising_days = parseInt(formData.advertising_days)
-      if (formData.status !== undefined) dataToSend.status = formData.status
+      // Si hay una nueva imagen, usar FormData, si no, usar JSON
+      let dataToSend
+      let headers = {
+        'Authorization': `Bearer ${token}`
+      }
+
       if (formData.advertising_image && formData.advertising_image instanceof File) {
-        dataToSend.advertising_image = formData.advertising_image.name
+        // Usar FormData para enviar la nueva imagen
+        const formDataToSend = new FormData()
+        if (formData.company_name) formDataToSend.append('company_name', formData.company_name.trim())
+        if (formData.rif) formDataToSend.append('rif', formData.rif.trim())
+        if (formData.company_address) formDataToSend.append('company_address', formData.company_address.trim())
+        if (formData.phone) formDataToSend.append('phone', formData.phone.trim())
+        if (formData.email) formDataToSend.append('email', formData.email.trim())
+        if (formData.start_date) formDataToSend.append('start_date', formData.start_date.split('T')[0])
+        if (formData.end_date) formDataToSend.append('end_date', formData.end_date.split('T')[0])
+        if (formData.time !== undefined) formDataToSend.append('time', formData.time || '')
+        if (formData.advertising_days) formDataToSend.append('advertising_days', parseInt(formData.advertising_days))
+        if (formData.publication_days !== undefined) {
+          formDataToSend.append('publication_days', JSON.stringify(Array.isArray(formData.publication_days) ? formData.publication_days : []))
+        }
+        if (formData.status !== undefined) formDataToSend.append('status', formData.status)
+        formDataToSend.append('advertising_image', formData.advertising_image)
+        
+        dataToSend = formDataToSend
+        // No establecer Content-Type para FormData
+      } else {
+        // Usar JSON si no hay nueva imagen
+        dataToSend = {}
+        if (formData.company_name) dataToSend.company_name = formData.company_name.trim()
+        if (formData.rif) dataToSend.rif = formData.rif.trim()
+        if (formData.company_address) dataToSend.company_address = formData.company_address.trim()
+        if (formData.phone) dataToSend.phone = formData.phone.trim()
+        if (formData.email) dataToSend.email = formData.email.trim()
+        if (formData.start_date) dataToSend.start_date = formData.start_date.split('T')[0]
+        if (formData.end_date) dataToSend.end_date = formData.end_date.split('T')[0]
+        if (formData.time !== undefined) dataToSend.time = formData.time || null
+        if (formData.advertising_days) dataToSend.advertising_days = parseInt(formData.advertising_days)
+        if (formData.publication_days !== undefined) {
+          dataToSend.publication_days = Array.isArray(formData.publication_days) 
+            ? formData.publication_days 
+            : []
+        }
+        if (formData.status !== undefined) dataToSend.status = formData.status
+        
+        headers['Content-Type'] = 'application/json'
       }
 
       const response = await axios.put(`/api/advertising/update/${editingId}`, dataToSend, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        }
+        headers
       })
 
       if (response.data.success) {
@@ -379,6 +456,7 @@ const AdvertisingManagement = () => {
       end_date: '',
       time: '',
       advertising_days: '',
+      publication_days: [],
       status: true,
       advertising_image: null
     })
@@ -398,6 +476,21 @@ const AdvertisingManagement = () => {
       return `${year}-${month}-${day}`
     }
 
+    // Procesar publication_days (puede venir como JSON string o array)
+    let publicationDays = []
+    if (ad.publication_days) {
+      if (typeof ad.publication_days === 'string') {
+        try {
+          publicationDays = JSON.parse(ad.publication_days)
+        } catch (e) {
+          // Si no es JSON válido, intentar como array
+          publicationDays = Array.isArray(ad.publication_days) ? ad.publication_days : []
+        }
+      } else if (Array.isArray(ad.publication_days)) {
+        publicationDays = ad.publication_days
+      }
+    }
+
     setFormData({
       company_name: ad.company_name || '',
       rif: ad.rif || '',
@@ -408,6 +501,7 @@ const AdvertisingManagement = () => {
       end_date: formatDateForInput(ad.end_date),
       time: ad.time || '',
       advertising_days: ad.advertising_days?.toString() || '',
+      publication_days: publicationDays,
       status: ad.status !== undefined ? ad.status : true,
       advertising_image: null // No cargar imagen existente
     })
@@ -770,6 +864,31 @@ const AdvertisingManagement = () => {
                       </FormHelperText>
                     </FormControl>
 
+                    {/* Días de la semana para publicación */}
+                    <FormControl>
+                      <FormLabel fontSize={{ base: "sm", md: "md" }}>
+                        Días de la Semana (Opcional)
+                      </FormLabel>
+                      <CheckboxGroup
+                        value={formData.publication_days}
+                        onChange={handlePublicationDaysChange}
+                        colorScheme="blue"
+                      >
+                        <Wrap spacing={{ base: 2, md: 3 }}>
+                          {weekDays.map((day) => (
+                            <WrapItem key={day.value}>
+                              <Checkbox value={day.value} size={{ base: "sm", md: "md" }}>
+                                <Text fontSize={{ base: "xs", md: "sm" }}>{day.label}</Text>
+                              </Checkbox>
+                            </WrapItem>
+                          ))}
+                        </Wrap>
+                      </CheckboxGroup>
+                      <FormHelperText fontSize={{ base: "xs", md: "sm" }}>
+                        Selecciona los días de la semana en que se publicará la publicidad
+                      </FormHelperText>
+                    </FormControl>
+
                     {/* Imagen */}
                     <FormControl>
                       <FormLabel fontSize={{ base: "sm", md: "md" }}>
@@ -887,6 +1006,7 @@ const AdvertisingManagement = () => {
                     <Table size={{ base: "xs", md: "sm" }} variant="simple">
                       <Thead>
                         <Tr>
+                          <Th fontSize={{ base: "xs", md: "sm" }}>Imagen</Th>
                           <Th fontSize={{ base: "xs", md: "sm" }}>Empresa</Th>
                           <Th fontSize={{ base: "xs", md: "sm" }} display={{ base: "none", md: "table-cell" }}>
                             RIF
@@ -899,33 +1019,98 @@ const AdvertisingManagement = () => {
                         </Tr>
                       </Thead>
                       <Tbody>
-                        {advertisements.map((ad) => (
-                          <Tr key={ad.advertising_id || ad.id}>
-                            <Td>
-                              <VStack align="start" spacing={0}>
-                                <Text 
-                                  fontWeight="medium" 
-                                  fontSize={{ base: "xs", md: "sm" }}
-                                  wordBreak="break-word"
-                                >
-                                  {ad.company_name || 'N/A'}
-                                </Text>
-                                <Text 
-                                  fontSize={{ base: "2xs", md: "xs" }} 
-                                  color={textColor}
-                                  display={{ base: "block", md: "none" }}
-                                >
-                                  RIF: {ad.rif || 'N/A'}
-                                </Text>
-                                <Text 
-                                  fontSize={{ base: "2xs", md: "xs" }} 
-                                  color={textColor}
-                                  display={{ base: "block", lg: "none" }}
-                                >
-                                  {ad.email || 'N/A'}
-                                </Text>
-                              </VStack>
-                            </Td>
+                        {advertisements.map((ad) => {
+                          // Construir URL de la imagen
+                          const getImageUrl = (imageName) => {
+                            if (!imageName) return null
+                            if (imageName.startsWith('http://') || imageName.startsWith('https://')) {
+                              return imageName
+                            }
+                            return `/api/advertising/images/${encodeURIComponent(imageName)}`
+                          }
+                          const imageUrl = getImageUrl(ad.advertising_image)
+
+                          return (
+                            <Tr key={ad.advertising_id || ad.id}>
+                              <Td>
+                                {imageUrl ? (
+                                  <Box
+                                    w={{ base: "50px", md: "80px", lg: "100px" }}
+                                    h={{ base: "50px", md: "80px", lg: "100px" }}
+                                    borderRadius="md"
+                                    overflow="hidden"
+                                    bg={useColorModeValue('gray.100', 'gray.700')}
+                                    borderWidth="1px"
+                                    borderColor={borderColor}
+                                  >
+                                    <Image
+                                      src={imageUrl}
+                                      alt={ad.company_name || 'Publicidad'}
+                                      w="100%"
+                                      h="100%"
+                                      objectFit="cover"
+                                      loading="lazy"
+                                      onError={(e) => {
+                                        e.target.style.display = 'none'
+                                        e.target.nextSibling.style.display = 'flex'
+                                      }}
+                                    />
+                                    <Flex
+                                      display="none"
+                                      align="center"
+                                      justify="center"
+                                      w="100%"
+                                      h="100%"
+                                      bg={useColorModeValue('gray.100', 'gray.700')}
+                                    >
+                                      <Text fontSize="2xs" color={textColor} textAlign="center" px={1}>
+                                        Sin imagen
+                                      </Text>
+                                    </Flex>
+                                  </Box>
+                                ) : (
+                                  <Box
+                                    w={{ base: "50px", md: "80px", lg: "100px" }}
+                                    h={{ base: "50px", md: "80px", lg: "100px" }}
+                                    borderRadius="md"
+                                    bg={useColorModeValue('gray.100', 'gray.700')}
+                                    borderWidth="1px"
+                                    borderColor={borderColor}
+                                    display="flex"
+                                    align="center"
+                                    justify="center"
+                                  >
+                                    <Text fontSize="2xs" color={textColor} textAlign="center" px={1}>
+                                      Sin imagen
+                                    </Text>
+                                  </Box>
+                                )}
+                              </Td>
+                              <Td>
+                                <VStack align="start" spacing={0}>
+                                  <Text 
+                                    fontWeight="medium" 
+                                    fontSize={{ base: "xs", md: "sm" }}
+                                    wordBreak="break-word"
+                                  >
+                                    {ad.company_name || 'N/A'}
+                                  </Text>
+                                  <Text 
+                                    fontSize={{ base: "2xs", md: "xs" }} 
+                                    color={textColor}
+                                    display={{ base: "block", md: "none" }}
+                                  >
+                                    RIF: {ad.rif || 'N/A'}
+                                  </Text>
+                                  <Text 
+                                    fontSize={{ base: "2xs", md: "xs" }} 
+                                    color={textColor}
+                                    display={{ base: "block", lg: "none" }}
+                                  >
+                                    {ad.email || 'N/A'}
+                                  </Text>
+                                </VStack>
+                              </Td>
                             <Td 
                               fontSize={{ base: "xs", md: "sm" }}
                               display={{ base: "none", md: "table-cell" }}
@@ -977,7 +1162,8 @@ const AdvertisingManagement = () => {
                               </HStack>
                             </Td>
                           </Tr>
-                        ))}
+                          )
+                        })}
                       </Tbody>
                     </Table>
                   </Box>

@@ -7,6 +7,7 @@ import LivePrograms from '../../components/sections/LivePrograms'
 import TopSongs from '../../components/sections/TopSongs'
 import StatsSection from '../../components/sections/StatsSection'
 import CategoriesSection from '../../components/sections/CategoriesSection'
+import AdvertisingCarousel from '../../components/sections/AdvertisingCarousel'
 import StickyRadioPlayer from '../../components/StickyRadioPlayer'
 import SEO from '../../components/SEO'
 const Home = () => {
@@ -33,6 +34,7 @@ const Home = () => {
         overflow="hidden"
       >
         <HeroSection />
+        <AdvertisingCarousel />
         {/* <LivePrograms /> */}
         {/* <TopSongs /> */}
         {/* <StatsSection /> */}
